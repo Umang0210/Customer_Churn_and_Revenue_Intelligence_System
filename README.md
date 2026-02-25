@@ -71,6 +71,7 @@ graph TD
     class MySQL db;
 ```
 
+
 ### Component Details
 
 #### 1. Data Processing Pipeline
