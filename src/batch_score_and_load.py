@@ -9,7 +9,7 @@ from datetime import date
 # Paths
 # ===============================
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_PATH = BASE_DIR / "data" / "processed" / "final_dataset.csv"
+DATA_PATH = BASE_DIR / "data" / "processed" / "customer_features.csv"
 MODEL_DIR = BASE_DIR / "models"
 
 # ===============================
@@ -59,15 +59,9 @@ def map_risk(prob):
 def write_df_to_mysql(df):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    # Ensure customer_id column exists
-    if "customer_id" not in df.columns:
-        if "customerid" in df.columns:
-            df["customer_id"] = df["customerid"]
-        else:
-            # Create customer_id from index if not available
-            df["customer_id"] = df.index + 1
-            print("Warning: No customer_id column found, using index as customer_id")
+
+    # 🔥 Full refresh strategy (prevents duplicate primary key error)
+    cursor.execute("TRUNCATE TABLE customer_churn_analytics")
 
     query = """
         INSERT INTO customer_churn_analytics (
@@ -83,24 +77,28 @@ def write_df_to_mysql(df):
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     """
 
-    for _, row in df.iterrows():
-        cursor.execute(query, (
+    data_tuples = [
+        (
             row["customer_id"],
             float(row["churn_probability"]),
             row["risk_bucket"],
             float(row["revenue"]),
             float(row["expected_revenue_loss"]),
             float(row["priority_score"]),
-            "v1.0",
-            date.today()
-        ))
+            row["model_version"],
+            row["prediction_date"]
+        )
+        for _, row in df.iterrows()
+    ]
+
+    cursor.executemany(query, data_tuples)
 
     conn.commit()
     cursor.close()
     conn.close()
 
 # ===============================
-# MAIN PIPELINE
+# FINAL MASTER PIPELINE
 # ===============================
 def main():
     print("Loading processed data...")
@@ -114,20 +112,62 @@ def main():
 
     df["churn_probability"] = probs
     df["risk_bucket"] = df["churn_probability"].apply(map_risk)
-    
-    # Ensure revenue column exists
-    if "revenue" not in df.columns:
-        if "monthlycharges" in df.columns:
-            df["revenue"] = df["monthlycharges"]
-        else:
-            df["revenue"] = 0
-            print("Warning: No revenue data available, using 0 as default")
-    
-    df["expected_revenue_loss"] = df["churn_probability"] * df["revenue"]
-    df["priority_score"] = df["expected_revenue_loss"] * df["churn_probability"]
 
+    # -----------------------------
+    # Revenue Handling
+    # -----------------------------
+    if "monthlycharges" in df.columns:
+        df["revenue"] = df["monthlycharges"]
+    elif "revenue" not in df.columns:
+        df["revenue"] = 0
+        print("Warning: No revenue column found. Defaulting to 0.")
+
+    # -----------------------------
+    # KPI Calculations
+    # -----------------------------
+    df["expected_revenue_loss"] = df["churn_probability"] * df["revenue"]
+    df["priority_score"] = df["churn_probability"] * df["revenue"]
+
+    df["prediction_date"] = date.today()
+    df["model_version"] = "v1.0"
+
+    # -----------------------------
+    # Ensure customer_id exists
+    # -----------------------------
+    if "customer_id" not in df.columns:
+        if "customerid" in df.columns:
+            df["customer_id"] = df["customerid"]
+        else:
+            df["customer_id"] = df.index + 1
+
+    # -----------------------------
+    # Final Columns (Power BI Ready)
+    # -----------------------------
+    final_columns = [
+        "customer_id",
+        "churn_probability",
+        "risk_bucket",
+        "revenue",
+        "expected_revenue_loss",
+        "priority_score",
+        "prediction_date",
+        "model_version"
+    ]
+
+    final_df = df[final_columns].copy()
+
+    # -----------------------------
+    # Save Final CSV
+    # -----------------------------
+    final_output_path = BASE_DIR / "data" / "processed" / "final_dataset.csv"
+    final_df.to_csv(final_output_path, index=False)
+    print(f"Final dataset saved to {final_output_path}")
+
+    # -----------------------------
+    # Write to MySQL
+    # -----------------------------
     print("Writing to MySQL...")
-    write_df_to_mysql(df)
+    write_df_to_mysql(final_df)
 
     print("Batch scoring completed successfully.")
 
