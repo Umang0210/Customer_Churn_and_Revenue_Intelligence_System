@@ -98,7 +98,7 @@ def write_df_to_mysql(df):
     conn.close()
 
 # ===============================
-# FINAL MASTER PIPELINE
+# FINAL MASTER PIPELINE (BI READY)
 # ===============================
 def main():
     print("Loading processed data...")
@@ -118,9 +118,9 @@ def main():
     # -----------------------------
     if "monthlycharges" in df.columns:
         df["revenue"] = df["monthlycharges"]
-    elif "revenue" not in df.columns:
+    else:
         df["revenue"] = 0
-        print("Warning: No revenue column found. Defaulting to 0.")
+        print("Warning: No monthlycharges column found.")
 
     # -----------------------------
     # KPI Calculations
@@ -132,6 +132,18 @@ def main():
     df["model_version"] = "v1.0"
 
     # -----------------------------
+    # Tenure Bucketing (for BI slicing)
+    # -----------------------------
+    if "tenure" in df.columns:
+        df["tenure_bucket"] = pd.cut(
+            df["tenure"],
+            bins=[0, 12, 24, 48, 72],
+            labels=["0-1yr", "1-2yr", "2-4yr", "4-6yr"]
+        )
+    else:
+        df["tenure_bucket"] = "Unknown"
+
+    # -----------------------------
     # Ensure customer_id exists
     # -----------------------------
     if "customer_id" not in df.columns:
@@ -141,18 +153,32 @@ def main():
             df["customer_id"] = df.index + 1
 
     # -----------------------------
-    # Final Columns (Power BI Ready)
+    # FINAL BUSINESS + MODEL DATASET
     # -----------------------------
     final_columns = [
-        "customer_id",
-        "churn_probability",
-        "risk_bucket",
-        "revenue",
-        "expected_revenue_loss",
-        "priority_score",
-        "prediction_date",
-        "model_version"
+    "customer_id",
+    "gender",
+    "seniorcitizen",
+    "partner",
+    "dependents",
+    "tenure",
+    "tenure_bucket",
+    "contract",
+    "paymentmethod",
+    "internetservice",
+    "monthlycharges",
+    "totalcharges",
+    "revenue",  # ADD THIS BACK
+    "churn_probability",
+    "risk_bucket",
+    "expected_revenue_loss",
+    "priority_score",
+    "prediction_date",
+    "model_version"
     ]
+
+    # Keep only columns that actually exist
+    final_columns = [col for col in final_columns if col in df.columns]
 
     final_df = df[final_columns].copy()
 
@@ -170,6 +196,8 @@ def main():
     write_df_to_mysql(final_df)
 
     print("Batch scoring completed successfully.")
-
+    
 if __name__ == "__main__":
+    print("MAIN FUNCTION CALLED")
     main()
+    
