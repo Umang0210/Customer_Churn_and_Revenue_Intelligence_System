@@ -2,180 +2,182 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Analytics - Churn Intelligence</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Churn Analytics — Revenue analysis, customer segmentation by contract, tenure, services, and payment methods.">
+    <title>Analytics | Churn Intelligence Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Churn Intelligence</span>
-                </div>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="index.html" class="nav-item">
-                    <i class="fas fa-home"></i>
-                    <span>Dashboard</span>
-                </a>
-                <a href="customers.html" class="nav-item">
-                    <i class="fas fa-users"></i>
-                    <span>Customers</span>
-                </a>
-                <a href="analytics.html" class="nav-item active">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Analytics</span>
-                </a>
-                <a href="predictions.html" class="nav-item">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <span>Predictions</span>
-                </a>
-                <a href="settings.html" class="nav-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </nav>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
-            <!-- TOP BAR -->
-            <div class="top-bar">
-                <h1 class="page-title">
-                    <i class="fas fa-chart-bar"></i>
-                    Advanced Analytics
-                </h1>
-                <div class="user-info">
-                    <span class="user-name">Analytics Team</span>
-                    <div class="user-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TIME RANGE SELECTOR -->
-            <div class="filters-section">
-                <div class="time-range-selector">
-                    <button class="time-btn active">7 Days</button>
-                    <button class="time-btn">30 Days</button>
-                    <button class="time-btn">90 Days</button>
-                    <button class="time-btn">1 Year</button>
-                    <button class="time-btn">All Time</button>
-                </div>
-                <button class="btn-primary">
-                    <i class="fas fa-download"></i>
-                    Export Report
-                </button>
-            </div>
-
-            <!-- KEY INSIGHTS -->
-            <div class="insights-section">
-                <h2 class="section-title">
-                    <i class="fas fa-lightbulb"></i>
-                    Key Insights
-                </h2>
-                <div class="insights-grid">
-                    <div class="insight-card">
-                        <div class="insight-icon">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <div class="insight-content">
-                            <h4>Churn Rate Trend</h4>
-                            <p>Churn rate has increased by <strong>12.5%</strong> over the last 30 days</p>
-                            <span class="insight-badge warning">Attention Required</span>
-                        </div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-icon success">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="insight-content">
-                            <h4>Retention Success</h4>
-                            <p>Successfully retained <strong>78%</strong> of at-risk customers this quarter</p>
-                            <span class="insight-badge success">Positive Trend</span>
-                        </div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-icon info">
-                            <i class="fas fa-info-circle"></i>
-                        </div>
-                        <div class="insight-content">
-                            <h4>Revenue Impact</h4>
-                            <p>Potential revenue loss reduced by <strong>₹2.5M</strong> through early intervention</p>
-                            <span class="insight-badge info">Good Performance</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CHARTS SECTION -->
-            <div class="charts-container">
-                <div class="chart-box chart-wide">
-                    <div class="chart-header">
-                        <h3>
-                            <i class="fas fa-chart-line"></i>
-                            Churn Rate Trend Over Time
-                        </h3>
-                        <span class="chart-subtitle">Monthly churn rate analysis</span>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="churnTrendChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-box">
-                    <div class="chart-header">
-                        <h3>
-                            <i class="fas fa-users"></i>
-                            Customer Segmentation
-                        </h3>
-                        <span class="chart-subtitle">Distribution by segment</span>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="segmentChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-box">
-                    <div class="chart-header">
-                        <h3>
-                            <i class="fas fa-rupee-sign"></i>
-                            Revenue at Risk by Segment
-                        </h3>
-                        <span class="chart-subtitle">Financial impact analysis</span>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="revenueRiskChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-box chart-wide">
-                    <div class="chart-header">
-                        <h3>
-                            <i class="fas fa-percentage"></i>
-                            Churn Probability Distribution
-                        </h3>
-                        <span class="chart-subtitle">Customer distribution by churn probability</span>
-                    </div>
-                    <div class="chart-content">
-                        <canvas id="probabilityDistChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </main>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Analytics...</div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">📊</div>
+            <div class="brand-title">Churn Intelligence</div>
+            <div class="brand-subtitle">Revenue Optimization System</div>
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-label">Dashboard</div>
+            <a href="index.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Overview</span>
+            </a>
+            <a href="model.html" class="nav-item">
+                <span class="nav-icon">🤖</span>
+                <span class="nav-text">Model Performance</span>
+            </a>
+            <a href="analytics.html" class="nav-item active">
+                <span class="nav-icon">📈</span>
+                <span class="nav-text">Analytics</span>
+            </a>
+            <a href="customers.html" class="nav-item">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">Customers</span>
+            </a>
+            <div class="nav-label" style="margin-top: auto;">System</div>
+            <a href="#" class="nav-item" style="opacity: 0.4; pointer-events: none;">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Pipeline</span>
+            </a>
+        </div>
+        <div class="sidebar-footer">
+            <div class="version-badge">
+                <span class="dot"></span>
+                <span>v1.1.0 — Random Forest</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-container">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-breadcrumb">
+                    <a href="index.html">Dashboard</a> <span>/</span> Analytics
+                </div>
+                <h1 class="page-title">Revenue & Segmentation Analytics</h1>
+                <p class="page-subtitle">Deep-dive into churn patterns across revenue tiers, contracts, tenure, and
+                    services</p>
+            </div>
+
+            <!-- Revenue Analysis -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon amber">💰</div>
+                    <div>
+                        <h2 class="section-title">Revenue Impact</h2>
+                        <p class="section-subtitle">Financial comparison between retained and churned customer segments
+                        </p>
+                    </div>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Revenue by Churn Status</div>
+                        <div class="chart-subtitle">Total lifetime revenue: retained vs churned customers</div>
+                        <div class="chart-wrapper">
+                            <canvas id="revenueBarChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Monthly Charges Distribution</div>
+                        <div class="chart-subtitle">Customer count across spending tiers</div>
+                        <div class="chart-wrapper">
+                            <canvas id="chargeDistChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contract & Tenure -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon sky">📋</div>
+                    <div>
+                        <h2 class="section-title">Contract & Tenure Segmentation</h2>
+                        <p class="section-subtitle">Churn behaviour across contract types and customer lifecycle stages
+                        </p>
+                    </div>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Churn Rate by Contract Type</div>
+                        <div class="chart-subtitle">Month-to-Month contracts have 42.7% churn — 15x higher than Two Year
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="contractChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Churn Rate by Tenure</div>
+                        <div class="chart-subtitle">New customers (0-6 months) churn at 52.9%</div>
+                        <div class="chart-wrapper">
+                            <canvas id="tenureChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tenure Table -->
+                <div class="card mt-20">
+                    <div class="chart-title">Tenure Group Breakdown</div>
+                    <div class="chart-subtitle">Detailed metrics per customer lifecycle stage</div>
+                    <div class="table-wrapper mt-16">
+                        <table class="data-table" id="tenureTable">
+                            <thead>
+                                <tr>
+                                    <th>Tenure Group</th>
+                                    <th>Customers</th>
+                                    <th>Churn Rate</th>
+                                    <th>Avg Monthly Charges</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services & Payment -->
+            <section class="section">
+                <div class="section-header">
+                    <div class="section-icon cyan">🌐</div>
+                    <div>
+                        <h2 class="section-title">Service & Payment Analysis</h2>
+                        <p class="section-subtitle">Churn patterns across internet services and payment methods</p>
+                    </div>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-container">
+                        <div class="chart-title">Churn by Internet Service</div>
+                        <div class="chart-subtitle">Fiber Optic customers churn at 41.9% — highest across all services
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="internetChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Churn by Payment Method</div>
+                        <div class="chart-subtitle">Electronic Check: 45.3% churn — 3x vs automatic payments</div>
+                        <div class="chart-wrapper">
+                            <canvas id="paymentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="dashboard.js"></script>
 </body>
 
 </html>
