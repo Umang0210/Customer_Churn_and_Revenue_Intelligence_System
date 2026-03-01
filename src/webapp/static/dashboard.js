@@ -32,8 +32,13 @@ let DATA = null;
 // ========================
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const r = await fetch('dashboard_data.json');
-        DATA = await r.json();
+        // Use script-loaded data first (works with file://), fetch as fallback
+        if (window.DASHBOARD_DATA) {
+            DATA = window.DASHBOARD_DATA;
+        } else {
+            const r = await fetch('dashboard_data.json');
+            DATA = await r.json();
+        }
         routePage();
         hideLoader();
         initScrollReveal();
@@ -42,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const ov = document.getElementById('loadingOverlay');
         ov.innerHTML = `<div style="text-align:center;color:#f43f5e;">
       <p style="font-size:1.1rem;font-weight:600;">Failed to load data</p>
-      <p style="color:#8b949e;margin-top:8px;">Ensure dashboard_data.json exists. Serve via HTTP server.</p>
+      <p style="color:#8b949e;margin-top:8px;">Ensure dashboard_data.js exists in the same folder.</p>
       <p style="color:#484f58;margin-top:4px;font-size:0.75rem;">Error: ${e.message}</p></div>`;
     }
 });
