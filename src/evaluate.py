@@ -3,12 +3,14 @@ import joblib
 import json
 import sys
 from pathlib import Path
+from datetime import datetime
 from sklearn.metrics import (
     classification_report,
     confusion_matrix,
     roc_auc_score,
     precision_score,
-    recall_score
+    recall_score,
+    f1_score
 )
 from sklearn.model_selection import train_test_split
 
@@ -25,6 +27,7 @@ FEATURE_LIST_PATH = MODEL_DIR / "feature_list.json"
 
 TARGET_COL = "churn"
 RANDOM_STATE = 42
+MIN_ROC_AUC = 0.70
 
 
 def evaluate_model():
@@ -44,7 +47,7 @@ def evaluate_model():
     if df[TARGET_COL].dtype == object:
         df[TARGET_COL] = df[TARGET_COL].map({'yes': 1, 'no': 0})
 
-    # Explicit feature selection (match training)
+    # Explicit feature selection (must match training)
     NUMERIC_COLS = ["tenure", "monthlycharges", "totalcharges"]
     CATEGORICAL_COLS = ["gender", "seniorcitizen", "contract"]
 
@@ -54,7 +57,7 @@ def evaluate_model():
     # Encode categoricals
     X = pd.get_dummies(X, columns=CATEGORICAL_COLS, drop_first=True)
 
-    # Align features to training schema
+    # Align to training feature schema
     with open(FEATURE_LIST_PATH, "r") as f:
         feature_list = json.load(f)
 
@@ -72,7 +75,7 @@ def evaluate_model():
     print("Loading model...")
     model = joblib.load(MODEL_PATH)
 
-    # Apply scaler only if it exists
+    # Apply scaler if exists
     if SCALER_PATH.exists():
         print("Scaler found. Applying scaling...")
         scaler = joblib.load(SCALER_PATH)
@@ -90,6 +93,7 @@ def evaluate_model():
     roc_auc = roc_auc_score(y_test, y_proba)
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
 
     print("\n==============================")
     print("MODEL EVALUATION METRICS")
@@ -97,6 +101,7 @@ def evaluate_model():
     print(f"ROC-AUC: {roc_auc:.4f}")
     print(f"Precision (0.5 threshold): {precision:.4f}")
     print(f"Recall (0.5 threshold): {recall:.4f}")
+    print(f"F1 Score: {f1:.4f}")
 
     print("\nConfusion Matrix:")
     print(confusion_matrix(y_test, y_pred))
@@ -107,24 +112,70 @@ def evaluate_model():
     # ==============================
     # THRESHOLD ANALYSIS
     # ==============================
+    threshold_results = []
+
     print("\nThreshold Analysis:")
     for t in [0.4, 0.5, 0.6, 0.7]:
         y_pred_t = (y_proba >= t).astype(int)
+        p = precision_score(y_test, y_pred_t)
+        r = recall_score(y_test, y_pred_t)
+        f = f1_score(y_test, y_pred_t)
+
+        threshold_results.append({
+            "threshold": t,
+            "precision": round(p, 4),
+            "recall": round(r, 4),
+            "f1_score": round(f, 4)
+        })
+
         print(f"\nThreshold: {t}")
-        print("Precision:", round(precision_score(y_test, y_pred_t), 4))
-        print("Recall:", round(recall_score(y_test, y_pred_t), 4))
+        print("Precision:", round(p, 4))
+        print("Recall:", round(r, 4))
+        print("F1 Score:", round(f, 4))
+
+    threshold_df = pd.DataFrame(threshold_results)
+
+    # ==============================
+    # SAVE METRICS TO CSV (data/processed/newfile)
+    # ==============================
+
+    OUTPUT_DIR = BASE_DIR / "data" / "processed" / "Metrics"
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    metrics_path = OUTPUT_DIR / f"model_metrics_{timestamp}.csv"
+    threshold_path = OUTPUT_DIR / f"threshold_analysis_{timestamp}.csv"
+
+    # Overall metrics
+    metrics_df = pd.DataFrame({
+        "metric": ["ROC-AUC", "Precision", "Recall", "F1 Score"],
+        "value": [
+            round(roc_auc, 4),
+            round(precision, 4),
+            round(recall, 4),
+            round(f1, 4)
+        ]
+    })
+
+    metrics_df.to_csv(metrics_path, index=False)
+    threshold_df.to_csv(threshold_path, index=False)
+
+    print("\n==============================")
+    print("Metrics successfully saved.")
+    print("Metrics file:", metrics_path)
+    print("Threshold file:", threshold_path)
+    print("==============================")
 
     # ==============================
     # CI PERFORMANCE GATE
     # ==============================
-    MIN_ROC_AUC = 0.70
-
     if roc_auc < MIN_ROC_AUC:
         print(f"\n❌ Model ROC-AUC below threshold ({MIN_ROC_AUC})")
         sys.exit(1)
     else:
         print("\n✅ Model performance acceptable.")
 
+
 if __name__ == "__main__":
     evaluate_model()
-    

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Customer Churn & Revenue Optimization Intelligence System — Interactive Dashboard with ML insights, revenue analysis, and customer risk segmentation.">
+    <title>Churn Intelligence Dashboard | Customer Revenue Optimization</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Intelligence Dashboard...</div>
+    </div>
+
+    <div class="dashboard-container">
+
+        <!-- ═══════════════════════════════════════════
+         HERO SECTION
+         ═══════════════════════════════════════════ -->
+        <header class="hero">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                Live Intelligence Report
+            </div>
+            <h1>Customer Churn & Revenue<br>Optimization Intelligence</h1>
+            <p class="subtitle">End-to-end ML pipeline insights — from raw data to actionable business intelligence</p>
+            <p class="generated-at" id="generatedAt"></p>
+        </header>
+
+        <!-- ═══════════════════════════════════════════
+         KPI CARDS
+         ═══════════════════════════════════════════ -->
+        <section class="section" id="kpiSection">
+            <div class="section-header">
+                <div class="section-icon indigo">📊</div>
+                <div>
+                    <h2 class="section-title">Key Performance Indicators</h2>
+                    <p class="section-subtitle">Real-time business metrics from the ML pipeline</p>
+                </div>
+            </div>
+            <div class="kpi-grid" id="kpiGrid"></div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+         DATASET OVERVIEW
+         ═══════════════════════════════════════════ -->
+        <section class="section" id="datasetSection">
+            <div class="section-header">
+                <div class="section-icon cyan">🗂️</div>
+                <div>
+                    <h2 class="section-title">Dataset Overview</h2>
+                    <p class="section-subtitle">Telco Customer Churn dataset analysis</p>
+                </div>
+            </div>
+            <div class="overview-stats" id="datasetStats"></div>
+            <div class="card">
+                <div class="chart-title">Column Schema</div>
+                <div class="chart-subtitle">All 21 features with data types and unique value counts</div>
+                <div class="columns-grid" id="columnsGrid"></div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+         MODEL PERFORMANCE
+         ═══════════════════════════════════════════ -->
+        <section class="section" id="modelSection">
+            <div class="section-header">
+                <div class="section-icon emerald">🤖</div>
+                <div>
+                    <h2 class="section-title">Model Performance</h2>
+                    <p class="section-subtitle">Random Forest vs. Logistic Regression comparison</p>
+                </div>
+            </div>
+
+            <!-- Model Comparison Cards -->
+            <div class="model-cards mb-24" id="modelCards"></div>
+
+            <!-- Charts Row -->
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Confusion Matrix</div>
+                    <div class="chart-subtitle">True vs Predicted classification results (test set)</div>
+                    <div class="confusion-matrix" id="confusionMatrix"></div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Model Metrics Radar</div>
+                    <div class="chart-subtitle">Multi-dimensional performance comparison</div>
+                    <div class="chart-wrapper">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="card mt-24">
+                <div class="chart-title">Model Features (<span id="featureCount"></span> selected)</div>
+                <div class="chart-subtitle">Features used for churn prediction after feature engineering</div>
+                <div class="feature-tags" id="featureTags"></div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+         THRESHOLD ANALYSIS
+         ═══════════════════════════════════════════ -->
+        <section class="section" id="thresholdSection">
+            <div class="section-header">
+                <div class="section-icon amber">⚡</div>
+                <div>
+                    <h2 class="section-title">Threshold Analysis</h2>
+                    <p class="section-subtitle">Precision-Recall trade-off at different classification thresholds</p>
+                </div>
+            </div>
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Precision vs Recall by Threshold</div>
+                    <div class="chart-subtitle">Finding the optimal classification threshold for business goals</div>
+                    <div class="chart-wrapper">
+                        <canvas id="thresholdChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Threshold Detail</div>
+                    <div class="chart-subtitle">Exact metrics at each evaluated threshold</div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="thresholdTable">
+                            <thead>
+                                <tr>
+                                    <th>Threshold</th>
+                                    <th>Precision</th>
+                                    <th>Recall</th>
+                                    <th>F1 Score</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+         CHURN & REVENUE ANALYSIS
+         ═══════════════════════════════════════════ -->
+        <section class="section" id="churnSection">
+            <div class="section-header">
+                <div class="section-icon rose">💸</div>
+                <div>
+                    <h2 class="section-title">Churn & Revenue Analysis</h2>
+                    <p class="section-subtitle">Financial impact of customer attrition</p>
+                </div>
+            </div>
+            <div class="chart-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Churn Distribution</div>
+                    <div class="chart-subtitle">Overall customer retention vs. churn split</div>
+                    <div class="chart-wrapper">
+                        <canvas id="churnPieChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Risk Distribution</div>
+                    <div class="chart-subtitle">Customers classified by predicted churn risk</div>
+                    <div class="chart-wrapper">
+                        <canvas id="riskPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-grid mt-24">
+                <div class="chart-container">
+                    <div class="chart-title">Revenue by Churn Status</div>
+                    <div class="chart-subtitle">Total revenue comparison: retained vs. churned customers</div>
+                    <div class="chart-wrapper">
+                        <canvas id="revenueBarChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Monthly Charges Distribution</div>
+                    <div class="chart-subtitle">Customer count across spending tiers</div>
+                    <div class="chart-wrapper">
+                        <canvas id="chargeDistChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+         SEGMENT ANALYSIS
+         ═══════════════════════════════════════════ -->
+        <section class="section" id="segmentSection">
+            <div class="section-header">
+                <div class="section-icon sky">📈</div>
+                <div>
+                    <h2 class="section-title">Customer Segmentation</h2>
+                    <p class="section-subtitle">Churn patterns across contract types, services, and payment methods</p>
+                </div>
+            </div>
+            <div class="chart-grid three-col">
+                <div class="chart-container">
+                    <div class="chart-title">Churn Rate by Contract</div>
+                    <div class="chart-subtitle">Month-to-Month contracts show highest churn</div>
+                    <div class="chart-wrapper">
+                        <canvas id="contractChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Churn Rate by Tenure</div>
+                    <div class="chart-subtitle">New customers (0-6 mo) are most vulnerable</div>
+                    <div class="chart-wrapper">
+                        <canvas id="tenureChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Churn by Internet Service</div>
+                    <div class="chart-subtitle">Fiber Optic customers churn at highest rate</div>
+                    <div class="chart-wrapper">
+                        <canvas id="internetChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-grid mt-24">
+                <div class="chart-container">
+                    <div class="chart-title">Churn by Payment Method</div>
+                    <div class="chart-subtitle">Electronic Check users churn at 45.3% — 3x vs automatic payments</div>
+                    <div class="chart-wrapper">
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Tenure Group Breakdown</div>
+                    <div class="chart-subtitle">Customer count and average spending by tenure</div>
+                    <div class="table-wrapper">
+                        <table class="data-table" id="tenureTable">
+                            <thead>
+                                <tr>
+                                    <th>Tenure Group</th>
+                                    <th>Customers</th>
+                                    <th>Churn Rate</th>
+                                    <th>Avg Monthly</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+         TOP HIGH-RISK CUSTOMERS
+         ═══════════════════════════════════════════ -->
+        <section class="section" id="customersSection">
+            <div class="section-header">
+                <div class="section-icon rose">🔥</div>
+                <div>
+                    <h2 class="section-title">Top High-Risk Customers</h2>
+                    <p class="section-subtitle">Priority customers for retention intervention — ranked by expected
+                        revenue loss</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-wrapper">
+                    <table class="data-table" id="customersTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Customer ID</th>
+                                <th>Churn Prob.</th>
+                                <th>Risk</th>
+                                <th>Monthly Charges</th>
+                                <th>Tenure</th>
+                                <th>Lifetime Revenue</th>
+                                <th>Expected Loss</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+         ML PIPELINE
+         ═══════════════════════════════════════════ -->
+        <section class="section" id="pipelineSection">
+            <div class="section-header">
+                <div class="section-icon indigo">⚙️</div>
+                <div>
+                    <h2 class="section-title">ML Pipeline Architecture</h2>
+                    <p class="section-subtitle">End-to-end data processing and model training workflow</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="pipeline-flow" id="pipelineFlow"></div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════
+         FOOTER
+         ═══════════════════════════════════════════ -->
+        <footer class="footer">
+            <p class="footer-brand">Customer Churn & Revenue Optimization Intelligence System</p>
+            <p class="footer-text">End-to-end Data Science + Machine Learning + DevOps | Built with Python,
+                scikit-learn, Chart.js</p>
+        </footer>
+
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
