@@ -39,17 +39,15 @@ jobs:
           assert sklearn.__version__ == "1.3.2"
           EOF
 
-      # 6️⃣ Build Docker image
-      - name: Build Docker image
+      # 6️⃣ Build and Start Docker Compose Services
+      - name: Build and Start Services
         run: |
-          docker build -t churn-ml-api .
+          docker compose up -d --build
 
-      # 7️⃣ Run container & test health endpoint
-      - name: Run container & test health
+      # 7️⃣ Wait for API health endpoint
+      - name: Wait for API health
         run: |
-          docker run -d -p 8000:8000 --name churn-api-test churn-ml-api
-          sleep 10
-          curl --fail http://localhost:8000/health
+          timeout 60s bash -c 'until curl --silent --fail http://localhost:8000/health; do sleep 5; echo "Waiting for API..."; done'
 
       # 8️⃣ Test predict endpoint (valid payload)
       - name: Test predict endpoint (valid payload)
@@ -59,8 +57,10 @@ jobs:
           RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8000/predict \
             -H "Content-Type: application/json" \
             -d '{
+              "customer_id": "test_123",
+              "revenue": 500.0,
               "gender": "Female",
-              "seniorcitizen": 0,
+              "seniorcitizen": "0",
               "contract": "Month-to-month",
               "tenure": 12,
               "monthlycharges": 70.0,
@@ -74,7 +74,7 @@ jobs:
           echo "Body: $BODY"
 
           test "$STATUS" -eq 200
-          echo "$BODY" | grep -E '"prediction"|\"churn\"' > /dev/null
+          echo "$BODY" | grep -E '"churn_probability"|\"risk_bucket\"' > /dev/null
 
       # 9️⃣ Test predict endpoint (invalid payload)
       - name: Test predict endpoint (invalid payload)
@@ -91,5 +91,4 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          docker stop churn-api-test || true
-          docker rm churn-api-test || true
+          docker compose down -v || true
