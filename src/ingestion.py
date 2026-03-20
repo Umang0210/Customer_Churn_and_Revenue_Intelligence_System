@@ -11,12 +11,16 @@ SAMPLE_DATA_FILE = "Sample_dataset.csv"
 
 def get_input_file():
     """
-    Prefer real dataset if available, otherwise use sample dataset.
+    Priority: uploaded_dataset > real dataset > sample dataset.
     """
-    real_path = os.path.join(RAW_DATA_DIR, REAL_DATA_FILE)
-    sample_path = os.path.join(RAW_DATA_DIR, SAMPLE_DATA_FILE)
+    uploaded_path = os.path.join(RAW_DATA_DIR, "uploaded_dataset.csv")
+    real_path     = os.path.join(RAW_DATA_DIR, REAL_DATA_FILE)
+    sample_path   = os.path.join(RAW_DATA_DIR, SAMPLE_DATA_FILE)
 
-    if os.path.exists(real_path):
+    if os.path.exists(uploaded_path):
+        print("Using UPLOADED dataset")
+        return uploaded_path
+    elif os.path.exists(real_path):
         print("Using REAL dataset")
         return real_path
     elif os.path.exists(sample_path):
@@ -44,4 +48,7 @@ def ingest_data():
 
 
 if __name__ == "__main__":
+    ingest_data()
+
+def main():
     ingest_data()
