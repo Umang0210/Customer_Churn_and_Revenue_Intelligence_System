@@ -17,7 +17,7 @@ def create_features(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
     # -------------------------------
-    # 🔥 STANDARDIZE COLUMN NAMES
+    # STANDARDIZE COLUMN NAMES
     # -------------------------------
     df.columns = df.columns.str.strip().str.lower()
 
