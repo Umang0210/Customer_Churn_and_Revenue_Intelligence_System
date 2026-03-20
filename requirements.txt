@@ -1,8 +1,24 @@
-pandas==2.2.0
-numpy==1.26.4
-scikit-learn==1.3.2
-joblib==1.3.2
-fastapi==0.110.0
-uvicorn==0.29.0
-mysql-connector-python
-python-dotenv
+# Core data science
+pandas>=2.2.0
+numpy>=1.26.4
+scikit-learn>=1.3.2
+joblib>=1.3.2
+
+# Gradient boosting
+xgboost>=2.0.3
+
+# Visualisation
+matplotlib>=3.8.3
+seaborn>=0.13.2
+
+# API & web
+fastapi>=0.110.0
+uvicorn>=0.29.0
+python-multipart>=0.0.9
+
+# Database
+mysql-connector-python>=8.3.0
+
+# Utilities
+python-dotenv>=1.0.1
+openpyxl>=3.1.2
