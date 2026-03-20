@@ -1,22 +1,3 @@
-"""
-Business Insights — Customer Churn & Revenue Intelligence
-==========================================================
-Computes and exports structured business KPIs from:
-  - The processed feature dataset (always available)
-  - The MySQL predictions table (if DB is running)
-
-Outputs:
-  - reports/business_insights.csv   — metric table
-  - reports/segment_summary.csv     — churn by risk bucket
-  - Console summary
-
-This is the 'Prescriptive Intelligence' layer from the project spec:
-    Priority Score = Churn Probability × Revenue Impact
-
-Run:
-    python src/business_insights.py
-"""
-
 import os
 import json
 import logging
