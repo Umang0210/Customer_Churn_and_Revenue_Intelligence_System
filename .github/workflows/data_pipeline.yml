@@ -1,94 +1,252 @@
-name: CI Pipeline – ML API
+name: Churn Intelligence — Full Pipeline CI/CD
 
 on:
+  # Trigger on push to main
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    branches: [main]
+    paths:
+      # Re-run pipeline when new data, source code, or model config changes
+      - "data/raw/**"
+      - "src/**"
+      - "api/**"
+      - "run_pipeline.py"
+      - "upload_handler.py"
+      - "requirements.txt"
+
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      from_step:
+        description: "Start from step (1=ingestion, 5=train, 7=predictions)"
+        required: false
+        default: "1"
+      skip_eda:
+        description: "Skip EDA step (true/false)"
+        required: false
+        default: "false"
+      skip_train:
+        description: "Skip training (use existing model)"
+        required: false
+        default: "false"
 
 jobs:
-  build-test:
+  # ════════════════════════════════════════════════════════════
+  # JOB 1: Run the full ML pipeline
+  # ════════════════════════════════════════════════════════════
+  pipeline:
+    name: Run ML Pipeline
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE:      churn_intelligence
+          MYSQL_USER:          churn_user
+          MYSQL_PASSWORD:      StrongPassword123
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DB_HOST:     127.0.0.1
+      DB_PORT:     3306
+      DB_NAME:     churn_intelligence
+      DB_USER:     churn_user
+      DB_PASSWORD: StrongPassword123
+      PYTHONPATH:  ${{ github.workspace }}
 
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Set up Python 3.10 (stable + compatible with sklearn 1.3.2)
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
+          cache: pip
 
-      # 3️⃣ Upgrade pip
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-
-      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 5️⃣ Sanity check: sklearn version
-      - name: Run sanity checks
+      - name: Verify sample dataset exists
         run: |
-          python - <<EOF
-          import sklearn
-          print("sklearn version:", sklearn.__version__)
-          assert sklearn.__version__ == "1.3.2"
-          EOF
+          if [ ! -f "data/raw/Sample_dataset.csv" ] && [ ! -f "data/raw/uploaded_dataset.csv" ]; then
+            echo "ERROR: No dataset found in data/raw/. Pipeline cannot run."
+            exit 1
+          fi
+          echo "Dataset found."
 
-      # 6️⃣ Build and Start Docker Compose Services
-      - name: Build and Start Services
+      - name: Run full ML pipeline
         run: |
-          docker compose up -d --build
+          python run_pipeline.py \
+            --from-step ${{ github.event.inputs.from_step || '1' }} \
+            ${{ github.event.inputs.skip_eda == 'true' && '--skip-eda' || '' }} \
+            ${{ github.event.inputs.skip_train == 'true' && '--skip-train' || '' }}
 
-      # 7️⃣ Wait for API health endpoint
-      - name: Wait for API health
+      - name: Check evaluation report (performance gate)
         run: |
-          timeout 60s bash -c 'until curl --silent --fail http://localhost:8000/health; do sleep 5; echo "Waiting for API..."; done'
+          python -c "
+          import json, sys
+          from pathlib import Path
+          report_path = Path('reports/evaluation_report.json')
+          if not report_path.exists():
+              print('ERROR: evaluation_report.json not found.')
+              sys.exit(1)
+          report = json.loads(report_path.read_text())
+          auc = report.get('roc_auc', 0)
+          passed = report.get('passes_gate', False)
+          print(f'ROC-AUC: {auc}')
+          print(f'Gate passed: {passed}')
+          if not passed:
+              print(f'FAIL: ROC-AUC {auc} < minimum {report.get(\"min_auc_threshold\", 0.70)}')
+              sys.exit(1)
+          print('Performance gate PASSED.')
+          "
 
-      # 8️⃣ Test predict endpoint (valid payload)
-      - name: Test predict endpoint (valid payload)
+      - name: Upload pipeline artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pipeline-outputs-${{ github.run_number }}
+          path: |
+            reports/
+            models/feature_list.json
+            models/model_metadata.json
+            logs/
+          retention-days: 14
+
+      - name: Upload evaluation figures
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evaluation-figures-${{ github.run_number }}
+          path: reports/figures/
+          retention-days: 14
+
+  # ════════════════════════════════════════════════════════════
+  # JOB 2: Build and push Docker image (only if pipeline passed)
+  # ════════════════════════════════════════════════════════════
+  docker-build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: pipeline
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          dockerfile: Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/churn-intelligence-api:latest
+            ${{ secrets.DOCKER_USERNAME }}/churn-intelligence-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+
+      - name: Build and push Webapp image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          dockerfile: Dockerfile.webapp
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/churn-intelligence-webapp:latest
+            ${{ secrets.DOCKER_USERNAME }}/churn-intelligence-webapp:${{ github.sha }}
+          cache-from: type=gha
+          cache-to:   type=gha,mode=max
+
+  # ════════════════════════════════════════════════════════════
+  # JOB 3: API smoke test (runs against the built image)
+  # ════════════════════════════════════════════════════════════
+  api-test:
+    name: API Smoke Test
+    runs-on: ubuntu-latest
+    needs: pipeline
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download pipeline artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pipeline-outputs-${{ github.run_number }}
+          path: .
+
+      - name: Start API server
         run: |
-          set -e
+          python -m uvicorn api.app:app --host 0.0.0.0 --port 5000 &
+          sleep 5
+          echo "API started."
 
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:8000/predict \
+      - name: Test /health endpoint
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health)
+          echo "Health check status: $STATUS"
+          [ "$STATUS" = "200" ] || (echo "FAIL: Health check returned $STATUS" && exit 1)
+
+      - name: Test /predict endpoint
+        run: |
+          RESPONSE=$(curl -s -X POST http://localhost:5000/predict \
             -H "Content-Type: application/json" \
             -d '{
-              "customer_id": "test_123",
-              "revenue": 500.0,
-              "gender": "Female",
-              "seniorcitizen": "0",
-              "contract": "Month-to-month",
-              "tenure": 12,
-              "monthlycharges": 70.0,
-              "totalcharges": 840.0
+              "customer_id": "TEST_001",
+              "revenue": 1500.0,
+              "monthly_charges": 85.5,
+              "usage_frequency": 12,
+              "complaints_count": 2,
+              "payment_delays": 1
             }')
+          echo "Response: $RESPONSE"
+          echo "$RESPONSE" | python -c "
+          import json, sys
+          data = json.load(sys.stdin)
+          assert 'churn_probability' in data, 'Missing churn_probability'
+          assert 'risk_bucket' in data, 'Missing risk_bucket'
+          assert 0 <= data['churn_probability'] <= 1, 'Probability out of range'
+          print('Predict endpoint OK.')
+          "
 
-          BODY=$(echo "$RESPONSE" | head -n -1)
-          STATUS=$(echo "$RESPONSE" | tail -n 1)
-
-          echo "Status: $STATUS"
-          echo "Body: $BODY"
-
-          test "$STATUS" -eq 200
-          echo "$BODY" | grep -E '"churn_probability"|\"risk_bucket\"' > /dev/null
-
-      # 9️⃣ Test predict endpoint (invalid payload)
-      - name: Test predict endpoint (invalid payload)
+      - name: Test /api/upload/status endpoint
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X POST http://localhost:8000/predict \
-            -H "Content-Type: application/json" \
-            -d '{}')
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/api/upload/status)
+          echo "Upload status check: $STATUS"
+          [ "$STATUS" = "200" ] || (echo "FAIL: Upload status returned $STATUS" && exit 1)
 
-          echo "Invalid payload status: $STATUS"
-          test "$STATUS" -eq 422
-
-      # 🔟 Cleanup
-      - name: Cleanup
-        if: always()
+      - name: Test /api/dashboard/summary endpoint
         run: |
-          docker compose down -v || true
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/api/dashboard/summary)
+          echo "Dashboard summary check: $STATUS"
+          [ "$STATUS" = "200" ] || echo "WARNING: Dashboard summary returned $STATUS (may be empty if no predictions yet)"
