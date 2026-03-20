@@ -1,23 +1,42 @@
 {
-    "model_version": "v1.1.0",
-    "training_date": "2026-02-12 08:08:51",
-    "selected_model": "random_forest",
-    "metrics": {
-        "logistic_regression": {
-            "roc_auc": 0.8282,
-            "precision": 0.491,
-            "recall": 0.8021
-        },
-        "random_forest": {
-            "roc_auc": 0.8323,
-            "precision": 0.541,
-            "recall": 0.7406
-        }
+  "model_name": "Logistic Regression",
+  "model_version": "v2.0.0",
+  "trained_at": "2026-03-20T18:05:53.313270",
+  "train_samples": 1200,
+  "test_samples": 300,
+  "feature_count": 22,
+  "xgboost_available": true,
+  "metrics": {
+    "roc_auc": 0.846,
+    "cv_auc": 0.8511,
+    "precision": 0.5517,
+    "recall": 0.8101,
+    "f1_score": 0.6564
+  },
+  "all_model_results": {
+    "Logistic Regression": {
+      "roc_auc": 0.846,
+      "cv_auc": 0.8511,
+      "precision": 0.5517,
+      "recall": 0.8101,
+      "f1_score": 0.6564,
+      "selected": true
     },
-    "final_model_metrics": {
-        "roc_auc": 0.8323,
-        "precision": 0.541,
-        "recall": 0.7406
+    "Random Forest": {
+      "roc_auc": 0.8298,
+      "cv_auc": 0.8587,
+      "precision": 0.5604,
+      "recall": 0.6456,
+      "f1_score": 0.6
     },
-    "num_features": 7
+    "XGBoost": {
+      "roc_auc": 0.8318,
+      "cv_auc": 0.8513,
+      "precision": 0.5579,
+      "recall": 0.6709,
+      "f1_score": 0.6092
+    }
+  },
+  "min_auc_threshold": 0.7,
+  "passes_gate": true
 }
