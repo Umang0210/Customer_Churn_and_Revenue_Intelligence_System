@@ -1,24 +1,3 @@
-"""
-Model Evaluation — Customer Churn & Revenue Intelligence
-=========================================================
-Loads the best trained model and evaluates it on held-out test data.
-
-Outputs:
-  - Console: metrics table, threshold analysis, confusion matrix
-  - reports/evaluation_report.json  — machine-readable results
-  - reports/figures/09_roc_curve.png
-  - reports/figures/10_confusion_matrix.png
-  - reports/figures/11_threshold_analysis.png
-  - reports/figures/12_feature_importance.png  (tree/XGBoost models only)
-
-CI/CD Gate:
-  Exits with code 1 if ROC-AUC < MIN_AUC_THRESHOLD (0.70).
-  This is used by .github/workflows/data_pipeline.yml.
-
-Run:
-    python src/evaluate.py
-"""
-
 import os
 import sys
 import json
