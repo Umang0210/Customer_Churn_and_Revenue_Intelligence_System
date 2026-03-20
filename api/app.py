@@ -1,33 +1,3 @@
-"""
-api/app.py — PATCH INSTRUCTIONS
-================================
-Add the following lines to your existing api/app.py.
-
-STEP 1: Add this import near the top (after existing imports):
-──────────────────────────────────────────────────────────────
-
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from upload_handler import router as upload_router
-
-STEP 2: Mount the router (after app = FastAPI(...)):
-──────────────────────────────────────────────────────────────
-
-app.include_router(upload_router)
-
-STEP 3: Add the /api/upload/status SSE endpoint (optional but makes
-        progress polling more efficient):
-──────────────────────────────────────────────────────────────
-
-# Already handled inside upload_handler.py via GET /api/upload/status
-# No additional code needed.
-
-──────────────────────────────────────────────────────────────
-FULL PATCHED app.py SHOWN BELOW — replace your existing file:
-──────────────────────────────────────────────────────────────
-"""
-
 # ── Standard imports (keep your existing ones) ────────────────────────────────
 import os
 import sys
