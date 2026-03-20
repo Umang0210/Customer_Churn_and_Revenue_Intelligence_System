@@ -1,0 +1,79 @@
+services:
+
+  # ── MySQL Database ───────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: churn-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE:      churn_intelligence
+      MYSQL_USER:          churn_user
+      MYSQL_PASSWORD:      StrongPassword123
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./main.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test:     ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout:  5s
+      retries:  5
+
+  # ── Inference API (port 5000) ────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: churn-ml-api
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      CI_MODE:     "false"
+      DB_HOST:     mysql
+      DB_PORT:     3306
+      DB_NAME:     churn_intelligence
+      DB_USER:     churn_user
+      DB_PASSWORD: StrongPassword123
+      PYTHONPATH:  /app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./logs:/app/logs
+    command: uvicorn api.app:app --host 0.0.0.0 --port 5000 --reload
+
+  # ── Web Dashboard (port 8000) ────────────────────────────────────────────────
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile.webapp
+    container_name: churn-webapp
+    restart: always
+    depends_on:
+      - api
+    environment:
+      API_BASE_URL: http://api:5000
+      DB_HOST:      mysql
+      DB_PORT:      3306
+      DB_NAME:      churn_intelligence
+      DB_USER:      churn_user
+      DB_PASSWORD:  StrongPassword123
+      PYTHONPATH:   /app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./reports:/app/reports
+      - ./logs:/app/logs
+      - ./src:/app/src
+    command: uvicorn src.webapp.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  mysql_data:
