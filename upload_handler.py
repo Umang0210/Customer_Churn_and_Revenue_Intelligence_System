@@ -1,28 +1,3 @@
-"""
-Upload Handler — Customer Churn & Revenue Intelligence
-======================================================
-FastAPI router that handles user-uploaded CSV/Excel files.
-
-Endpoints:
-  POST /api/upload/dataset          — upload file, validate, trigger pipeline
-  GET  /api/upload/status           — current pipeline run status
-  GET  /api/upload/history          — list of all past uploads
-  GET  /api/upload/template         — download sample CSV template
-  GET  /api/upload/column-guide     — expected columns documentation
-
-Flow:
-  1. User uploads CSV or XLSX via the dashboard
-  2. File is validated (required columns, min rows, data types)
-  3. File saved to data/raw/ with timestamp
-  4. Background task triggers run_pipeline.py (steps 1–8)
-  5. Status endpoint streams progress back to the UI
-  6. Dashboard auto-refreshes when pipeline completes
-
-Mount this router in api/app.py:
-    from upload_handler import router as upload_router
-    app.include_router(upload_router)
-"""
-
 import os
 import io
 import json
