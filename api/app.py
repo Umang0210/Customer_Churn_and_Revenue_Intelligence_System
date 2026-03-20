@@ -1,307 +1,249 @@
-import os
-import logging
-from datetime import date
-from pathlib import Path
+"""
+api/app.py — PATCH INSTRUCTIONS
+================================
+Add the following lines to your existing api/app.py.
 
-import joblib
+STEP 1: Add this import near the top (after existing imports):
+──────────────────────────────────────────────────────────────
+
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from upload_handler import router as upload_router
+
+STEP 2: Mount the router (after app = FastAPI(...)):
+──────────────────────────────────────────────────────────────
+
+app.include_router(upload_router)
+
+STEP 3: Add the /api/upload/status SSE endpoint (optional but makes
+        progress polling more efficient):
+──────────────────────────────────────────────────────────────
+
+# Already handled inside upload_handler.py via GET /api/upload/status
+# No additional code needed.
+
+──────────────────────────────────────────────────────────────
+FULL PATCHED app.py SHOWN BELOW — replace your existing file:
+──────────────────────────────────────────────────────────────
+"""
+
+# ── Standard imports (keep your existing ones) ────────────────────────────────
+import os
+import sys
 import json
+import logging
+import joblib
+import numpy as np
 import pandas as pd
-import mysql.connector
+
+from pathlib import Path
+from typing import Optional
+from datetime import datetime
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from dotenv import load_dotenv
+from pydantic import BaseModel
 
-# ===============================
-# Load Environment Variables
-# ===============================
-load_dotenv()
+# ── Add project root to path ──────────────────────────────────────────────────
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))
+sys.path.insert(0, str(BASE_DIR / "src"))
 
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_USER = os.getenv("DB_USER", "churn_user")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "StrongPassword123")
-DB_NAME = os.getenv("DB_NAME", "churn_intelligence")
-MODEL_VERSION = os.getenv("MODEL_VERSION", "v1.1.0")
+# ── Import upload router ──────────────────────────────────────────────────────
+from upload_handler import router as upload_router
 
-# Detect CI Mode
-CI_MODE = os.getenv("CI_MODE", "false").lower() == "true"
+# Sub-routers disabled — endpoints are now handled directly in this file
+HAS_SUBROUTERS = False
 
-# ===============================
-# Risk Thresholds
-# ===============================
-HIGH_THRESHOLD = 0.6
-MEDIUM_THRESHOLD = 0.4
-
-# ===============================
-# Logging
-# ===============================
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("churn-api")
+log = logging.getLogger(__name__)
 
-# ===============================
-# App Init
-# ===============================
+# ── Paths ─────────────────────────────────────────────────────────────────────
+MODELS_DIR    = BASE_DIR / "models"
+MODEL_PATH    = MODELS_DIR / "churn_model.pkl"
+SCALER_PATH   = MODELS_DIR / "scaler.pkl"
+FEATURES_PATH = MODELS_DIR / "feature_list.json"
+METADATA_PATH = MODELS_DIR / "model_metadata.json"
+
+# ── App ───────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title="Churn Intelligence API",
-    version="3.1.0"
+    description="Customer Churn & Revenue Optimization Intelligence System",
+    version="3.1.0",
 )
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ===============================
-# Paths
-# ===============================
-BASE_DIR = Path(__file__).resolve().parent.parent
-MODEL_DIR = BASE_DIR / "models"
-
-# ===============================
-# Load ML Assets
-# ===============================
-try:
-    model = joblib.load(MODEL_DIR / "churn_model.pkl")
-    logger.info("Model loaded successfully.")
-except Exception as e:
-    logger.error(f"Model loading failed: {e}")
-    raise RuntimeError("Model could not be loaded.")
-
-if (MODEL_DIR / "scaler.pkl").exists():
-    scaler = joblib.load(MODEL_DIR / "scaler.pkl")
-    logger.info("Scaler loaded.")
-else:
-    scaler = None
-    logger.info("No scaler found. Tree-based model assumed.")
-
-try:
-    with open(MODEL_DIR / "feature_list.json") as f:
-        feature_list = json.load(f)
-except:
-    feature_list = []
-
-# ===============================
-# Database
-# ===============================
-def get_db_connection():
-    if CI_MODE:
-        return None
-
-    try:
-        return mysql.connector.connect(
-            host=DB_HOST,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_NAME
-        )
-    except Exception as e:
-        logger.error(f"Database connection failed: {e}")
-        return None
+# ── Mount routers ─────────────────────────────────────────────────────────────
+app.include_router(upload_router)            # ← upload + pipeline trigger
 
 
-def insert_prediction(record: dict):
-    if CI_MODE:
-        return  # Skip DB writes in CI
+# ── Load model ────────────────────────────────────────────────────────────────
+def load_model():
+    if not MODEL_PATH.exists():
+        log.warning("Model not found. Run the pipeline first.")
+        return None, None, None, {}
 
-    conn = get_db_connection()
-    if conn is None:
-        return
+    model    = joblib.load(MODEL_PATH)
+    scaler   = joblib.load(SCALER_PATH)   if SCALER_PATH.exists()   else None
+    features = json.loads(FEATURES_PATH.read_text()) if FEATURES_PATH.exists() else None
+    metadata = json.loads(METADATA_PATH.read_text()) if METADATA_PATH.exists() else {}
+    log.info(f"Model loaded: {type(model).__name__}")
+    return model, scaler, features, metadata
 
-    try:
-        cursor = conn.cursor()
 
-        query = """
-            INSERT INTO customer_churn_analytics (
-                customer_id,
-                churn_probability,
-                risk_bucket,
-                revenue,
-                expected_revenue_loss,
-                priority_score,
-                model_version,
-                batch_run_date
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """
+model, scaler, feature_names, model_metadata = load_model()
 
-        cursor.execute(query, (
-            record["customer_id"],
-            record["churn_probability"],
-            record["risk_bucket"],
-            record["revenue"],
-            record["expected_revenue_loss"],
-            record["priority_score"],
-            MODEL_VERSION,
-            date.today()
-        ))
 
-        conn.commit()
-        cursor.close()
-        conn.close()
+# ── Request schema ────────────────────────────────────────────────────────────
+class PredictRequest(BaseModel):
+    customer_id:      str
+    revenue:          float = 0.0
+    monthly_charges:  float = 0.0
+    usage_frequency:  int   = 0
+    complaints_count: int   = 0
+    payment_delays:   int   = 0
+    gender:           Optional[str] = None
+    seniorcitizen:    Optional[str] = None
+    contract:         Optional[str] = None
 
-    except Exception as e:
-        logger.error(f"Insert failed: {e}")
 
-# ===============================
-# Request Schema
-# ===============================
-class ChurnRequest(BaseModel):
-    customer_id: str
-    revenue: float = Field(gt=0)
+# ── Endpoints ─────────────────────────────────────────────────────────────────
 
-    # Must match training features
-    tenure: float = Field(ge=0)
-    monthlycharges: float = Field(gt=0)
-    totalcharges: float = Field(ge=0)
-
-    gender: str
-    seniorcitizen: str
-    contract: str
-
-# ===============================
-# Health
-# ===============================
 @app.get("/health")
 def health():
-    return {"status": "ok"}
-
-# ===============================
-# Model Info
-# ===============================
-@app.get("/model-info")
-def model_info():
-    try:
-        with open(MODEL_DIR / "model_metadata.json") as f:
-            return json.load(f)
-    except:
-        return {"message": "Model metadata not available"}
-
-# ===============================
-# Predict
-# ===============================
-@app.post("/predict")
-def predict(request: ChurnRequest):
-
-    try:
-        df = pd.DataFrame([request.dict()])
-        df.columns = df.columns.str.lower()
-
-        categorical_cols = ["gender", "seniorcitizen", "contract"]
-        df_encoded = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
-
-        df_final = df_encoded.reindex(columns=feature_list, fill_value=0)
-
-        if scaler:
-            X = scaler.transform(df_final)
-        else:
-            X = df_final
-
-        prob = float(model.predict_proba(X)[0][1])
-
-    except Exception as e:
-        logger.error(f"Inference failed: {e}")
-        raise HTTPException(status_code=500, detail="Model inference failed")
-
-    if prob >= HIGH_THRESHOLD:
-        risk = "HIGH"
-    elif prob >= MEDIUM_THRESHOLD:
-        risk = "MEDIUM"
-    else:
-        risk = "LOW"
-
-    expected_loss = round(prob * request.revenue, 2)
-    priority_score = expected_loss
-
-    result = {
-        "customer_id": request.customer_id,
-        "churn_probability": round(prob, 4),
-        "risk_bucket": risk,
-        "revenue": request.revenue,
-        "expected_revenue_loss": expected_loss,
-        "priority_score": priority_score
+    return {
+        "status":        "healthy",
+        "model_loaded":  model is not None,
+        "model_name":    model_metadata.get("model_name", "unknown"),
+        "model_version": model_metadata.get("model_version", "unknown"),
+        "timestamp":     datetime.utcnow().isoformat(),
     }
 
-    insert_prediction(result)
 
-    return result
+@app.post("/predict")
+def predict(req: PredictRequest):
+    global model, scaler, feature_names, model_metadata
 
-# ===============================
-# Dashboard APIs
-# ===============================
+    # Reload model if not loaded (e.g. after pipeline retrain)
+    if model is None:
+        model, scaler, feature_names, model_metadata = load_model()
+    if model is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Model not available. Run the pipeline first.",
+        )
+
+    # Build feature vector
+    input_data = {
+        "monthly_charges":  req.monthly_charges,
+        "usage_frequency":  req.usage_frequency,
+        "complaints_count": req.complaints_count,
+        "payment_delays":   req.payment_delays,
+    }
+
+    df = pd.DataFrame([input_data])
+
+    # Align to training features
+    if feature_names:
+        for f in feature_names:
+            if f not in df.columns:
+                df[f] = 0
+        df = df[feature_names]
+
+    X = df.values
+    if scaler is not None:
+        X = scaler.transform(X)
+
+    prob = float(model.predict_proba(X)[0][1])
+    prob = round(min(max(prob, 0.0), 1.0), 4)
+
+    revenue = req.revenue or req.monthly_charges
+    expected_revenue_loss = round(prob * revenue, 2)
+    priority_score        = round(prob * expected_revenue_loss, 4)
+
+    risk_bucket = "LOW" if prob < 0.4 else ("MEDIUM" if prob < 0.7 else "HIGH")
+
+    return {
+        "customer_id":            req.customer_id,
+        "churn_probability":      prob,
+        "risk_bucket":            risk_bucket,
+        "revenue":                revenue,
+        "expected_revenue_loss":  expected_revenue_loss,
+        "priority_score":         priority_score,
+        "model_name":             model_metadata.get("model_name", "unknown"),
+        "model_version":          model_metadata.get("model_version", "unknown"),
+    }
+
+
 @app.get("/api/dashboard/summary")
 def dashboard_summary():
-    conn = get_db_connection()
-    if conn is None:
-        return {
-            "total_predictions": 0,
-            "avg_churn_probability": 0,
-            "high_risk_customers": 0,
-            "total_revenue_at_risk": 0
-        }
+    """Returns top-level KPIs for the dashboard."""
+    try:
+        pred_path = BASE_DIR / "reports" / "batch_predictions.csv"
+        if not pred_path.exists():
+            return {"error": "No predictions yet. Run the pipeline."}
 
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT
-            COUNT(*) AS total_predictions,
-            ROUND(AVG(churn_probability) * 100, 2) AS avg_churn_probability,
-            SUM(CASE WHEN risk_bucket='HIGH' THEN 1 ELSE 0 END) AS high_risk_customers,
-            IFNULL(ROUND(SUM(expected_revenue_loss), 2), 0) AS total_revenue_at_risk
-        FROM customer_churn_analytics
-    """)
-    data = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    return data
+        df  = pd.read_csv(pred_path)
+        return {
+            "total_predictions":    len(df),
+            "avg_churn_probability": round(float(df["churn_probability"].mean()), 4),
+            "high_risk_count":      int((df["risk_bucket"] == "High").sum()),
+            "revenue_at_risk":      round(float(df["expected_revenue_loss"].sum()), 2),
+            "total_revenue":        round(float(df["revenue"].sum()), 2),
+            "last_updated":         model_metadata.get("trained_at", "unknown"),
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/dashboard/priority_customers")
-def priority_customers():
-    conn = get_db_connection()
-    if conn is None:
-        return []
+def priority_customers(limit: int = 20):
+    """Returns top N customers by priority score."""
+    try:
+        pred_path = BASE_DIR / "reports" / "batch_predictions.csv"
+        if not pred_path.exists():
+            return []
 
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT customer_id,
-               churn_probability,
-               risk_bucket,
-               expected_revenue_loss,
-               priority_score
-        FROM customer_churn_analytics
-        ORDER BY priority_score DESC
-        LIMIT 20
-    """)
-    data = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return data
+        df = pd.read_csv(pred_path)
+        top = (
+            df.sort_values("priority_score", ascending=False)
+            .head(limit)
+            .fillna(0)
+        )
+        return top.to_dict(orient="records")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/risk_distribution")
 def risk_distribution():
-    conn = get_db_connection()
-    if conn is None:
-        return []
+    try:
+        pred_path = BASE_DIR / "reports" / "batch_predictions.csv"
+        if not pred_path.exists():
+            return []
 
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("""
-        SELECT risk_bucket, COUNT(*) AS count
-        FROM customer_churn_analytics
-        GROUP BY risk_bucket
-    """)
-    data = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return data
+        df    = pd.read_csv(pred_path)
+        dist  = df["risk_bucket"].value_counts().reset_index()
+        dist.columns = ["risk_bucket", "count"]
+        return dist.to_dict(orient="records")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/")
-def root():
+@app.get("/api/model/reload")
+def reload_model():
+    """Force-reload model artifacts. Call after pipeline completes."""
+    global model, scaler, feature_names, model_metadata
+    model, scaler, feature_names, model_metadata = load_model()
     return {
-        "service": "churn-intelligence-api",
-        "version": MODEL_VERSION,
-        "status": "running"
+        "status":     "reloaded",
+        "model_name": model_metadata.get("model_name", "unknown"),
+        "loaded":     model is not None,
     }
