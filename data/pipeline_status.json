@@ -1,0 +1,83 @@
+{
+  "status": "success",
+  "message": "Pipeline completed successfully! Dashboard data updated.",
+  "step": 8,
+  "total_steps": 8,
+  "progress_pct": 100,
+  "updated_at": "2026-03-20T18:06:02.985253",
+  "details": {
+    "status": "success",
+    "total_duration": 22.96,
+    "steps": [
+      {
+        "step": 1,
+        "name": "Data Ingestion",
+        "module": "ingestion",
+        "status": "success",
+        "duration": 0.05,
+        "error": null
+      },
+      {
+        "step": 2,
+        "name": "Data Cleaning",
+        "module": "cleaning",
+        "status": "success",
+        "duration": 0.07,
+        "error": null
+      },
+      {
+        "step": 3,
+        "name": "Feature Engineering",
+        "module": "features",
+        "status": "success",
+        "duration": 0.05,
+        "error": null
+      },
+      {
+        "step": 4,
+        "name": "Exploratory Analysis",
+        "module": "eda",
+        "status": "success",
+        "duration": 3.61,
+        "error": null
+      },
+      {
+        "step": 5,
+        "name": "Model Training",
+        "module": "train",
+        "status": "success",
+        "duration": 9.51,
+        "error": null
+      },
+      {
+        "step": 6,
+        "name": "Model Evaluation",
+        "module": "evaluate",
+        "status": "success",
+        "duration": 1.32,
+        "error": null
+      },
+      {
+        "step": 7,
+        "name": "Batch Predictions",
+        "module": "persist_insights",
+        "status": "success",
+        "duration": 4.22,
+        "error": null
+      },
+      {
+        "step": 8,
+        "name": "Business Insights",
+        "module": "business_insights",
+        "status": "success",
+        "duration": 4.12,
+        "error": null
+      }
+    ],
+    "success_count": 8,
+    "skip_count": 0,
+    "fail_count": 0,
+    "log_file": "C:\\Users\\umang\\Desktop\\Customer_Churn_and_Revenue_Intelligence_System - Copy (2)\\logs\\pipeline_20260320_233540.log",
+    "completed_at": "2026-03-20T18:06:02.985233"
+  }
+}
