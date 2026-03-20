@@ -1,24 +1,3 @@
-"""
-Batch Predictions & Persistence — Customer Churn & Revenue Intelligence
-========================================================================
-Runs the trained model over the entire customer dataset, computes:
-    - churn_probability     (0.0 – 1.0)
-    - risk_bucket           (Low / Medium / High)
-    - expected_revenue_loss (churn_probability × revenue)
-    - priority_score        (expected_revenue_loss — for retention ranking)
-    - clv_estimate          (simple Customer Lifetime Value proxy)
-
-Stores results in MySQL table: customer_churn_analytics
-Also exports: reports/batch_predictions.csv
-
-Priority Score logic (from PDF spec):
-    Priority Score = Risk (churn_probability) × Revenue Impact (expected_revenue_loss)
-    → Identifies who to save first when resources are limited.
-
-Run:
-    python src/persist_insights.py
-"""
-
 import os
 import sys
 import json
