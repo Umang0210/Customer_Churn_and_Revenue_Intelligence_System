@@ -36,7 +36,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].median())
 
     # 5. Normalize categorical columns
-    categorical_cols = df.select_dtypes(include="object").columns
+    categorical_cols = df.select_dtypes(include=["object", "string"]).columns
 
     for col in categorical_cols:
         df[col] = df[col].str.strip().str.lower()
@@ -66,4 +66,7 @@ def run_cleaning():
 
 
 if __name__ == "__main__":
+    run_cleaning()
+
+def main():
     run_cleaning()
