@@ -1,11 +1,67 @@
-# Ignore real dataset
-data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
+# ── Virtual environments ──────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+ENV/
 
-# Ignore any future real datasets
+# ── Environment variables ─────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Dataset files (real data — do not commit) ─────────────────────────────────
+data/raw/WA_Fn-UseC_-Telco-Customer-Churn.csv
 data/raw/*real*.csv
+data/processed/
 
 # Keep sample dataset tracked
 !data/raw/Sample_dataset.csv
 
-# Data codes
-data/
+# ── Python cache ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# ── Build / dist ──────────────────────────────────────────────────────────────
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ── ML model artifacts (large binaries — regenerate locally) ──────────────────
+models/*.pkl
+models/*.joblib
+models/model_metadata.json
+
+# Keep feature_list.json tracked (it's small and documents the schema)
+!models/feature_list.json
+
+# ── Reports (generated outputs) ───────────────────────────────────────────────
+reports/figures/
+reports/business_insights.csv
+reports/segment_summary.csv
+reports/top_priority_customers.csv
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Docker volumes ────────────────────────────────────────────────────────────
+mysql_data/
