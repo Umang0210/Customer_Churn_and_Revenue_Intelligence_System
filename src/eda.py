@@ -23,8 +23,9 @@ from pathlib import Path
 BASE_DIR    = Path(__file__).resolve().parent.parent
 DATA_PATH   = BASE_DIR / "data" / "processed" / "customer_features.csv"
 CLEAN_PATH  = BASE_DIR / "data" / "processed" / "clean_customers.csv"
-FIGURES_DIR = BASE_DIR / "reports" / "figures"
-REPORTS_DIR = BASE_DIR / "reports"
+FIGURES_DIR   = BASE_DIR / "reports" / "figures"
+REPORTS_DIR   = BASE_DIR / "reports"
+PROCESSED_DIR = BASE_DIR / "data" / "processed"
 
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -482,7 +483,7 @@ def generate_business_insights(df: pd.DataFrame) -> pd.DataFrame:
     insights_df = pd.DataFrame(
         list(insights.items()), columns=["metric", "value"]
     )
-    out = REPORTS_DIR / "business_insights.csv"
+    out = PROCESSED_DIR / "business_insights.csv"
     insights_df.to_csv(out, index=False)
     print(f"[EDA] Saved → {out.name}")
     return insights_df

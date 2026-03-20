@@ -1,3 +1,24 @@
+"""
+Batch Predictions & Persistence — Customer Churn & Revenue Intelligence
+========================================================================
+Runs the trained model over the entire customer dataset, computes:
+    - churn_probability     (0.0 – 1.0)
+    - risk_bucket           (Low / Medium / High)
+    - expected_revenue_loss (churn_probability × revenue)
+    - priority_score        (expected_revenue_loss — for retention ranking)
+    - clv_estimate          (simple Customer Lifetime Value proxy)
+
+Stores results in MySQL table: customer_churn_analytics
+Also exports: reports/batch_predictions.csv
+
+Priority Score logic (from PDF spec):
+    Priority Score = Risk (churn_probability) × Revenue Impact (expected_revenue_loss)
+    → Identifies who to save first when resources are limited.
+
+Run:
+    python src/persist_insights.py
+"""
+
 import os
 import sys
 import json
@@ -31,7 +52,9 @@ SCALER_PATH   = MODELS_DIR / "scaler.pkl"
 FEATURES_PATH = MODELS_DIR / "feature_list.json"
 METADATA_PATH = MODELS_DIR / "model_metadata.json"
 REPORTS_DIR   = BASE_DIR / "reports"
+PROCESSED_DIR = BASE_DIR / "data" / "processed"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Risk bucket thresholds (aligned with api/app.py) ─────────────────────────
 LOW_THRESHOLD    = 0.40
@@ -363,7 +386,7 @@ def main():
     )
 
     # Save CSV (always)
-    csv_path = REPORTS_DIR / "batch_predictions.csv"
+    csv_path = PROCESSED_DIR / "batch_predictions.csv"
     df_out.to_csv(csv_path)
     log.info(f"Batch predictions saved → {csv_path}")
 

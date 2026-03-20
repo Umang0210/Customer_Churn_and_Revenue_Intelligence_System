@@ -1,3 +1,22 @@
+"""
+Business Insights — Customer Churn & Revenue Intelligence
+==========================================================
+Computes and exports structured business KPIs from:
+  - The processed feature dataset (always available)
+  - The MySQL predictions table (if DB is running)
+
+Outputs:
+  - reports/business_insights.csv   — metric table
+  - reports/segment_summary.csv     — churn by risk bucket
+  - Console summary
+
+This is the 'Prescriptive Intelligence' layer from the project spec:
+    Priority Score = Churn Probability × Revenue Impact
+
+Run:
+    python src/business_insights.py
+"""
+
 import os
 import json
 import logging
@@ -22,8 +41,10 @@ BASE_DIR     = Path(__file__).resolve().parent.parent
 FEATURES_CSV = BASE_DIR / "data" / "processed" / "customer_features.csv"
 CLEAN_CSV    = BASE_DIR / "data" / "processed" / "clean_customers.csv"
 MODELS_DIR   = BASE_DIR / "models"
-REPORTS_DIR  = BASE_DIR / "reports"
+REPORTS_DIR    = BASE_DIR / "reports"
+PROCESSED_DIR  = BASE_DIR / "data" / "processed"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Try loading .env ──────────────────────────────────────────────────────────
 try:
@@ -307,17 +328,17 @@ def compute_top_priority_customers(df: pd.DataFrame, top_n: int = 20) -> pd.Data
 def save_insights(kpis: dict, segment_df: pd.DataFrame, top_customers: pd.DataFrame):
     # KPI table
     kpi_df = pd.DataFrame(list(kpis.items()), columns=["metric", "value"])
-    kpi_path = REPORTS_DIR / "business_insights.csv"
+    kpi_path = PROCESSED_DIR / "business_insights.csv"
     kpi_df.to_csv(kpi_path, index=False)
     log.info(f"KPIs saved → {kpi_path}")
 
     # Segment summary
-    seg_path = REPORTS_DIR / "segment_summary.csv"
+    seg_path = PROCESSED_DIR / "segment_summary.csv"
     segment_df.to_csv(seg_path, index=False)
     log.info(f"Segment summary saved → {seg_path}")
 
     # Top priority customers
-    top_path = REPORTS_DIR / "top_priority_customers.csv"
+    top_path = PROCESSED_DIR / "top_priority_customers.csv"
     top_customers.to_csv(top_path)
     log.info(f"Priority customers saved → {top_path}")
 
