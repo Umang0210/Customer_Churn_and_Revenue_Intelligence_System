@@ -1,0 +1,50 @@
+{
+  "model_name": "Logistic Regression",
+  "evaluated_at": "2026-03-20T18:05:54.639202",
+  "test_samples": 300,
+  "actual_churn_rate_%": 26.33,
+  "roc_auc": 0.846,
+  "avg_precision": 0.5941,
+  "min_auc_threshold": 0.7,
+  "passes_gate": true,
+  "threshold_analysis": [
+    {
+      "threshold": 0.4,
+      "precision": 0.4737,
+      "recall": 0.9114,
+      "f1_score": 0.6234,
+      "predicted_churn_count": 152,
+      "predicted_churn_%": 50.67
+    },
+    {
+      "threshold": 0.5,
+      "precision": 0.5517,
+      "recall": 0.8101,
+      "f1_score": 0.6564,
+      "predicted_churn_count": 116,
+      "predicted_churn_%": 38.67
+    },
+    {
+      "threshold": 0.6,
+      "precision": 0.5747,
+      "recall": 0.6329,
+      "f1_score": 0.6024,
+      "predicted_churn_count": 87,
+      "predicted_churn_%": 29.0
+    },
+    {
+      "threshold": 0.7,
+      "precision": 0.5634,
+      "recall": 0.5063,
+      "f1_score": 0.5333,
+      "predicted_churn_count": 71,
+      "predicted_churn_%": 23.67
+    }
+  ],
+  "figures": [
+    "reports/figures/09_roc_curve.png",
+    "reports/figures/10_confusion_matrix.png",
+    "reports/figures/11_threshold_analysis.png",
+    "reports/figures/12_feature_importance.png"
+  ]
+}
