@@ -240,11 +240,11 @@ def priority_customers(limit: int = 20, username: str = Depends(get_current_user
 @app.get("/api/risk_distribution")
 def risk_distribution(username: str = Depends(get_current_user)):
     try:
-        from db import SessionLocal
+        from db import get_engine
         from sqlalchemy import text
         
-        with SessionLocal() as db:
-            result = db.execute(text("SELECT risk_bucket, COUNT(*) as count FROM customer_predictions GROUP BY risk_bucket")).fetchall()
+        with get_engine().connect() as conn:
+            result = conn.execute(text("SELECT risk_bucket, COUNT(*) as count FROM customer_predictions GROUP BY risk_bucket")).fetchall()
             return [{"risk_bucket": r[0], "count": r[1]} for r in result]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -253,12 +253,12 @@ def risk_distribution(username: str = Depends(get_current_user)):
 @app.get("/api/dashboard/feature_importances")
 def feature_importances(username: str = Depends(get_current_user)):
     try:
-        from db import SessionLocal
+        from db import get_engine
         from sqlalchemy import text
         import json
-        with SessionLocal() as db:
+        with get_engine().connect() as conn:
             # Get latest model run
-            result = db.execute(text("SELECT feature_importances FROM model_runs ORDER BY run_date DESC LIMIT 1")).fetchone()
+            result = conn.execute(text("SELECT feature_importances FROM model_runs ORDER BY run_date DESC LIMIT 1")).fetchone()
             if not result or not result[0]:
                 return {}
             return json.loads(result[0])

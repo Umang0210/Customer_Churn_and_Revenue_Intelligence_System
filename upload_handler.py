@@ -24,7 +24,14 @@ STATUS_FILE = BASE_DIR / "data" / "pipeline_status.json"
 HISTORY_FILE= BASE_DIR / "data" / "upload_history.json"
 TEMPLATE_PATH = BASE_DIR / "data" / "raw" / "Sample_dataset.csv"
 
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    # Serverless/Read-only filesystem fallback
+    UPLOAD_DIR = Path("/tmp/data/raw")
+    STATUS_FILE = Path("/tmp/pipeline_status.json")
+    HISTORY_FILE = Path("/tmp/upload_history.json")
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Required columns (minimum viable set) ─────────────────────────────────────
 REQUIRED_COLUMNS = {
