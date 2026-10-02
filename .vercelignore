@@ -1,0 +1,22 @@
+.venv
+venv
+__pycache__
+.git
+.github
+tests/
+data/raw/
+data/processed/
+reports/
+logs/
+.pytest_cache
+Jenkinsfile
+Dockerfile
+Dockerfile.webapp
+docker-compose.yml
+aws/
+k8s/
+Power BI/
+requirements-dev.txt
+Project_Details.md
+ARCHITECTURE.md
+work-left.md
