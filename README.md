@@ -164,8 +164,9 @@ Customer_Churn_and_Revenue_Intelligence_System/
 
 ### Prerequisites
 - Python 3.11+
-- MySQL Server (for dashboard/API; optional for EDA + training)
+- MySQL Server (for dashboard/API and pipeline SQL Warehouse)
 - Git
+- Kubernetes cluster (e.g. Minikube or EKS) for deployment
 
 ### 1. Clone & Install
 
@@ -177,67 +178,54 @@ source venv/bin/activate       # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Configure Database (optional)
+### 2. Configure Database & Security
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root to securely store credentials:
 
 ```env
-DB_HOST=localhost
-DB_USER=churn_user
-DB_PASSWORD=StrongPassword123
-DB_NAME=churn_intelligence
-MODEL_VERSION=v2.0.0
+# Database connection string (default is local SQLite, use MySQL for production)
+DATABASE_URL=sqlite:///churn_intelligence.db
+# DATABASE_URL=mysql+pymysql://root:StrongPassword123@localhost:3306/churn_intelligence
+
+# API and Webapp Basic Auth credentials
+API_USER=admin
+API_PASSWORD=admin123
 ```
 
-```sql
-CREATE DATABASE churn_intelligence;
-CREATE USER 'churn_user'@'localhost' IDENTIFIED BY 'StrongPassword123';
-GRANT ALL PRIVILEGES ON churn_intelligence.* TO 'churn_user'@'localhost';
-FLUSH PRIVILEGES;
+If using MySQL, execute the `main.sql` script to create tables:
+```bash
+mysql -u root -p < main.sql
 ```
 
 ### 3. Run the Full Pipeline
 
 ```bash
-python src/ingestion.py           # Load raw data
-python src/cleaning.py            # Clean data
-python src/features.py            # Engineer features
-python src/eda.py                 # EDA plots + business insights
-python src/train.py               # Train LR + RF + XGBoost, auto-select best
-python src/evaluate.py            # Evaluate + threshold analysis (exits 1 if AUC < 0.70)
-python src/persist_insights.py    # Batch predictions → MySQL + CSV
-python src/business_insights.py   # KPI aggregation + priority ranking
+python run_pipeline.py
 ```
+*This extracts data, trains models, evaluates metrics, and inserts metrics/insights into the SQL database.*
 
 ### 4. Start the Inference API
 
 ```bash
-python -m uvicorn api.app:app --port 5000 --reload
+uvicorn api.app:app --port 5000
 ```
-
-- Swagger docs: http://127.0.0.1:5000/docs
+- Swagger docs: http://127.0.0.1:5000/docs (Requires Basic Auth)
 
 ### 5. Start the Web Dashboard
 
 ```bash
-python -m uvicorn src.webapp.main:app --port 8000 --reload
+uvicorn src.webapp.main:app --port 8000
 ```
+*Access the Webapp at http://localhost:8000 (Requires Basic Auth)*
 
-Dashboard pages:
-- **Executive KPIs**: http://127.0.0.1:8000/static/index.html
-- **Customers**: http://127.0.0.1:8000/static/customers.html
-- **Analytics**: http://127.0.0.1:8000/static/analytics.html
-- **Predictions**: http://127.0.0.1:8000/static/predictions.html
-- **Settings**: http://127.0.0.1:8000/static/settings.html
+### 6. Power BI Integration
 
-### 6. Docker (All-in-One)
+The `Power BI/main.pbix` dashboard is configured to read directly from the SQL database.
+1. Open `Power BI/main.pbix` in Power BI Desktop.
+2. Go to **Transform Data** > **Data Source Settings**.
+3. Update the connection details to point to your MySQL database.
+4. Refresh the data to view live insights from the pipeline.
 
-```bash
-docker-compose up --build
-# API:       http://localhost:5000
-# Dashboard: http://localhost:8000
-# MySQL:     localhost:3306
-```
 
 ---
 

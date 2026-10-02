@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: churn-intelligence-api
+  labels:
+    app: churn-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: churn-api
+  template:
+    metadata:
+      labels:
+        app: churn-api
+    spec:
+      containers:
+      - name: churn-api
+        image: IMAGE_PLACEHOLDER
+        ports:
+        - containerPort: 5000
+        env:
+        - name: API_USER
+          valueFrom:
+            secretKeyRef:
+              name: api-credentials
+              key: username
+        - name: API_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: api-credentials
+              key: password
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: database_url

@@ -177,6 +177,7 @@ function renderModelPage() {
     renderRadarChart();
     renderFeatures();
     renderThresholds();
+    renderFeatureImportance();
 }
 
 function renderModelCards() {
@@ -296,6 +297,50 @@ function renderThresholds() {
         }).join('');
     }
 }
+
+async function renderFeatureImportance() {
+    const chartEl = document.getElementById('featureImportanceChart');
+    if (!chartEl) return;
+    
+    try {
+        const res = await fetch(API_BASE + '/api/dashboard/feature_importances');
+        if (!res.ok) return;
+        const importances = await res.json();
+        
+        if (!importances || Object.keys(importances).length === 0) return;
+        
+        // Sort importances
+        const sorted = Object.entries(importances).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        
+        new Chart(chartEl, {
+            type: 'bar',
+            data: {
+                labels: sorted.map(d => d[0].replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())),
+                datasets: [{
+                    label: 'Importance Score',
+                    data: sorted.map(d => d[1]),
+                    backgroundColor: 'rgba(99,102,241,0.8)',
+                    borderColor: C.indigo,
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: 'rgba(255,255,255,0.03)' } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+    } catch (e) {
+        console.error("Failed to load feature importances:", e);
+    }
+}
+
 
 
 // ════════════════════════════════════════════

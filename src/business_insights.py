@@ -341,6 +341,34 @@ def save_insights(kpis: dict, segment_df: pd.DataFrame, top_customers: pd.DataFr
     top_path = PROCESSED_DIR / "top_priority_customers.csv"
     top_customers.to_csv(top_path)
     log.info(f"Priority customers saved → {top_path}")
+    
+    # Save to SQL Database
+    try:
+        from src.db import save_df_to_sql
+        
+        # Format KPIs for SQL
+        kpi_sql_df = pd.DataFrame([
+            {"metric_name": k, "metric_value": v, "generated_at": pd.to_datetime(kpis["generated_at"]).replace(tzinfo=None)}
+            for k, v in kpis.items() if k != "generated_at"
+        ])
+        save_df_to_sql(kpi_sql_df, "business_kpis", if_exists="replace")
+        
+        # Format segments for SQL
+        segment_sql = []
+        for _, row in segment_df.iterrows():
+            segment_sql.append({
+                "segment_type": "risk_bucket",
+                "segment_value": row.get("risk_bucket", "Unknown"),
+                "churn_rate": float(row.get("avg_churn_probability_%", 0)),
+                "customer_count": int(row.get("customer_count", 0)),
+                "generated_at": pd.to_datetime(kpis["generated_at"]).replace(tzinfo=None)
+            })
+        segment_sql_df = pd.DataFrame(segment_sql)
+        save_df_to_sql(segment_sql_df, "segment_insights", if_exists="replace")
+        
+        log.info("Saved KPIs and segment summaries to SQL database.")
+    except Exception as e:
+        log.warning(f"Failed to save insights to SQL database. Error: {e}")
 
 
 def print_kpis(kpis: dict):

@@ -13,7 +13,8 @@ import json
 import httpx
 import logging
 from pathlib import Path
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Depends
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import HTMLResponse, Response, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,12 +33,25 @@ app.add_middleware(
     allow_origins=["*"], allow_methods=["*"], allow_headers=["*"],
 )
 
+security = HTTPBasic()
+
+def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = os.getenv("API_USER", "admin")
+    correct_password = os.getenv("API_PASSWORD", "admin123")
+    if credentials.username != correct_username or credentials.password != correct_password:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # API PROXY — /api/* → inference API on port 5000
 # ══════════════════════════════════════════════════════════════════════════════
 @app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-async def proxy_api(path: str, request: Request):
+async def proxy_api(path: str, request: Request, username: str = Depends(get_current_user)):
     target_url = f"{INFERENCE_API}/api/{path}"
     if request.query_params:
         target_url += "?" + str(request.query_params)
@@ -48,6 +62,11 @@ async def proxy_api(path: str, request: Request):
 
     try:
         async with httpx.AsyncClient(timeout=120.0) as client:
+            # We must pass the authorization header to the downstream API as well
+            auth = request.headers.get("authorization")
+            if auth:
+                headers["authorization"] = auth
+            
             resp = await client.request(
                 method=request.method, url=target_url,
                 headers=headers, content=body,
@@ -90,7 +109,7 @@ async def proxy_health():
 # ROOT — serve index.html
 # ══════════════════════════════════════════════════════════════════════════════
 @app.get("/", response_class=HTMLResponse)
-async def root():
+async def root(username: str = Depends(get_current_user)):
     index = STATIC_DIR / "index.html"
     if index.exists():
         return HTMLResponse(content=index.read_text(encoding="utf-8"))
@@ -103,7 +122,7 @@ async def root():
 # MUST be registered AFTER all other routes so it doesn't swallow /api/*
 # ══════════════════════════════════════════════════════════════════════════════
 @app.get("/{filename:path}")
-async def serve_file(filename: str):
+async def serve_file(filename: str, username: str = Depends(get_current_user)):
     """
     Serves any file from the static/ folder at the root URL path.
     This means /dashboard_data.js serves static/dashboard_data.js directly,

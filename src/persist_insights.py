@@ -303,31 +303,22 @@ ON DUPLICATE KEY UPDATE
 
 def persist_to_mysql(df_out: pd.DataFrame) -> bool:
     try:
-        import mysql.connector
-        conn = mysql.connector.connect(
-            host     = os.getenv("DB_HOST",     "localhost"),
-            user     = os.getenv("DB_USER",     "churn_user"),
-            password = os.getenv("DB_PASSWORD", ""),
-            database = os.getenv("DB_NAME",     "churn_intelligence"),
-        )
-        cursor = conn.cursor()
-
-        # Ensure table exists
-        cursor.execute(CREATE_TABLE_SQL)
-        conn.commit()
-
-        # Batch insert
-        records = df_out.reset_index(drop=True).to_dict(orient="records")
-        cursor.executemany(UPSERT_SQL, records)
-        conn.commit()
-
-        log.info(f"Persisted {len(records)} predictions to MySQL.")
-        cursor.close()
-        conn.close()
+        from src.db import save_df_to_sql
+        # Drop id from dataframe if we are replacing to match the exact schema, or just let pandas create it
+        save_df_to_sql(df_out, "customer_churn_analytics", if_exists="replace")
+        log.info(f"Persisted {len(df_out)} predictions to SQL Database.")
+        
+        # We also need to save to customers_predictions for completeness
+        pred_df = df_out.copy()
+        pred_df = pred_df[['customer_id', 'churn_probability', 'risk_bucket', 'revenue', 
+                           'expected_revenue_loss', 'priority_score', 'model_version', 'prediction_timestamp']]
+        save_df_to_sql(pred_df, "customers_predictions", if_exists="replace")
+        log.info("Persisted predictions to customers_predictions table.")
+        
         return True
 
     except Exception as e:
-        log.warning(f"MySQL persistence failed: {e}")
+        log.warning(f"SQL persistence failed: {e}")
         log.warning("Predictions saved to CSV only.")
         return False
 

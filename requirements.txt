@@ -18,6 +18,10 @@ python-multipart>=0.0.9
 
 # Database
 mysql-connector-python>=8.3.0
+SQLAlchemy>=2.0.28
+pymysql
+pytest
+httpx>=1.1.0
 
 # Utilities
 python-dotenv>=1.0.1

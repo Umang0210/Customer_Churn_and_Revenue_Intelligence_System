@@ -545,7 +545,12 @@ body::before {
             <div class="chart-title">Threshold Curve</div>
             <div class="chart-wrapper"><canvas id="thresholdChart"></canvas></div>
           </div>
-          <div class="card">
+          <div class="chart-container">
+            <div class="chart-title">Feature Importance</div>
+            <div class="chart-subtitle">Top features driving churn predictions</div>
+            <div class="chart-wrapper"><canvas id="featureImportanceChart"></canvas></div>
+          </div>
+          <div class="card" style="grid-column: 1 / -1;">
             <table class="data-table" id="thresholdTable">
               <thead><tr><th>Threshold</th><th>Precision</th><th>Recall</th><th>F1 Score</th></tr></thead>
               <tbody></tbody>
@@ -789,14 +794,11 @@ body::before {
 <!-- ═══════════════ SCRIPTS ═══════════════ -->
 <script>
 // ─────────────────────────────────────────
-// CONFIG — API base URL (same server as webapp)
+// CONFIG — API base URL
 // ─────────────────────────────────────────
-// The webapp (port 8000) needs to proxy /api/* to the inference API (port 5000).
-// If both run on same server, use relative path so it works everywhere.
-// Fallback: try port 5000 directly if relative fails.
-const API_BASE = window.location.port === '8000'
-  ? 'http://' + window.location.hostname + ':5000'
-  : '';   // Same-origin if served directly from API
+// The webapp (port 8000) proxies /api/* to the inference API.
+// We should just use empty string so fetch goes to the same origin (port 8000).
+const API_BASE = '';
 
 // ─────────────────────────────────────────
 // CHART DEFAULTS

@@ -1,0 +1,64 @@
+{
+    "family": "churn-intelligence-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "512",
+    "memory": "1024",
+    "executionRoleArn": "arn:aws:iam::054012425015:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::054012425015:role/ecsTaskRole",
+    "containerDefinitions": [
+        {
+            "name": "churn-api",
+            "image": "054012425015.dkr.ecr.ap-south-1.amazonaws.com/churn-intelligence-api:latest",
+            "essential": true,
+            "portMappings": [
+                {
+                    "containerPort": 8000,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                { "name": "CI_MODE", "value": "false" },
+                { "name": "PYTHONPATH", "value": "/app" }
+            ],
+            "healthCheck": {
+                "command": ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"],
+                "interval": 30,
+                "timeout": 5,
+                "retries": 3,
+                "startPeriod": 10
+            },
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/churn-intelligence",
+                    "awslogs-region": "ap-south-1",
+                    "awslogs-stream-prefix": "api"
+                }
+            }
+        },
+        {
+            "name": "churn-webapp",
+            "image": "054012425015.dkr.ecr.ap-south-1.amazonaws.com/churn-intelligence-webapp:latest",
+            "essential": false,
+            "portMappings": [
+                {
+                    "containerPort": 8001,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                { "name": "PYTHONPATH", "value": "/app" },
+                { "name": "API_URL", "value": "http://localhost:8000" }
+            ],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/churn-intelligence",
+                    "awslogs-region": "ap-south-1",
+                    "awslogs-stream-prefix": "webapp"
+                }
+            }
+        }
+    ]
+}

@@ -60,6 +60,14 @@ def run_cleaning():
     cleaned_df = clean_data(df)
 
     cleaned_df.to_csv(CLEAN_DATA_PATH, index=False)
+    
+    # Save to SQL
+    try:
+        from src.db import save_df_to_sql
+        save_df_to_sql(cleaned_df, "clean_customers", if_exists="replace")
+        print("Cleaned data saved to SQL: clean_customers table")
+    except Exception as e:
+        print(f"Warning: Could not save to SQL Database. Error: {e}")
 
     print(f"Cleaned data saved to: {CLEAN_DATA_PATH}")
     print(f"Final shape: {cleaned_df.shape}")

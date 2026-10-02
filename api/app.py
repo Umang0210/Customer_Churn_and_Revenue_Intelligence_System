@@ -41,9 +41,23 @@ from pathlib import Path
 from typing import Optional
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+security = HTTPBasic()
+
+def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = os.getenv("API_USER", "admin")
+    correct_password = os.getenv("API_PASSWORD", "admin123")
+    if credentials.username != correct_username or credentials.password != correct_password:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
 
 # ── Add project root to path ──────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -104,11 +118,11 @@ model, scaler, feature_names, model_metadata = load_model()
 # ── Request schema ────────────────────────────────────────────────────────────
 class PredictRequest(BaseModel):
     customer_id:      str
-    revenue:          float = 0.0
-    monthly_charges:  float = 0.0
-    usage_frequency:  int   = 0
-    complaints_count: int   = 0
-    payment_delays:   int   = 0
+    revenue:          float = Field(default=0.0, ge=0.0)
+    monthly_charges:  float = Field(default=0.0, ge=0.0)
+    usage_frequency:  int   = Field(default=0, ge=0)
+    complaints_count: int   = Field(default=0, ge=0)
+    payment_delays:   int   = Field(default=0, ge=0)
     gender:           Optional[str] = None
     seniorcitizen:    Optional[str] = None
     contract:         Optional[str] = None
@@ -124,11 +138,12 @@ def health():
         "model_name":    model_metadata.get("model_name", "unknown"),
         "model_version": model_metadata.get("model_version", "unknown"),
         "timestamp":     datetime.utcnow().isoformat(),
+        "feature_importances": model_metadata.get("feature_importances", {})
     }
 
 
 @app.post("/predict")
-def predict(req: PredictRequest):
+def predict(req: PredictRequest, username: str = Depends(get_current_user)):
     global model, scaler, feature_names, model_metadata
 
     # Reload model if not loaded (e.g. after pipeline retrain)
@@ -183,7 +198,7 @@ def predict(req: PredictRequest):
 
 
 @app.get("/api/dashboard/summary")
-def dashboard_summary():
+def dashboard_summary(username: str = Depends(get_current_user)):
     """Returns top-level KPIs for the dashboard."""
     try:
         pred_path = BASE_DIR / "data" / "processed" / "batch_predictions.csv"
@@ -204,7 +219,7 @@ def dashboard_summary():
 
 
 @app.get("/api/dashboard/priority_customers")
-def priority_customers(limit: int = 20):
+def priority_customers(limit: int = 20, username: str = Depends(get_current_user)):
     """Returns top N customers by priority score."""
     try:
         pred_path = BASE_DIR / "data" / "processed" / "batch_predictions.csv"
@@ -223,22 +238,36 @@ def priority_customers(limit: int = 20):
 
 
 @app.get("/api/risk_distribution")
-def risk_distribution():
+def risk_distribution(username: str = Depends(get_current_user)):
     try:
-        pred_path = BASE_DIR / "data" / "processed" / "batch_predictions.csv"
-        if not pred_path.exists():
-            return []
+        from db import SessionLocal
+        from sqlalchemy import text
+        
+        with SessionLocal() as db:
+            result = db.execute(text("SELECT risk_bucket, COUNT(*) as count FROM customer_predictions GROUP BY risk_bucket")).fetchall()
+            return [{"risk_bucket": r[0], "count": r[1]} for r in result]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-        df    = pd.read_csv(pred_path)
-        dist  = df["risk_bucket"].value_counts().reset_index()
-        dist.columns = ["risk_bucket", "count"]
-        return dist.to_dict(orient="records")
+
+@app.get("/api/dashboard/feature_importances")
+def feature_importances(username: str = Depends(get_current_user)):
+    try:
+        from db import SessionLocal
+        from sqlalchemy import text
+        import json
+        with SessionLocal() as db:
+            # Get latest model run
+            result = db.execute(text("SELECT feature_importances FROM model_runs ORDER BY run_date DESC LIMIT 1")).fetchone()
+            if not result or not result[0]:
+                return {}
+            return json.loads(result[0])
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/model/reload")
-def reload_model():
+def reload_model(username: str = Depends(get_current_user)):
     """Force-reload model artifacts. Call after pipeline completes."""
     global model, scaler, feature_names, model_metadata
     model, scaler, feature_names, model_metadata = load_model()

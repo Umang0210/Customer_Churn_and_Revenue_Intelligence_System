@@ -82,6 +82,14 @@ def run_feature_engineering():
 
     # Save final dataset for batch scoring
     feature_df.to_csv(FINAL_DATASET_PATH, index=False)
+    
+    # Save to SQL
+    try:
+        from src.db import save_df_to_sql
+        save_df_to_sql(feature_df, "customer_features", if_exists="replace")
+        print("Feature dataset saved to SQL: customer_features table")
+    except Exception as e:
+        print(f"Warning: Could not save to SQL Database. Error: {e}")
 
     print("Feature engineering completed successfully.")
     print(f"Feature dataset saved to: {OUTPUT_PATH}")

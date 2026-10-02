@@ -322,6 +322,19 @@ def main():
     log.info(f"Best model: {best_name}  (ROC-AUC = {best_auc:.4f})")
 
     # ── Save artifacts ──
+    feature_importances = {}
+    if hasattr(best_model, "feature_importances_"):
+        importances = best_model.feature_importances_
+        for i, col in enumerate(feat_names):
+            feature_importances[col] = float(importances[i])
+    elif hasattr(best_model, "coef_"):
+        importances = best_model.coef_[0]
+        for i, col in enumerate(feat_names):
+            feature_importances[col] = float(importances[i])
+            
+    # Sort feature importances by absolute value
+    feature_importances = dict(sorted(feature_importances.items(), key=lambda item: abs(item[1]), reverse=True))
+
     metadata = {
         "model_name":       best_name,
         "model_version":    "v2.0.0",
@@ -334,9 +347,27 @@ def main():
         "all_model_results": results,
         "min_auc_threshold": 0.70,
         "passes_gate":       best_auc >= 0.70,
+        "feature_importances": feature_importances,
     }
 
     save_artifacts(best_model, best_scaler, feat_names, metadata)
+    
+    # Push to SQL model_runs table
+    try:
+        from src.db import save_df_to_sql
+        run_data = {
+            "model_version": [metadata["model_version"]],
+            "roc_auc": [metadata["metrics"].get("roc_auc", 0)],
+            "precision_score": [metadata["metrics"].get("precision", 0)],
+            "recall_score": [metadata["metrics"].get("recall", 0)],
+            "training_rows": [metadata["train_samples"]],
+            "run_timestamp": [pd.to_datetime(metadata["trained_at"]).replace(tzinfo=None)]
+        }
+        run_df = pd.DataFrame(run_data)
+        save_df_to_sql(run_df, "model_runs", if_exists="append")
+        log.info("Saved model run metrics to SQL: model_runs")
+    except Exception as e:
+        log.warning(f"Could not save model run to SQL. Error: {e}")
 
     if not metadata["passes_gate"]:
         log.warning(

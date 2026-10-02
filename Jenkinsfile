@@ -29,8 +29,7 @@ pipeline {
         API_IMAGE         = 'churn-intelligence-api'
         WEBAPP_IMAGE      = 'churn-intelligence-webapp'
         IMAGE_TAG         = "${BUILD_NUMBER}"
-        ECS_CLUSTER       = 'churn-cluster'
-        ECS_SERVICE       = 'churn-service'
+        K8S_NAMESPACE     = 'churn-intelligence'
     }
 
     options {
@@ -152,59 +151,26 @@ if not passed:
         }
 
         // ════════════════════════════════════════════════════════════════════
-        // STAGE 7: Deploy to AWS ECS
+        // STAGE 7: Deploy to Kubernetes
         // ════════════════════════════════════════════════════════════════════
-        stage('Deploy to ECS') {
+        stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding',
                                   credentialsId: 'aws-credentials']]) {
                     sh """
-                        echo "Updating ECS task definition with new image..."
+                        echo "Deploying to Kubernetes cluster..."
+                        
+                        # Configure kubectl (assuming EKS)
+                        # aws eks update-kubeconfig --name my-cluster --region ${AWS_DEFAULT_REGION}
 
-                        # Register updated task definition pointing to new image
-                        TASK_DEF=\$(aws ecs describe-task-definition \
-                            --task-definition churn-intelligence-task \
-                            --region ${AWS_DEFAULT_REGION} \
-                            --query 'taskDefinition' \
-                            --output json)
+                        # Substitute image placeholders with actual ECR images
+                        sed -i "s|IMAGE_PLACEHOLDER|${ECR_REGISTRY}/${API_IMAGE}:${IMAGE_TAG}|g" k8s/api-deployment.yaml
+                        sed -i "s|WEBAPP_IMAGE_PLACEHOLDER|${ECR_REGISTRY}/${WEBAPP_IMAGE}:${IMAGE_TAG}|g" k8s/webapp-deployment.yaml
 
-                        # Update container image in task definition
-                        NEW_TASK_DEF=\$(echo \$TASK_DEF | python3 -c "
-import json, sys
-td = json.load(sys.stdin)
-for c in td['containerDefinitions']:
-    name = c['name']
-    if name == 'churn-api':
-        c['image'] = '${ECR_REGISTRY}/${API_IMAGE}:${IMAGE_TAG}'
-    elif name == 'churn-webapp':
-        c['image'] = '${ECR_REGISTRY}/${WEBAPP_IMAGE}:${IMAGE_TAG}'
-# Keep only the fields needed for register-task-definition
-keep = ['family','containerDefinitions','taskRoleArn','executionRoleArn',
-        'networkMode','cpu','memory','requiresCompatibilities']
-out = {k: td[k] for k in keep if k in td}
-print(json.dumps(out))
-")
+                        # Apply manifests
+                        kubectl apply -f k8s/ --namespace=${K8S_NAMESPACE}
 
-                        echo "\$NEW_TASK_DEF" > /tmp/new-task-def.json
-
-                        # Register the new task definition
-                        NEW_REVISION=\$(aws ecs register-task-definition \
-                            --cli-input-json file:///tmp/new-task-def.json \
-                            --region ${AWS_DEFAULT_REGION} \
-                            --query 'taskDefinition.taskDefinitionArn' \
-                            --output text)
-
-                        echo "New task definition: \$NEW_REVISION"
-
-                        # Update the ECS service to use the new revision
-                        aws ecs update-service \
-                            --cluster ${ECS_CLUSTER} \
-                            --service ${ECS_SERVICE} \
-                            --task-definition \$NEW_REVISION \
-                            --force-new-deployment \
-                            --region ${AWS_DEFAULT_REGION}
-
-                        echo "ECS service updated. Deployment in progress."
+                        echo "Kubernetes deployment applied."
                     """
                 }
             }
@@ -221,7 +187,7 @@ print(json.dumps(out))
             Build   : #${BUILD_NUMBER}
             Images  : ${ECR_REGISTRY}/${API_IMAGE}:${IMAGE_TAG}
                       ${ECR_REGISTRY}/${WEBAPP_IMAGE}:${IMAGE_TAG}
-            Cluster : ${ECS_CLUSTER}
+            K8s NS  : ${K8S_NAMESPACE}
             ════════════════════════════════════════════
             """
         }

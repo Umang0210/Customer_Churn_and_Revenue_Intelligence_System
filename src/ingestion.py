@@ -42,6 +42,14 @@ def ingest_data():
     output_path = os.path.join(PROCESSED_DATA_DIR, output_file)
 
     df.to_csv(output_path, index=False)
+    
+    # Save to SQL
+    try:
+        from src.db import save_df_to_sql
+        save_df_to_sql(df, "raw_customers", if_exists="replace")
+        print("Raw data snapshot saved to SQL: raw_customers table")
+    except Exception as e:
+        print(f"Warning: Could not save to SQL Database. Error: {e}")
 
     print(f"Raw data snapshot saved to: {output_path}")
     print(f"Rows: {df.shape[0]}, Columns: {df.shape[1]}")

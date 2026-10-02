@@ -1,42 +1,66 @@
 {
   "model_name": "Logistic Regression",
   "model_version": "v2.0.0",
-  "trained_at": "2026-03-20T18:05:53.313270",
-  "train_samples": 1200,
-  "test_samples": 300,
+  "trained_at": "2026-10-02T12:44:34.856980",
+  "train_samples": 5634,
+  "test_samples": 1409,
   "feature_count": 22,
   "xgboost_available": true,
   "metrics": {
-    "roc_auc": 0.846,
-    "cv_auc": 0.8511,
-    "precision": 0.5517,
-    "recall": 0.8101,
-    "f1_score": 0.6564
+    "roc_auc": 0.8447,
+    "cv_auc": 0.8462,
+    "precision": 0.5121,
+    "recall": 0.7941,
+    "f1_score": 0.6226
   },
   "all_model_results": {
     "Logistic Regression": {
-      "roc_auc": 0.846,
-      "cv_auc": 0.8511,
-      "precision": 0.5517,
-      "recall": 0.8101,
-      "f1_score": 0.6564,
+      "roc_auc": 0.8447,
+      "cv_auc": 0.8462,
+      "precision": 0.5121,
+      "recall": 0.7941,
+      "f1_score": 0.6226,
       "selected": true
     },
     "Random Forest": {
-      "roc_auc": 0.8298,
-      "cv_auc": 0.8587,
-      "precision": 0.5604,
-      "recall": 0.6456,
-      "f1_score": 0.6
+      "roc_auc": 0.84,
+      "cv_auc": 0.8441,
+      "precision": 0.5655,
+      "recall": 0.7273,
+      "f1_score": 0.6363
     },
     "XGBoost": {
-      "roc_auc": 0.8318,
-      "cv_auc": 0.8513,
-      "precision": 0.5579,
-      "recall": 0.6709,
-      "f1_score": 0.6092
+      "roc_auc": 0.8375,
+      "cv_auc": 0.8401,
+      "precision": 0.5295,
+      "recall": 0.7433,
+      "f1_score": 0.6185
     }
   },
   "min_auc_threshold": 0.7,
-  "passes_gate": true
+  "passes_gate": true,
+  "feature_importances": {
+    "avg_monthly_spend": -0.97885045338029,
+    "tenure": -0.7788174848309266,
+    "contract": -0.6497390083973031,
+    "monthlycharges": 0.5993413179083967,
+    "revenue": 0.5993413179083944,
+    "phoneservice": -0.26806342319194587,
+    "totalcharges": 0.25865725285433844,
+    "onlinesecurity": -0.23228171215500312,
+    "techsupport": -0.2066216275285703,
+    "paperlessbilling": 0.17851168720090357,
+    "internetservice": 0.15777412518190576,
+    "onlinebackup": -0.12383211406303694,
+    "dependents": -0.11026406227330043,
+    "tenure_group": -0.09104334478784479,
+    "multiplelines": 0.0882533923597387,
+    "paymentmethod": 0.07846157233374935,
+    "deviceprotection": -0.06610447120499313,
+    "seniorcitizen": 0.06185942840047853,
+    "streamingmovies": 0.02472144109784968,
+    "partner": 0.024495370909029108,
+    "streamingtv": 0.020530276933581518,
+    "gender": 0.014796551411837168
+  }
 }
