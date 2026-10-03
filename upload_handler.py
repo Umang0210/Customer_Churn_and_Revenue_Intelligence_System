@@ -168,13 +168,7 @@ def validate_upload(df: pd.DataFrame, filename: str) -> dict:
 
 # Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
 # BACKGROUND PIPELINE RUNNER
-<<<<<<< HEAD
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-def _run_pipeline_background(filepath: str, filename: str, run_id: str):
-=======
-# Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
-def _run_pipeline_background(filepath: str, filename: str):
->>>>>>> 93636510e0d10e6f707978fa8ef8e4985267ec67
+1
     """
     Runs in a background thread after a successful upload.
     Updates status file at each step for the frontend to poll.
@@ -355,56 +349,7 @@ async def upload_dataset(
     }
 
 
-<<<<<<< HEAD
-@router.get("/logs/{run_id}")
-async def get_logs(run_id: str):
-    history = []
-    if HISTORY_FILE.exists():
-        try:
-            history = json.loads(HISTORY_FILE.read_text())
-        except:
-            pass
-            
-    run_meta = next((r for r in history if r.get("run_id") == run_id), None)
-    
-    if IS_VERCEL:
-        log_path = Path(f"/tmp/app/logs/{run_id}.log")
-    else:
-        log_path = Path(__file__).resolve().parent / "logs" / f"{run_id}.log"
-        
-    log_content = ""
-    if log_path.exists():
-        log_content = log_path.read_text(encoding="utf-8")
-        
-    if not run_meta and not log_path.exists():
-        return {"error": "Pipeline run not found."}
-        
-    return {
-        "run_id": run_id,
-        "metadata": run_meta,
-        "logs": log_content
-    }
-=======
-@router.get("/logs")
-async def get_logs():
-    """
-    Returns the latest pipeline run logs.
-    """
-    if IS_VERCEL:
-        log_path = Path("/tmp/app/logs/latest_pipeline.log")
-    else:
-        # Find latest log file in logs directory
-        log_dir = Path(__file__).resolve().parent / "logs"
-        log_files = list(log_dir.glob("pipeline_*.log"))
-        if log_files:
-            log_path = max(log_files, key=lambda p: p.stat().st_mtime)
-        else:
-            log_path = Path("no_logs")
-    
-    if log_path.exists():
-        return FileResponse(log_path, media_type="text/plain")
-    return {"message": "No logs found"}
->>>>>>> 93636510e0d10e6f707978fa8ef8e4985267ec67
+1
 
 @router.get("/status")
 async def get_pipeline_status():
