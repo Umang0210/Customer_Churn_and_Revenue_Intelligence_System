@@ -1,7 +1,7 @@
-/**
+﻿/**
  * Customer Churn Intelligence Dashboard
- * ──────────────────────────────────────
- * Multi-page JS — detects current page and renders only relevant sections
+ * â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ * Multi-page JS â€” detects current page and renders only relevant sections
  */
 
 // ========================
@@ -59,7 +59,7 @@ function hideLoader() {
 }
 
 // ========================
-// ROUTER — detect page
+// ROUTER â€” detect page
 // ========================
 function routePage() {
     const path = window.location.pathname.split('/').pop() || 'index.html';
@@ -75,9 +75,9 @@ function routePage() {
     }
 }
 
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  PAGE: OVERVIEW (index.html)
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderOverviewPage() {
     renderTimestamp();
     renderKPIs();
@@ -98,12 +98,12 @@ function renderKPIs() {
     const m = DATA.model.evaluation;
 
     const cards = [
-        { label: 'Total Customers', value: fmt(k.total_customers), sub: `${DATA.dataset_overview.columns} features analyzed`, cls: 'neutral', color: 'indigo', icon: '👥' },
-        { label: 'Churn Rate', value: `${ch.churn_rate}%`, sub: `${fmt(ch.churned)} churned of ${fmt(ch.total)}`, cls: 'negative', color: 'rose', icon: '📉' },
-        { label: 'Revenue at Risk', value: `$${compact(k.revenue_at_risk)}`, sub: `${k.revenue_at_risk_pct}% of total revenue`, cls: 'negative', color: 'amber', icon: '💰' },
-        { label: 'Model ROC-AUC', value: m.roc_auc.toFixed(4), sub: `${DATA.model.selected_model.replace('_', ' ')} — ${DATA.model.model_version}`, cls: 'positive', color: 'emerald', icon: '🎯' },
-        { label: 'High-Risk Customers', value: `${k.high_risk_pct}%`, sub: `${fmt(DATA.model.risk_distribution.HIGH || 0)} customers > 70% prob`, cls: 'negative', color: 'rose', icon: '🔥' },
-        { label: 'Total Revenue', value: `$${compact(k.total_revenue)}`, sub: `Avg $${DATA.revenue_analysis.avg_monthly_charges}/mo per customer`, cls: 'neutral', color: 'cyan', icon: '💎' },
+        { label: 'Total Customers', value: fmt(k.total_customers), sub: `${DATA.dataset_overview.columns} features analyzed`, cls: 'neutral', color: 'indigo', icon: 'ðŸ‘¥' },
+        { label: 'Churn Rate', value: `${ch.churn_rate}%`, sub: `${fmt(ch.churned)} churned of ${fmt(ch.total)}`, cls: 'negative', color: 'rose', icon: 'ðŸ“‰' },
+        { label: 'Revenue at Risk', value: `$${compact(k.revenue_at_risk)}`, sub: `${k.revenue_at_risk_pct}% of total revenue`, cls: 'negative', color: 'amber', icon: 'ðŸ’°' },
+        { label: 'Model ROC-AUC', value: m.roc_auc.toFixed(4), sub: `${DATA.model.selected_model.replace('_', ' ')} â€” ${DATA.model.model_version}`, cls: 'positive', color: 'emerald', icon: 'ðŸŽ¯' },
+        { label: 'High-Risk Customers', value: `${k.high_risk_pct}%`, sub: `${fmt(DATA.model.risk_distribution.HIGH || 0)} customers > 70% prob`, cls: 'negative', color: 'rose', icon: 'ðŸ”¥' },
+        { label: 'Total Revenue', value: `$${compact(k.total_revenue)}`, sub: `Avg $${DATA.revenue_analysis.avg_monthly_charges}/mo per customer`, cls: 'neutral', color: 'cyan', icon: 'ðŸ’Ž' },
     ];
 
     grid.innerHTML = cards.map(c => `
@@ -149,17 +149,17 @@ function renderPipeline() {
     const flow = document.getElementById('pipelineFlow');
     if (!flow) return;
     const steps = [
-        { icon: '📁', name: 'Raw Data', file: 'data/raw/', bg: 'rgba(139,92,246,0.12)' },
-        { icon: '📥', name: 'Ingestion', file: 'ingestion.py', bg: 'rgba(6,182,212,0.12)' },
-        { icon: '🧹', name: 'Cleaning', file: 'cleaning.py', bg: 'rgba(16,185,129,0.12)' },
-        { icon: '⚙️', name: 'Features', file: 'features.py', bg: 'rgba(245,158,11,0.12)' },
-        { icon: '🤖', name: 'Training', file: 'train.py', bg: 'rgba(99,102,241,0.12)' },
-        { icon: '📊', name: 'Evaluation', file: 'evaluate.py', bg: 'rgba(16,185,129,0.12)' },
-        { icon: '💡', name: 'Insights', file: 'business_insights.py', bg: 'rgba(244,63,94,0.12)' },
-        { icon: '🌐', name: 'Dashboard', file: 'index.html', bg: 'rgba(14,165,233,0.12)' },
+        { icon: 'ðŸ“', name: 'Raw Data', file: 'data/raw/', bg: 'rgba(139,92,246,0.12)' },
+        { icon: 'ðŸ“¥', name: 'Ingestion', file: 'ingestion.py', bg: 'rgba(6,182,212,0.12)' },
+        { icon: 'ðŸ§¹', name: 'Cleaning', file: 'cleaning.py', bg: 'rgba(16,185,129,0.12)' },
+        { icon: 'âš™ï¸', name: 'Features', file: 'features.py', bg: 'rgba(245,158,11,0.12)' },
+        { icon: 'ðŸ¤–', name: 'Training', file: 'train.py', bg: 'rgba(99,102,241,0.12)' },
+        { icon: 'ðŸ“Š', name: 'Evaluation', file: 'evaluate.py', bg: 'rgba(16,185,129,0.12)' },
+        { icon: 'ðŸ’¡', name: 'Insights', file: 'business_insights.py', bg: 'rgba(244,63,94,0.12)' },
+        { icon: 'ðŸŒ', name: 'Dashboard', file: 'index.html', bg: 'rgba(14,165,233,0.12)' },
     ];
     flow.innerHTML = steps.map((s, i) => `
-    ${i > 0 ? '<div class="pipeline-arrow">→</div>' : ''}
+    ${i > 0 ? '<div class="pipeline-arrow">â†’</div>' : ''}
     <div class="pipeline-step">
       <div class="step-icon" style="background:${s.bg}">${s.icon}</div>
       <div class="step-name">${s.name}</div>
@@ -168,9 +168,9 @@ function renderPipeline() {
 }
 
 
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  PAGE: MODEL (model.html)
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderModelPage() {
     renderModelCards();
     renderConfusionMatrix();
@@ -293,7 +293,7 @@ function renderThresholds() {
     if (tbody) {
         tbody.innerHTML = thresholds.map(t => {
             const hl = t.threshold === 0.5 ? ' style="background:rgba(99,102,241,0.06);"' : '';
-            return `<tr${hl}><td>${t.threshold.toFixed(1)}${t.threshold === 0.5 ? ' ★' : ''}</td><td>${(t.precision * 100).toFixed(2)}%</td><td>${(t.recall * 100).toFixed(2)}%</td><td>${(t.f1_score * 100).toFixed(2)}%</td></tr>`;
+            return `<tr${hl}><td>${t.threshold.toFixed(1)}${t.threshold === 0.5 ? ' â˜…' : ''}</td><td>${(t.precision * 100).toFixed(2)}%</td><td>${(t.recall * 100).toFixed(2)}%</td><td>${(t.f1_score * 100).toFixed(2)}%</td></tr>`;
         }).join('');
     }
 }
@@ -343,9 +343,9 @@ async function renderFeatureImportance() {
 
 
 
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  PAGE: ANALYTICS (analytics.html)
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderAnalyticsPage() {
     renderRevenue();
     renderSegmentCharts();
@@ -453,9 +453,9 @@ function renderTenureTable() {
 }
 
 
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  PAGE: CUSTOMERS (customers.html)
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderCustomersPage() {
     renderTopCustomers();
     renderDatasetOverview();
@@ -510,9 +510,9 @@ function renderDatasetOverview() {
 }
 
 
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  SCROLL REVEAL
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function initScrollReveal() {
     const sections = document.querySelectorAll('.section');
     const observer = new IntersectionObserver((entries) => {
@@ -527,11 +527,11 @@ function initScrollReveal() {
 }
 
 
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 //  UTILITIES
-// ════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function fmt(n) {
-    if (n === null || n === undefined) return '—';
+    if (n === null || n === undefined) return 'â€”';
     return Number(n).toLocaleString('en-US', { maximumFractionDigits: 2 });
 }
 
@@ -540,3 +540,33 @@ function compact(n) {
     if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
     return n.toFixed(2);
 }
+
+
+// --- LOGS MODAL FUNCTIONS ---
+function showLogs() {
+  document.getElementById("logsModal").style.display = "block";
+  fetchLogs();
+}
+
+async function fetchLogs() {
+  const content = document.getElementById("logsContent");
+  content.textContent = "Loading logs...";
+  try {
+    const response = await fetch(API_BASE + "/api/upload/logs");
+    if (!response.ok) {
+        content.textContent = "Failed to fetch logs. Error " + response.status;
+        return;
+    }
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        content.textContent = data.message || JSON.stringify(data);
+    } else {
+        const text = await response.text();
+        content.textContent = text || "No logs available.";
+    }
+  } catch(e) {
+    content.textContent = "Error fetching logs: " + e.message;
+  }
+}
+

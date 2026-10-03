@@ -1,6 +1,6 @@
 {
   "model_name": "Logistic Regression",
-  "evaluated_at": "2026-10-02T12:44:36.807751",
+  "evaluated_at": "2026-10-03T19:20:58.979709",
   "test_samples": 1409,
   "actual_churn_rate_%": 26.54,
   "roc_auc": 0.8447,

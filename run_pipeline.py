@@ -1,5 +1,5 @@
-"""
-Pipeline Orchestrator — Customer Churn & Revenue Intelligence
+﻿"""
+Pipeline Orchestrator â€” Customer Churn & Revenue Intelligence
 =============================================================
 Connects ALL pipeline steps end-to-end in the correct order.
 Can be triggered:
@@ -14,7 +14,7 @@ Steps:
   3. features.py
   4. eda.py
   5. train.py
-  6. evaluate.py          ← exits with code 1 if AUC < 0.70
+  6. evaluate.py          â† exits with code 1 if AUC < 0.70
   7. persist_insights.py
   8. business_insights.py
 
@@ -34,7 +34,7 @@ from pathlib import Path
 from datetime import datetime
 
 
-# ── Logging ───────────────────────────────────────────────────────────────────
+# â”€â”€ Logging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os
 
 IS_VERCEL = os.environ.get("VERCEL") == "1"
@@ -42,12 +42,15 @@ IS_VERCEL = os.environ.get("VERCEL") == "1"
 handlers = [logging.StreamHandler(sys.stdout)]
 log_file_str = "stdout"
 
-if not IS_VERCEL:
+if IS_VERCEL:
+    LOG_DIR = Path("/tmp/app/logs")
+else:
     LOG_DIR = Path(__file__).resolve().parent / "logs"
-    LOG_DIR.mkdir(exist_ok=True)
-    log_file = LOG_DIR / f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-    handlers.append(logging.FileHandler(log_file))
-    log_file_str = str(log_file)
+
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+log_file = LOG_DIR / f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
+log_file_str = str(log_file)
 
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
@@ -60,7 +63,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# ── Paths & sys.path ─────────────────────────────────────────────────────────
+# â”€â”€ Paths & sys.path â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os
 import importlib
 import os, shutil
@@ -70,7 +73,7 @@ if IS_VERCEL:
     BASE_DIR = Path("/tmp/app")
     if not BASE_DIR.exists():
         BASE_DIR.mkdir(parents=True, exist_ok=True)
-        for d in ["data", "models", "reports"]:
+        for d in ["src", "data", "models", "reports"]:
             src_dir = _REAL_BASE / d
             dst_dir = BASE_DIR / d
             if src_dir.exists():
@@ -88,9 +91,9 @@ if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # STEP RUNNER
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def run_step(step_num: int, step_name: str, module_name: str) -> dict:
     """
     Imports and runs a pipeline step's main() function.
@@ -105,9 +108,9 @@ def run_step(step_num: int, step_name: str, module_name: str) -> dict:
         "error":    None,
     }
 
-    log.info(f"{'─'*55}")
+    log.info(f"{'â”€'*55}")
     log.info(f"  STEP {step_num}: {step_name}")
-    log.info(f"{'─'*55}")
+    log.info(f"{'â”€'*55}")
 
     start = time.time()
     try:
@@ -124,28 +127,28 @@ def run_step(step_num: int, step_name: str, module_name: str) -> dict:
 
         result["duration"] = round(time.time() - start, 2)
         result["status"]   = "success"
-        log.info(f"  ✓ {step_name} completed in {result['duration']}s\n")
+        log.info(f"  âœ“ {step_name} completed in {result['duration']}s\n")
 
     except SystemExit as e:
-        # evaluate.py calls sys.exit(1) on gate failure — treat as fatal
+        # evaluate.py calls sys.exit(1) on gate failure â€” treat as fatal
         result["duration"] = round(time.time() - start, 2)
         result["status"]   = "gate_failed"
         result["error"]    = f"Performance gate failed (exit code {e.code})"
-        log.error(f"  ✗ {step_name} GATE FAILED: {result['error']}\n")
+        log.error(f"  âœ— {step_name} GATE FAILED: {result['error']}\n")
 
     except Exception as e:
         result["duration"] = round(time.time() - start, 2)
         result["status"]   = "failed"
         result["error"]    = str(e)
-        log.error(f"  ✗ {step_name} FAILED: {e}")
+        log.error(f"  âœ— {step_name} FAILED: {e}")
         log.error(traceback.format_exc())
 
     return result
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # PIPELINE DEFINITION
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 PIPELINE_STEPS = [
     (1, "Data Ingestion",         "ingestion"),
     (2, "Data Cleaning",          "cleaning"),
@@ -158,9 +161,9 @@ PIPELINE_STEPS = [
 ]
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # MAIN
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def run_pipeline(
     from_step: int = 1,
     skip_eda: bool = False,
@@ -176,7 +179,7 @@ def run_pipeline(
     failed         = False
 
     log.info("=" * 55)
-    log.info("  CHURN INTELLIGENCE PIPELINE — STARTING")
+    log.info("  CHURN INTELLIGENCE PIPELINE â€” STARTING")
     log.info(f"  From step: {from_step}")
     log.info(f"  Skip EDA:  {skip_eda}")
     log.info(f"  Skip train: {skip_train}")
@@ -225,7 +228,7 @@ def run_pipeline(
 
     total_duration = round(time.time() - pipeline_start, 2)
 
-    # ── Summary ──
+    # â”€â”€ Summary â”€â”€
     success_count = sum(1 for r in results if r["status"] == "success")
     skip_count    = sum(1 for r in results if r["status"] == "skipped")
     fail_count    = sum(1 for r in results if r["status"] in ("failed", "gate_failed"))
@@ -234,7 +237,7 @@ def run_pipeline(
     log.info("  PIPELINE SUMMARY")
     log.info("=" * 55)
     for r in results:
-        icon = "✓" if r["status"] == "success" else ("→" if r["status"] == "skipped" else "✗")
+        icon = "âœ“" if r["status"] == "success" else ("â†’" if r["status"] == "skipped" else "âœ—")
         log.info(f"  {icon}  Step {r['step']}: {r['name']:<28} {r['status']:<12} {r['duration']}s")
     log.info(f"\n  Total time  : {total_duration}s")
     log.info(f"  Succeeded   : {success_count}")
@@ -260,12 +263,12 @@ def run_pipeline(
     return summary
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # CLI
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def main():
     parser = argparse.ArgumentParser(
-        description="Customer Churn Intelligence — Pipeline Orchestrator"
+        description="Customer Churn Intelligence â€” Pipeline Orchestrator"
     )
     parser.add_argument(
         "--from-step", type=int, default=1,
@@ -292,3 +295,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

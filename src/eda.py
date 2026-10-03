@@ -1,4 +1,4 @@
-"""
+﻿"""
 EDA (Exploratory Data Analysis) - Customer Churn & Revenue Intelligence
 ========================================================================
 Step 4 of the pipeline. Runs standalone (no Jupyter required).
@@ -13,13 +13,13 @@ import sys
 import pandas as pd
 import numpy as np
 import matplotlib
-matplotlib.use("Agg")  # Non-interactive backend — no display needed
+matplotlib.use("Agg")  # Non-interactive backend â€” no display needed
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import seaborn as sns
 from pathlib import Path
 
-# ── Paths ──────────────────────────────────────────────────────────────────────
+# â”€â”€ Paths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os, shutil
 _REAL_BASE = Path(__file__).resolve().parent.parent
 IS_VERCEL = os.environ.get("VERCEL") == "1"
@@ -27,7 +27,7 @@ if IS_VERCEL:
     BASE_DIR = Path("/tmp/app")
     if not BASE_DIR.exists():
         BASE_DIR.mkdir(parents=True, exist_ok=True)
-        for d in ["data", "models", "reports"]:
+        for d in ["src", "data", "models", "reports"]:
             src_dir = _REAL_BASE / d
             dst_dir = BASE_DIR / d
             if src_dir.exists():
@@ -43,7 +43,7 @@ PROCESSED_DIR = BASE_DIR / "data" / "processed"
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── Style ──────────────────────────────────────────────────────────────────────
+# â”€â”€ Style â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 PALETTE_RISK   = {"Low": "#2ecc71", "Medium": "#f39c12", "High": "#e74c3c"}
 COLOR_CHURN    = "#e74c3c"
 COLOR_RETAIN   = "#2ecc71"
@@ -51,7 +51,7 @@ COLOR_NEUTRAL  = "#3498db"
 sns.set_theme(style="whitegrid", font_scale=1.1)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def load_data() -> pd.DataFrame:
     """Load feature-engineered dataset; fall back to clean dataset."""
     if DATA_PATH.exists():
@@ -62,7 +62,7 @@ def load_data() -> pd.DataFrame:
         print(f"[EDA] Loaded clean dataset (features not found): {df.shape}")
     else:
         raise FileNotFoundError(
-            "No processed data found. Run ingestion.py → cleaning.py → features.py first."
+            "No processed data found. Run ingestion.py â†’ cleaning.py â†’ features.py first."
         )
 
     # Normalise target column
@@ -75,7 +75,7 @@ def load_data() -> pd.DataFrame:
 
     df = df.rename(columns={churn_col: "churn_flag"})
 
-    # Convert yes/no → 1/0 if needed
+    # Convert yes/no â†’ 1/0 if needed
     if pd.api.types.is_string_dtype(df["churn_flag"]) or df["churn_flag"].dtype == object:
         df["churn_flag"] = df["churn_flag"].str.strip().str.lower().map({"yes": 1, "no": 0})
 
@@ -83,7 +83,7 @@ def load_data() -> pd.DataFrame:
     return df
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def _revenue_col(df: pd.DataFrame) -> str:
     """Return the best available revenue column name."""
     for col in ["total_spend", "TotalCharges", "totalcharges", "revenue",
@@ -108,9 +108,9 @@ def _tenure_col(df: pd.DataFrame) -> str:
     return None
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PLOT 1 — Churn distribution (pie + bar side by side)
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PLOT 1 â€” Churn distribution (pie + bar side by side)
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_churn_distribution(df: pd.DataFrame):
     counts  = df["churn_flag"].value_counts().sort_index()
     labels  = ["Retained", "Churned"]
@@ -147,16 +147,16 @@ def plot_churn_distribution(df: pd.DataFrame):
     out = FIGURES_DIR / "01_churn_distribution.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PLOT 2 — Churn rate by contract type
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PLOT 2 â€” Churn rate by contract type
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_churn_by_contract(df: pd.DataFrame):
     col = _contract_col(df)
     if col is None:
-        print("[EDA] Skipping contract plot — no contract column found.")
+        print("[EDA] Skipping contract plot â€” no contract column found.")
         return
 
     grp = (
@@ -185,16 +185,16 @@ def plot_churn_by_contract(df: pd.DataFrame):
     out = FIGURES_DIR / "02_churn_by_contract.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PLOT 3 — Tenure vs churn (histogram overlay)
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PLOT 3 â€” Tenure vs churn (histogram overlay)
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_tenure_vs_churn(df: pd.DataFrame):
     col = _tenure_col(df)
     if col is None:
-        print("[EDA] Skipping tenure plot — no tenure column found.")
+        print("[EDA] Skipping tenure plot â€” no tenure column found.")
         return
 
     # If it's already a group (string), use bar chart
@@ -231,12 +231,12 @@ def plot_tenure_vs_churn(df: pd.DataFrame):
     out = FIGURES_DIR / "03_tenure_vs_churn.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PLOT 4 — Monthly charges: churn vs retain (boxplot)
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PLOT 4 â€” Monthly charges: churn vs retain (boxplot)
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_monthly_charges_box(df: pd.DataFrame):
     charge_col = None
     for c in ["monthly_charges", "MonthlyCharges", "monthlycharges"]:
@@ -244,7 +244,7 @@ def plot_monthly_charges_box(df: pd.DataFrame):
             charge_col = c
             break
     if charge_col is None:
-        print("[EDA] Skipping monthly charges plot — column not found.")
+        print("[EDA] Skipping monthly charges plot â€” column not found.")
         return
 
     df["_churn_label"] = df["churn_flag"].map({0: "Retained", 1: "Churned"})
@@ -268,18 +268,18 @@ def plot_monthly_charges_box(df: pd.DataFrame):
     out = FIGURES_DIR / "04_monthly_charges_boxplot.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PLOT 5 — Complaints & payment delays vs churn (grouped bar)
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PLOT 5 â€” Complaints & payment delays vs churn (grouped bar)
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_complaints_payment(df: pd.DataFrame):
     has_complaints = "complaints_count" in df.columns
     has_payments   = "payment_delays"   in df.columns
 
     if not has_complaints and not has_payments:
-        print("[EDA] Skipping complaints/payment plot — columns not found.")
+        print("[EDA] Skipping complaints/payment plot â€” columns not found.")
         return
 
     cols_present = []
@@ -312,16 +312,16 @@ def plot_complaints_payment(df: pd.DataFrame):
     out = FIGURES_DIR / "05_complaints_payment_vs_churn.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PLOT 6 — Feature correlation heatmap (numeric only)
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PLOT 6 â€” Feature correlation heatmap (numeric only)
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_correlation_heatmap(df: pd.DataFrame):
     numeric_df = df.select_dtypes(include=[np.number])
     if numeric_df.shape[1] < 3:
-        print("[EDA] Skipping correlation heatmap — too few numeric columns.")
+        print("[EDA] Skipping correlation heatmap â€” too few numeric columns.")
         return
 
     # Keep only columns with variance
@@ -347,16 +347,16 @@ def plot_correlation_heatmap(df: pd.DataFrame):
     out = FIGURES_DIR / "06_correlation_heatmap.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PLOT 7 — Revenue at risk (bar: churned vs retained total spend)
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PLOT 7 â€” Revenue at risk (bar: churned vs retained total spend)
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_revenue_at_risk(df: pd.DataFrame):
     rev_col = _revenue_col(df)
     if rev_col is None:
-        print("[EDA] Skipping revenue plot — no revenue column found.")
+        print("[EDA] Skipping revenue plot â€” no revenue column found.")
         return
 
     total_revenue  = df[rev_col].sum()
@@ -389,18 +389,18 @@ def plot_revenue_at_risk(df: pd.DataFrame):
     out = FIGURES_DIR / "07_revenue_at_risk.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# PLOT 8 — High-risk profile: top features separating churners
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# PLOT 8 â€” High-risk profile: top features separating churners
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_high_risk_profiles(df: pd.DataFrame):
     numeric_cols = df.select_dtypes(include=[np.number]).columns.tolist()
     numeric_cols = [c for c in numeric_cols if c != "churn_flag" and df[c].std() > 0]
 
     if len(numeric_cols) == 0:
-        print("[EDA] Skipping high-risk profile plot — no numeric feature columns.")
+        print("[EDA] Skipping high-risk profile plot â€” no numeric feature columns.")
         return
 
     # Normalised mean difference per feature
@@ -416,7 +416,7 @@ def plot_high_risk_profiles(df: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.barh(top10.index[::-1], top10.values[::-1], color=colors[::-1], edgecolor="white")
-    ax.set_xlabel("Normalised Mean Difference (Churned − Retained)")
+    ax.set_xlabel("Normalised Mean Difference (Churned âˆ’ Retained)")
     ax.set_title("Top Features Differentiating Churned vs Retained Customers",
                  fontsize=12, fontweight="bold")
     from matplotlib.patches import Patch
@@ -429,20 +429,20 @@ def plot_high_risk_profiles(df: pd.DataFrame):
     out = FIGURES_DIR / "08_high_risk_profiles.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # BUSINESS INSIGHTS CSV
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def generate_business_insights(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Produces a structured summary of key business metrics — 
+    Produces a structured summary of key business metrics â€” 
     mirrors what the PDF calls 'Business Insights (Non-ML)'.
     """
     insights = {}
 
-    # ── Basic churn metrics ──
+    # â”€â”€ Basic churn metrics â”€â”€
     total        = len(df)
     n_churned    = df["churn_flag"].sum()
     churn_rate   = n_churned / total * 100
@@ -452,7 +452,7 @@ def generate_business_insights(df: pd.DataFrame) -> pd.DataFrame:
     insights["retained_customers"]    = int(total - n_churned)
     insights["overall_churn_rate_%"]  = round(churn_rate, 2)
 
-    # ── Revenue metrics ──
+    # â”€â”€ Revenue metrics â”€â”€
     rev_col = _revenue_col(df)
     if rev_col:
         total_rev   = df[rev_col].sum()
@@ -463,7 +463,7 @@ def generate_business_insights(df: pd.DataFrame) -> pd.DataFrame:
         insights["avg_revenue_churned_$"]     = round(df[df["churn_flag"] == 1][rev_col].mean(), 2)
         insights["avg_revenue_retained_$"]    = round(df[df["churn_flag"] == 0][rev_col].mean(), 2)
 
-    # ── Highest-churn contract type ──
+    # â”€â”€ Highest-churn contract type â”€â”€
     col = _contract_col(df)
     if col:
         worst = (
@@ -473,7 +473,7 @@ def generate_business_insights(df: pd.DataFrame) -> pd.DataFrame:
         insights["highest_churn_contract"]          = worst.index[0]
         insights["highest_churn_contract_rate_%"]   = round(worst.iloc[0] * 100, 2)
 
-    # ── Tenure insight ──
+    # â”€â”€ Tenure insight â”€â”€
     ten_col = _tenure_col(df)
     if ten_col and df[ten_col].dtype != object:
         low_tenure   = df[df[ten_col] <= df[ten_col].quantile(0.25)]["churn_flag"].mean() * 100
@@ -482,29 +482,29 @@ def generate_business_insights(df: pd.DataFrame) -> pd.DataFrame:
         insights["churn_rate_high_tenure_%"] = round(high_tenure, 2)
         insights["early_churn_multiplier"]   = round(low_tenure / high_tenure, 2) if high_tenure > 0 else None
 
-    # ── Complaints ──
+    # â”€â”€ Complaints â”€â”€
     if "complaints_count" in df.columns:
         high_complaint = df[df["complaints_count"] >= 3]["churn_flag"].mean() * 100
         insights["churn_rate_3plus_complaints_%"] = round(high_complaint, 2)
 
-    # ── Payment delays ──
+    # â”€â”€ Payment delays â”€â”€
     if "payment_delays" in df.columns:
         high_delay = df[df["payment_delays"] >= 2]["churn_flag"].mean() * 100
         insights["churn_rate_2plus_payment_delays_%"] = round(high_delay, 2)
 
-    # ── Save as CSV ──
+    # â”€â”€ Save as CSV â”€â”€
     insights_df = pd.DataFrame(
         list(insights.items()), columns=["metric", "value"]
     )
     out = PROCESSED_DIR / "business_insights.csv"
     insights_df.to_csv(out, index=False)
-    print(f"[EDA] Saved → {out.name}")
+    print(f"[EDA] Saved â†’ {out.name}")
     return insights_df
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # PRINT SUMMARY TO CONSOLE
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def print_summary(insights_df: pd.DataFrame):
     print("\n" + "="*60)
     print("  BUSINESS INSIGHTS SUMMARY")
@@ -515,9 +515,9 @@ def print_summary(insights_df: pd.DataFrame):
     print("="*60 + "\n")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # MAIN
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def main():
     print("\n[EDA] Starting Exploratory Data Analysis...")
     df = load_data()
@@ -546,3 +546,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
