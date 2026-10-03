@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 # Add project root to sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from api.app import app
+from api.index import app
 import base64
 
 client = TestClient(app)

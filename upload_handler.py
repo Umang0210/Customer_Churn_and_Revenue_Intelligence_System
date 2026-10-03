@@ -17,28 +17,34 @@ log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/upload", tags=["Upload"])
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
-BASE_DIR    = Path(__file__).resolve().parent
+# â”€â”€ Paths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+import os, shutil
+_REAL_BASE = Path(__file__).resolve().parent
+IS_VERCEL = os.environ.get("VERCEL") == "1"
+if IS_VERCEL:
+    BASE_DIR = Path("/tmp/app")
+    if not BASE_DIR.exists():
+        BASE_DIR.mkdir(parents=True, exist_ok=True)
+        for d in ["data", "models", "reports"]:
+            src_dir = _REAL_BASE / d
+            dst_dir = BASE_DIR / d
+            if src_dir.exists():
+                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+else:
+    BASE_DIR = _REAL_BASE
 UPLOAD_DIR  = BASE_DIR / "data" / "raw"
 STATUS_FILE = BASE_DIR / "data" / "pipeline_status.json"
 HISTORY_FILE= BASE_DIR / "data" / "upload_history.json"
 TEMPLATE_PATH = BASE_DIR / "data" / "raw" / "Sample_dataset.csv"
 
-try:
-    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-except OSError:
-    # Serverless/Read-only filesystem fallback
-    UPLOAD_DIR = Path("/tmp/data/raw")
-    STATUS_FILE = Path("/tmp/pipeline_status.json")
-    HISTORY_FILE = Path("/tmp/upload_history.json")
-    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── Required columns (minimum viable set) ─────────────────────────────────────
+# â”€â”€ Required columns (minimum viable set) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 REQUIRED_COLUMNS = {
     "customer_id", "monthly_charges", "churn"
 }
 
-# ── Accepted columns (used for validation hints) ──────────────────────────────
+# â”€â”€ Accepted columns (used for validation hints) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ACCEPTED_COLUMNS = {
     "customer_id", "signup_date", "last_active_date",
     "monthly_charges", "total_spend", "usage_frequency",
@@ -53,9 +59,9 @@ MAX_FILE_SIZE_MB    = 50
 MIN_ROWS            = 10
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # STATUS MANAGEMENT
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def _write_status(status: str, message: str, step: int = 0,
                   total_steps: int = 8, details: dict = None):
     payload = {
@@ -93,9 +99,9 @@ def _append_history(entry: dict):
     HISTORY_FILE.write_text(json.dumps(history, indent=2))
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # FILE VALIDATION
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def validate_upload(df: pd.DataFrame, filename: str) -> dict:
     """
     Returns {"valid": True} or {"valid": False, "errors": [...], "warnings": [...]}
@@ -114,7 +120,7 @@ def validate_upload(df: pd.DataFrame, filename: str) -> dict:
 
     cols_norm = {_norm(c) for c in df.columns}
 
-    # Required column equivalences (normalised form → display name)
+    # Required column equivalences (normalised form â†’ display name)
     REQUIRED_NORM = {
         "customerid":      "customer_id",
         "monthlycharges":  "monthly_charges",
@@ -159,9 +165,9 @@ def validate_upload(df: pd.DataFrame, filename: str) -> dict:
     return {"valid": True, "errors": [], "warnings": warnings}
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # BACKGROUND PIPELINE RUNNER
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def _run_pipeline_background(filepath: str, filename: str):
     """
     Runs in a background thread after a successful upload.
@@ -194,7 +200,7 @@ def _run_pipeline_background(filepath: str, filename: str):
         def step_callback(step_num, step_name, status):
             _write_status(
                 "running",
-                f"Step {step_num}/8: {step_name} — {status}",
+                f"Step {step_num}/8: {step_name} â€” {status}",
                 step=step_num,
             )
 
@@ -244,9 +250,9 @@ def _run_pipeline_background(filepath: str, filename: str):
         log.error(f"Background pipeline error: {e}", exc_info=True)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # ENDPOINTS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 @router.post("/dataset")
 async def upload_dataset(
@@ -257,7 +263,7 @@ async def upload_dataset(
     Upload a CSV or Excel file. Validates schema, saves to data/raw/,
     then triggers the full ML pipeline in the background.
     """
-    # ── Check current pipeline status ──
+    # â”€â”€ Check current pipeline status â”€â”€
     current = _read_status()
     if current.get("status") == "running":
         raise HTTPException(
@@ -265,7 +271,7 @@ async def upload_dataset(
             detail="A pipeline is already running. Please wait for it to complete.",
         )
 
-    # ── Validate file extension ──
+    # â”€â”€ Validate file extension â”€â”€
     suffix = Path(file.filename).suffix.lower()
     if suffix not in ACCEPTED_EXTENSIONS:
         raise HTTPException(
@@ -273,10 +279,10 @@ async def upload_dataset(
             detail=f"Unsupported file type '{suffix}'. Accepted: {', '.join(ACCEPTED_EXTENSIONS)}",
         )
 
-    # ── Read file content ──
+    # â”€â”€ Read file content â”€â”€
     content = await file.read()
 
-    # ── Check file size ──
+    # â”€â”€ Check file size â”€â”€
     size_mb = len(content) / (1024 * 1024)
     if size_mb > MAX_FILE_SIZE_MB:
         raise HTTPException(
@@ -284,7 +290,7 @@ async def upload_dataset(
             detail=f"File too large ({size_mb:.1f} MB). Maximum: {MAX_FILE_SIZE_MB} MB.",
         )
 
-    # ── Parse into DataFrame ──
+    # â”€â”€ Parse into DataFrame â”€â”€
     try:
         if suffix == ".csv":
             df = pd.read_csv(io.BytesIO(content))
@@ -296,7 +302,7 @@ async def upload_dataset(
             detail=f"Could not parse file: {str(e)}",
         )
 
-    # ── Validate schema ──
+    # â”€â”€ Validate schema â”€â”€
     validation = validate_upload(df, file.filename)
     if not validation["valid"]:
         raise HTTPException(
@@ -308,7 +314,7 @@ async def upload_dataset(
             },
         )
 
-    # ── Save file ──
+    # â”€â”€ Save file â”€â”€
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe_name  = f"upload_{timestamp}{suffix}"
     save_path  = UPLOAD_DIR / safe_name
@@ -319,11 +325,11 @@ async def upload_dataset(
 
     log.info(f"File saved: {csv_path}  ({len(df)} rows, {len(df.columns)} columns)")
 
-    # ── Also save as the main dataset for pipeline ──
+    # â”€â”€ Also save as the main dataset for pipeline â”€â”€
     main_csv = UPLOAD_DIR / "uploaded_dataset.csv"
     df.to_csv(main_csv, index=False)
 
-    # ── Trigger pipeline in background ──
+    # â”€â”€ Trigger pipeline in background â”€â”€
     _write_status("running", f"File uploaded. Starting pipeline...", step=0)
     background_tasks.add_task(
         _run_pipeline_background,

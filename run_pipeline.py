@@ -35,12 +35,20 @@ from datetime import datetime
 
 
 # ── Logging ───────────────────────────────────────────────────────────────────
-LOG_DIR = Path(__file__).resolve().parent / "logs"
-LOG_DIR.mkdir(exist_ok=True)
+import os
 
-log_file = LOG_DIR / f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+IS_VERCEL = os.environ.get("VERCEL") == "1"
 
-# Add this right after the imports, before the logging.basicConfig call
+handlers = [logging.StreamHandler(sys.stdout)]
+log_file_str = "stdout"
+
+if not IS_VERCEL:
+    LOG_DIR = Path(__file__).resolve().parent / "logs"
+    LOG_DIR.mkdir(exist_ok=True)
+    log_file = LOG_DIR / f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    handlers.append(logging.FileHandler(log_file))
+    log_file_str = str(log_file)
+
 import sys
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -48,17 +56,27 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  [PIPELINE]  %(message)s",
     datefmt="%H:%M:%S",
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.FileHandler(log_file),
-    ],
+    handlers=handlers,
 )
 log = logging.getLogger(__name__)
 
 # ── Paths & sys.path ─────────────────────────────────────────────────────────
 import os
 import importlib
-BASE_DIR = Path(__file__).resolve().parent
+import os, shutil
+_REAL_BASE = Path(__file__).resolve().parent
+IS_VERCEL = os.environ.get("VERCEL") == "1"
+if IS_VERCEL:
+    BASE_DIR = Path("/tmp/app")
+    if not BASE_DIR.exists():
+        BASE_DIR.mkdir(parents=True, exist_ok=True)
+        for d in ["data", "models", "reports"]:
+            src_dir = _REAL_BASE / d
+            dst_dir = BASE_DIR / d
+            if src_dir.exists():
+                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+else:
+    BASE_DIR = _REAL_BASE
 
 # Always run from project root so relative paths (data/, models/) work
 os.chdir(BASE_DIR)
@@ -222,7 +240,7 @@ def run_pipeline(
     log.info(f"  Succeeded   : {success_count}")
     log.info(f"  Skipped     : {skip_count}")
     log.info(f"  Failed      : {fail_count}")
-    log.info(f"  Log file    : {log_file}")
+    log.info(f"  Log file    : {log_file_str}")
     log.info("=" * 55 + "\n")
 
     summary = {
@@ -232,7 +250,7 @@ def run_pipeline(
         "success_count":  success_count,
         "skip_count":     skip_count,
         "fail_count":     fail_count,
-        "log_file":       str(log_file),
+        "log_file":       log_file_str,
         "completed_at":   datetime.utcnow().isoformat(),
     }
 

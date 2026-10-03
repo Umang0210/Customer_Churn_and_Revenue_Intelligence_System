@@ -37,7 +37,20 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
-BASE_DIR     = Path(__file__).resolve().parent.parent
+import os, shutil
+_REAL_BASE = Path(__file__).resolve().parent.parent
+IS_VERCEL = os.environ.get("VERCEL") == "1"
+if IS_VERCEL:
+    BASE_DIR = Path("/tmp/app")
+    if not BASE_DIR.exists():
+        BASE_DIR.mkdir(parents=True, exist_ok=True)
+        for d in ["data", "models", "reports"]:
+            src_dir = _REAL_BASE / d
+            dst_dir = BASE_DIR / d
+            if src_dir.exists():
+                shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
+else:
+    BASE_DIR = _REAL_BASE
 FEATURES_CSV = BASE_DIR / "data" / "processed" / "customer_features.csv"
 CLEAN_CSV    = BASE_DIR / "data" / "processed" / "clean_customers.csv"
 MODELS_DIR   = BASE_DIR / "models"
