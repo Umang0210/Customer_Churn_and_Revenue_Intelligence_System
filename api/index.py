@@ -131,6 +131,7 @@ class PredictRequest(BaseModel):
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 
 @app.get("/health")
+@app.get("/api/health")
 def health():
     return {
         "status":        "healthy",
@@ -143,6 +144,7 @@ def health():
 
 
 @app.post("/predict")
+@app.post("/api/predict")
 def predict(req: PredictRequest, username: str = Depends(get_current_user)):
     global model, scaler, feature_names, model_metadata
 
