@@ -44,7 +44,7 @@ if IS_VERCEL:
     BASE_DIR = Path("/tmp/app")
     if not BASE_DIR.exists():
         BASE_DIR.mkdir(parents=True, exist_ok=True)
-        for d in ["data", "models", "reports"]:
+        for d in ["src", "data", "models", "reports"]:
             src_dir = _REAL_BASE / d
             dst_dir = BASE_DIR / d
             if src_dir.exists():

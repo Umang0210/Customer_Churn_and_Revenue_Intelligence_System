@@ -25,7 +25,7 @@ if IS_VERCEL:
     BASE_DIR = Path("/tmp/app")
     if not BASE_DIR.exists():
         BASE_DIR.mkdir(parents=True, exist_ok=True)
-        for d in ["data", "models", "reports"]:
+        for d in ["src", "data", "models", "reports"]:
             src_dir = _REAL_BASE / d
             dst_dir = BASE_DIR / d
             if src_dir.exists():
@@ -63,7 +63,7 @@ MIN_ROWS            = 10
 # STATUS MANAGEMENT
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def _write_status(status: str, message: str, step: int = 0,
-                  total_steps: int = 8, details: dict = None):
+                  total_steps: int = 8, details: dict = None, run_id: str = None):
     payload = {
         "status":      status,     # idle | running | success | failed
         "message":     message,
@@ -71,6 +71,7 @@ def _write_status(status: str, message: str, step: int = 0,
         "total_steps": total_steps,
         "progress_pct": round(step / total_steps * 100) if total_steps else 0,
         "updated_at":  datetime.utcnow().isoformat(),
+        "run_id": run_id,
         "details":     details or {},
     }
     STATUS_FILE.write_text(json.dumps(payload, indent=2))
@@ -168,7 +169,7 @@ def validate_upload(df: pd.DataFrame, filename: str) -> dict:
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # BACKGROUND PIPELINE RUNNER
 # â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-def _run_pipeline_background(filepath: str, filename: str):
+def _run_pipeline_background(filepath: str, filename: str, run_id: str):
     """
     Runs in a background thread after a successful upload.
     Updates status file at each step for the frontend to poll.
@@ -207,18 +208,19 @@ def _run_pipeline_background(filepath: str, filename: str):
         # Monkey-patch run_step to update status
         original_run_step = rp.run_step
         def patched_run_step(step_num, step_name, module_name):
-            _write_status("running", f"Running: {step_name}", step=step_num - 1)
+            _write_status("running", f"Running: {step_name}", step=step_num - 1, run_id=run_id)
             result = original_run_step(step_num, step_name, module_name)
             _write_status(
                 "running",
                 f"Completed: {step_name}",
                 step=step_num,
                 details={"last_step": result},
+                run_id=run_id
             )
             return result
         rp.run_step = patched_run_step
 
-        summary = rp.run_pipeline(raise_on_failure=False)
+        summary = rp.run_pipeline(raise_on_failure=False, run_id=run_id)
 
         final_status = "success" if summary["status"] == "success" else "failed"
         _write_status(
@@ -347,6 +349,35 @@ async def upload_dataset(
         "status_url": "/api/upload/status",
     }
 
+
+@router.get("/logs/{run_id}")
+async def get_logs(run_id: str):
+    history = []
+    if HISTORY_FILE.exists():
+        try:
+            history = json.loads(HISTORY_FILE.read_text())
+        except:
+            pass
+            
+    run_meta = next((r for r in history if r.get("run_id") == run_id), None)
+    
+    if IS_VERCEL:
+        log_path = Path(f"/tmp/app/logs/{run_id}.log")
+    else:
+        log_path = Path(__file__).resolve().parent / "logs" / f"{run_id}.log"
+        
+    log_content = ""
+    if log_path.exists():
+        log_content = log_path.read_text(encoding="utf-8")
+        
+    if not run_meta and not log_path.exists():
+        return {"error": "Pipeline run not found."}
+        
+    return {
+        "run_id": run_id,
+        "metadata": run_meta,
+        "logs": log_content
+    }
 
 @router.get("/status")
 async def get_pipeline_status():

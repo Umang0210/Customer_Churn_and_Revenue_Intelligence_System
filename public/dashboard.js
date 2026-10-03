@@ -98,9 +98,9 @@ function renderKPIs() {
     const m = DATA.model.evaluation;
 
     const cards = [
-        { label: 'Total Customers', value: fmt(k.total_customers), sub: `${DATA.dataset_overview.columns} features analyzed`, cls: 'neutral', color: 'indigo', icon: '👥' },
+        { label: 'Total Customers', value: fmt(k.total_customers), sub: `${DATA.dataset_overview.columns} features analyzed`, cls: 'neutral', color: 'indigo', icon: '<i data-lucide="users" class="icon-sm"></i>' },
         { label: 'Churn Rate', value: `${ch.churn_rate}%`, sub: `${fmt(ch.churned)} churned of ${fmt(ch.total)}`, cls: 'negative', color: 'rose', icon: '📉' },
-        { label: 'Revenue at Risk', value: `$${compact(k.revenue_at_risk)}`, sub: `${k.revenue_at_risk_pct}% of total revenue`, cls: 'negative', color: 'amber', icon: '💰' },
+        { label: 'Revenue at Risk', value: `$${compact(k.revenue_at_risk)}`, sub: `${k.revenue_at_risk_pct}% of total revenue`, cls: 'negative', color: 'amber', icon: '<i data-lucide="dollar-sign" class="icon-sm"></i>' },
         { label: 'Model ROC-AUC', value: m.roc_auc.toFixed(4), sub: `${DATA.model.selected_model.replace('_', ' ')} — ${DATA.model.model_version}`, cls: 'positive', color: 'emerald', icon: '🎯' },
         { label: 'High-Risk Customers', value: `${k.high_risk_pct}%`, sub: `${fmt(DATA.model.risk_distribution.HIGH || 0)} customers > 70% prob`, cls: 'negative', color: 'rose', icon: '🔥' },
         { label: 'Total Revenue', value: `$${compact(k.total_revenue)}`, sub: `Avg $${DATA.revenue_analysis.avg_monthly_charges}/mo per customer`, cls: 'neutral', color: 'cyan', icon: '💎' },
@@ -149,12 +149,12 @@ function renderPipeline() {
     const flow = document.getElementById('pipelineFlow');
     if (!flow) return;
     const steps = [
-        { icon: '📁', name: 'Raw Data', file: 'data/raw/', bg: 'rgba(139,92,246,0.12)' },
+        { icon: '<i data-lucide="folder-up" class="icon-sm"></i>', name: 'Raw Data', file: 'data/raw/', bg: 'rgba(139,92,246,0.12)' },
         { icon: '📥', name: 'Ingestion', file: 'ingestion.py', bg: 'rgba(6,182,212,0.12)' },
         { icon: '🧹', name: 'Cleaning', file: 'cleaning.py', bg: 'rgba(16,185,129,0.12)' },
-        { icon: '⚙️', name: 'Features', file: 'features.py', bg: 'rgba(245,158,11,0.12)' },
-        { icon: '🤖', name: 'Training', file: 'train.py', bg: 'rgba(99,102,241,0.12)' },
-        { icon: '📊', name: 'Evaluation', file: 'evaluate.py', bg: 'rgba(16,185,129,0.12)' },
+        { icon: '<i data-lucide="settings" class="icon-sm"></i>️', name: 'Features', file: 'features.py', bg: 'rgba(245,158,11,0.12)' },
+        { icon: '<i data-lucide="bot" class="icon-sm"></i>', name: 'Training', file: 'train.py', bg: 'rgba(99,102,241,0.12)' },
+        { icon: '<i data-lucide="bar-chart-2" class="icon-sm"></i>', name: 'Evaluation', file: 'evaluate.py', bg: 'rgba(16,185,129,0.12)' },
         { icon: '💡', name: 'Insights', file: 'business_insights.py', bg: 'rgba(244,63,94,0.12)' },
         { icon: '🌐', name: 'Dashboard', file: 'index.html', bg: 'rgba(14,165,233,0.12)' },
     ];
@@ -293,7 +293,7 @@ function renderThresholds() {
     if (tbody) {
         tbody.innerHTML = thresholds.map(t => {
             const hl = t.threshold === 0.5 ? ' style="background:rgba(99,102,241,0.06);"' : '';
-            return `<tr${hl}><td>${t.threshold.toFixed(1)}${t.threshold === 0.5 ? ' ★' : ''}</td><td>${(t.precision * 100).toFixed(2)}%</td><td>${(t.recall * 100).toFixed(2)}%</td><td>${(t.f1_score * 100).toFixed(2)}%</td></tr>`;
+            return `<tr${hl}><td>${t.threshold.toFixed(1)}${t.threshold === 0.5 ? ' <i data-lucide="star" class="icon-sm"></i>' : ''}</td><td>${(t.precision * 100).toFixed(2)}%</td><td>${(t.recall * 100).toFixed(2)}%</td><td>${(t.f1_score * 100).toFixed(2)}%</td></tr>`;
         }).join('');
     }
 }
@@ -539,4 +539,121 @@ function compact(n) {
     if (n >= 1e6) return (n / 1e6).toFixed(2) + 'M';
     if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
     return n.toFixed(2);
+}
+
+
+// --- LOGS MODAL FUNCTIONS ---
+function showLogs() {
+  document.getElementById("logsModal").style.display = "block";
+  fetchLogs();
+}
+
+async function fetchLogs() {
+  const content = document.getElementById("logsContent");
+  content.textContent = "Loading logs...";
+  try {
+    const response = await fetch(API_BASE + "/api/upload/logs");
+    if (!response.ok) {
+        content.textContent = "Failed to fetch logs. Error " + response.status;
+        return;
+    }
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        content.textContent = data.message || JSON.stringify(data);
+    } else {
+        const text = await response.text();
+        content.textContent = text || "No logs available.";
+    }
+  } catch(e) {
+    content.textContent = "Error fetching logs: " + e.message;
+  }
+}
+
+// ========================
+// LOGS PAGE LOGIC
+// ========================
+let currentLogRunId = null;
+
+function viewCurrentLogs() {
+    if (window.currentPipelineRunId) {
+        // Change URL without reloading
+        window.history.pushState({}, '', '/logs/' + window.currentPipelineRunId);
+        navigateTo('logs');
+        loadLogsForRun(window.currentPipelineRunId);
+    } else {
+        navigateTo('logs');
+        document.getElementById('logsError').style.display = 'block';
+        document.getElementById('logsContentWrapper').style.display = 'none';
+        document.getElementById('logsErrorText').textContent = "No pipeline run is currently active in this session.";
+    }
+}
+
+async function loadLogsForRun(runId) {
+    if (!runId) return;
+    currentLogRunId = runId;
+    
+    document.getElementById('logsLoading').style.display = 'block';
+    document.getElementById('logsContentWrapper').style.display = 'none';
+    document.getElementById('logsError').style.display = 'none';
+
+    try {
+        const res = await fetch(API_BASE + '/api/logs/' + runId);
+        if (!res.ok) throw new Error('API returned ' + res.status);
+        const data = await res.json();
+        
+        if (data.error) throw new Error(data.error);
+
+        document.getElementById('logsLoading').style.display = 'none';
+        document.getElementById('logsContentWrapper').style.display = 'block';
+
+        // Render Summary
+        document.getElementById('logRunId').textContent = data.run_id || runId;
+        const meta = data.metadata || {};
+        document.getElementById('logFile').textContent = meta.filename || 'Unknown';
+        document.getElementById('logStarted').textContent = meta.uploaded_at ? new Date(meta.uploaded_at).toLocaleString() : 'Unknown';
+        document.getElementById('logDuration').textContent = meta.duration ? meta.duration + 's' : '0s';
+        
+        const statusEl = document.getElementById('logStatus');
+        statusEl.textContent = (meta.status || 'Unknown').toUpperCase();
+        statusEl.style.color = meta.status === 'success' ? 'var(--emerald)' : (meta.status === 'failed' ? 'var(--rose)' : 'var(--amber)');
+
+        // Render Steps
+        const stepsEl = document.getElementById('logStepsList');
+        if (meta.steps && meta.steps.length > 0) {
+            stepsEl.innerHTML = meta.steps.map((s, i) => {
+                let icon = '<i data-lucide="circle" class="icon-sm text-amber"></i>';
+                let color = 'var(--tx2)';
+                if (s.status === 'success') {
+                    icon = '<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i>';
+                    color = 'var(--emerald)';
+                } else if (s.status === 'failed') {
+                    icon = '<i data-lucide="x-circle" class="icon-sm text-rose"></i>';
+                    color = 'var(--rose)';
+                }
+                
+                return `
+                <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        ${icon}
+                        <span style="font-size:0.9rem; color:var(--tx1);">Step ${i+1} — ${s.name || 'Unknown'}</span>
+                    </div>
+                    <div style="font-size:0.75rem; color:${color};">${s.status ? s.status.toUpperCase() : 'PENDING'}</div>
+                </div>
+                `;
+            }).join('');
+        } else {
+            stepsEl.innerHTML = '<p style="color:var(--tx3); font-size:0.85rem;">No step data recorded.</p>';
+        }
+
+        // Render Raw Logs
+        document.getElementById('logRawText').textContent = data.logs || "No logs available for this run.";
+        
+        if (window.lucide) window.lucide.createIcons();
+
+    } catch (e) {
+        document.getElementById('logsLoading').style.display = 'none';
+        document.getElementById('logsError').style.display = 'block';
+        document.getElementById('logsErrorText').textContent = e.message;
+    }
 }

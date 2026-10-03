@@ -7,6 +7,14 @@
     {
       "source": "/predict",
       "destination": "/api/predict"
+    },
+    {
+      "source": "/logs",
+      "destination": "/"
+    },
+    {
+      "source": "/logs/:path*",
+      "destination": "/"
     }
   ]
 }

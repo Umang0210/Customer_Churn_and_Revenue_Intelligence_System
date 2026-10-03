@@ -415,6 +415,8 @@ body::before {
 .animate-in { animation:fadeup .4s both; }
 @keyframes fadeup { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
   </style>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>.icon-sm { width: 1.1em; height: 1.1em; vertical-align: -0.125em; display: inline-block; } .text-emerald { color: var(--emerald); } .text-rose { color: var(--rose); } .text-amber { color: var(--amber); }</style>
 </head>
 <body>
 
@@ -426,25 +428,29 @@ body::before {
 <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <nav class="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon">📊</div>
+    <div class="brand-icon"><i data-lucide="bar-chart-2" class="icon-sm"></i></div>
     <div class="brand-title">Churn Intelligence</div>
     <div class="brand-subtitle">Revenue Optimization System</div>
   </div>
   <div class="sidebar-nav">
     <div class="nav-label">Dashboard</div>
     <button class="nav-item active" data-page="overview">
-      <span class="nav-icon">ðŸ </span><span class="nav-text">Overview</span>
+      <span class="nav-icon"><i data-lucide="home" class="icon-sm"></i></span><span class="nav-text">Overview</span>
     </button>
     <button class="nav-item" data-page="model">
-      <span class="nav-icon">🤖</span><span class="nav-text">Model Performance</span>
+      <span class="nav-icon"><i data-lucide="bot" class="icon-sm"></i></span><span class="nav-text">Model Performance</span>
     </button>
     <button class="nav-item" data-page="analytics">
-      <span class="nav-icon">📈</span><span class="nav-text">Analytics</span>
+      <span class="nav-icon"><i data-lucide="line-chart" class="icon-sm"></i></span><span class="nav-text">Analytics</span>
     </button>
     <button class="nav-item" data-page="customers">
-      <span class="nav-icon">👥</span><span class="nav-text">Customers</span>
+      <span class="nav-icon"><i data-lucide="users" class="icon-sm"></i></span><span class="nav-text">Customers</span>
     </button>
     <div class="nav-label">System</div>
+      
+      <button class="nav-item" data-page="logs">
+        <span class="nav-icon"><i data-lucide="file-text" class="icon-sm"></i></span><span class="nav-text">Logs</span>
+      </button>
     <button class="nav-item" data-page="upload">
       <span class="nav-icon">📂</span><span class="nav-text">Upload Data</span>
     </button>
@@ -495,7 +501,7 @@ body::before {
       </section>
       <section class="section">
         <div class="section-header">
-          <div class="section-icon indigo">⚙</div>
+          <div class="section-icon indigo"><i data-lucide="settings" class="icon-sm"></i></div>
           <div>
             <h2 class="section-title">ML Pipeline Architecture</h2>
             <p class="section-subtitle">End-to-end data processing and model workflow</p>
@@ -516,7 +522,7 @@ body::before {
       </div>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon indigo">🤖</div>
+          <div class="section-icon indigo"><i data-lucide="bot" class="icon-sm"></i></div>
           <div><h2 class="section-title">Model Comparison</h2></div>
         </div>
         <div class="model-grid" id="modelCards"></div>
@@ -537,7 +543,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon amber">📊</div>
+          <div class="section-icon amber"><i data-lucide="bar-chart-2" class="icon-sm"></i></div>
           <div><h2 class="section-title">Threshold Analysis</h2><p class="section-subtitle">Precision, Recall, F1 at different decision thresholds</p></div>
         </div>
         <div class="chart-grid">
@@ -580,7 +586,7 @@ body::before {
       </div>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon amber">💰</div>
+          <div class="section-icon amber"><i data-lucide="dollar-sign" class="icon-sm"></i></div>
           <div><h2 class="section-title">Revenue Impact</h2></div>
         </div>
         <div class="chart-grid">
@@ -596,7 +602,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon indigo">📊</div>
+          <div class="section-icon indigo"><i data-lucide="bar-chart-2" class="icon-sm"></i></div>
           <div><h2 class="section-title">Churn by Segment</h2></div>
         </div>
         <div class="chart-grid">
@@ -684,7 +690,7 @@ body::before {
             <div class="chart-title" style="margin-bottom:18px">Upload Customer Data</div>
             <div class="drop-zone" id="dropZone">
               <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" />
-              <div class="drop-icon">ðŸ“</div>
+              <div class="drop-icon">“</div>
               <h3>Drag & drop your file here</h3>
               <p>or click to browse from your computer</p>
               <div class="format-badges">
@@ -695,7 +701,7 @@ body::before {
               </div>
             </div>
             <div class="file-preview" id="filePreview">
-              <div class="file-icon-big" id="previewIcon">📄</div>
+              <div class="file-icon-big" id="previewIcon"><i data-lucide="file-text" class="icon-sm"></i></div>
               <div class="file-info">
                 <div class="file-name" id="previewName">—</div>
                 <div class="file-meta" id="previewMeta">—</div>
@@ -705,7 +711,7 @@ body::before {
             <div class="val-box" id="valBox"></div>
             <div class="upload-actions">
               <button class="btn btn-primary" id="uploadBtn" disabled onclick="uploadFile()">
-                🚀 Upload & Run Pipeline
+                <i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline
               </button>
               <button class="btn btn-outline" onclick="downloadTemplate()">⬇ Download Template</button>
             </div>
@@ -713,7 +719,12 @@ body::before {
 
           <!-- Pipeline Progress -->
           <div class="card pipeline-progress" id="pipelineProgress">
-            <div class="chart-title" style="margin-bottom:14px">⚙ Pipeline Progress</div>
+            <div class="chart-title" style="margin-bottom:14px; display:flex; justify-content:space-between; align-items:center">
+        <span><i data-lucide="rocket" class="icon-sm"></i> Pipeline Progress</span>
+        <button class="btn btn-outline" style="padding:4px 10px; font-size:0.75rem; border-color:var(--border)" onclick="showLogs()">
+            <i data-lucide="file-text" class="icon-sm"></i> View Logs
+        </button>
+    </div>
             <div class="prog-bar-wrap">
               <div class="prog-bar-fill" id="progBar" style="width:0%"></div>
             </div>
@@ -767,7 +778,62 @@ body::before {
     </div>
   </div>
 
-</main>
+
+    <!-- 📄 LOGS PAGE 📄 -->
+    <div class="page" id="page-logs">
+      <div class="page-container">
+        <div class="page-header">
+          <div class="page-breadcrumb"><span>System</span> <span>/</span> Logs</div>
+          <h1 class="page-title">Pipeline Logs</h1>
+          <p class="page-subtitle">Execution details and step-by-step logs</p>
+        </div>
+        
+        <div id="logsLoading" style="text-align:center; padding:40px; color:var(--tx2); display:none;">
+            <div class="loading-spinner" style="margin: 0 auto 16px;"></div>
+            Loading pipeline logs...
+        </div>
+
+        <div id="logsContentWrapper" style="display:none;">
+            <!-- Summary Card -->
+            <div class="card" style="margin-bottom: 24px;">
+                <h3 style="margin-top:0; margin-bottom:16px; font-size:1.1rem; color:var(--tx1);">Execution Summary</h3>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:16px;">
+                    <div><div style="color:var(--tx3); font-size:0.75rem; text-transform:uppercase;">Run ID</div><div id="logRunId" style="font-weight:600; color:var(--tx1); font-family:monospace;">-</div></div>
+                    <div><div style="color:var(--tx3); font-size:0.75rem; text-transform:uppercase;">File</div><div id="logFile" style="font-weight:600; color:var(--tx1);">-_</div></div>
+                    <div><div style="color:var(--tx3); font-size:0.75rem; text-transform:uppercase;">Started</div><div id="logStarted" style="font-weight:600; color:var(--tx1);">-_</div></div>
+                    <div><div style="color:var(--tx3); font-size:0.75rem; text-transform:uppercase;">Duration</div><div id="logDuration" style="font-weight:600; color:var(--tx1);">-_</div></div>
+                    <div><div style="color:var(--tx3); font-size:0.75rem; text-transform:uppercase;">Status</div><div id="logStatus" style="font-weight:600;">-_</div></div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 2fr; gap: 24px;">
+                <!-- Pipeline Steps -->
+                <div class="card">
+                    <h3 style="margin-top:0; margin-bottom:16px; font-size:1.1rem; color:var(--tx1);">Pipeline Steps</h3>
+                    <div id="logStepsList" style="display:flex; flex-direction:column; gap:12px;"></div>
+                </div>
+
+                <!-- Raw Logs -->
+                <div class="card" style="display:flex; flex-direction:column;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                        <h3 style="margin:0; font-size:1.1rem; color:var(--tx1);">Execution Details</h3>
+                        <button class="btn btn-outline" style="padding:4px 10px; font-size:0.75rem;" onclick="loadLogsForRun(currentLogRunId)"><i data-lucide="refresh-cw" class="icon-sm"></i> Refresh</button>
+                    </div>
+                    <div style="flex:1; overflow-y:auto; background:#1e1e1e; padding:16px; border-radius:8px; border:1px solid var(--border); max-height:600px;">
+                        <pre id="logRawText" style="margin:0; font-family:monospace; font-size:0.8rem; color:#d4d4d4; white-space:pre-wrap; word-wrap:break-word;">No logs available.</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="logsError" class="card" style="display:none; border-left:4px solid var(--rose);">
+            <h3 style="margin-top:0; color:var(--rose);">Error</h3>
+            <p id="logsErrorText" style="color:var(--tx2);">Unable to load pipeline logs.</p>
+        </div>
+      </div>
+    </div>
+    
+  </main>
 
 <div id="toast"></div>
 
@@ -926,9 +992,9 @@ function renderOverview() {
   const grid = document.getElementById('kpiGrid');
   if (grid) {
     const cards = [
-      { label:'Total Customers', value:fmt(k.total_customers), sub:`${DATA.dataset_overview.columns} features`, cls:'neutral', color:'indigo', icon:'👥' },
+      { label:'Total Customers', value:fmt(k.total_customers), sub:`${DATA.dataset_overview.columns} features`, cls:'neutral', color:'indigo', icon:'<i data-lucide="users" class="icon-sm"></i>' },
       { label:'Churn Rate', value:`${ch.churn_rate}%`, sub:`${fmt(ch.churned)} churned`, cls:'negative', color:'rose', icon:'📉', live:'churn_rate' },
-      { label:'Revenue at Risk', value:`$${compact(k.revenue_at_risk)}`, sub:`${k.revenue_at_risk_pct}% of total`, cls:'negative', color:'amber', icon:'💰', live:'rev_at_risk' },
+      { label:'Revenue at Risk', value:`$${compact(k.revenue_at_risk)}`, sub:`${k.revenue_at_risk_pct}% of total`, cls:'negative', color:'amber', icon:'<i data-lucide="dollar-sign" class="icon-sm"></i>', live:'rev_at_risk' },
       { label:'Model ROC-AUC', value:m.roc_auc.toFixed(4), sub:`${DATA.model.selected_model.replace(/_/g,' ')} — ${DATA.model.model_version}`, cls:'positive', color:'emerald', icon:'🎯' },
       { label:'High-Risk Customers', value:`${k.high_risk_pct}%`, sub:`${fmt(DATA.model.risk_distribution.HIGH||0)} > 70% prob`, cls:'negative', color:'rose', icon:'🔥', live:'high_risk' },
       { label:'Total Revenue', value:`$${compact(k.total_revenue)}`, sub:`Avg $${DATA.revenue_analysis.avg_monthly_charges}/mo`, cls:'neutral', color:'cyan', icon:'💎' },
@@ -966,14 +1032,14 @@ function renderOverview() {
   const flow = document.getElementById('pipelineFlow');
   if (flow) {
     const steps = [
-      {icon:'ðŸ“',name:'Raw Data',file:'data/raw/',bg:'rgba(139,92,246,.12)'},
+      {icon:'“',name:'Raw Data',file:'data/raw/',bg:'rgba(139,92,246,.12)'},
       {icon:'📥',name:'Ingestion',file:'ingestion.py',bg:'rgba(6,182,212,.12)'},
       {icon:'🧹',name:'Cleaning',file:'cleaning.py',bg:'rgba(16,185,129,.12)'},
-      {icon:'⚙',name:'Features',file:'features.py',bg:'rgba(245,158,11,.12)'},
-      {icon:'🤖',name:'Training',file:'train.py',bg:'rgba(99,102,241,.12)'},
-      {icon:'📊',name:'Evaluate',file:'evaluate.py',bg:'rgba(16,185,129,.12)'},
+      {icon:'<i data-lucide="settings" class="icon-sm"></i>',name:'Features',file:'features.py',bg:'rgba(245,158,11,.12)'},
+      {icon:'<i data-lucide="bot" class="icon-sm"></i>',name:'Training',file:'train.py',bg:'rgba(99,102,241,.12)'},
+      {icon:'<i data-lucide="bar-chart-2" class="icon-sm"></i>',name:'Evaluate',file:'evaluate.py',bg:'rgba(16,185,129,.12)'},
       {icon:'💡',name:'Insights',file:'business_insights.py',bg:'rgba(244,63,94,.12)'},
-      {icon:'ðŸŒ',name:'Dashboard',file:'index.html',bg:'rgba(14,165,233,.12)'},
+      {icon:'Œ',name:'Dashboard',file:'index.html',bg:'rgba(14,165,233,.12)'},
     ];
     flow.innerHTML = steps.map((s,i)=>`
       ${i>0?'<div class="pipeline-arrow">→</div>':''}
@@ -1054,7 +1120,7 @@ function renderModel() {
   }
   // Threshold table
   const tbody = document.querySelector('#thresholdTable tbody');
-  if (tbody) tbody.innerHTML = th.map(t=>`<tr${t.threshold===.5?' style="background:rgba(99,102,241,.06)"':''}><td>${t.threshold.toFixed(1)}${t.threshold===.5?' ★':''}</td><td>${(t.precision*100).toFixed(2)}%</td><td>${(t.recall*100).toFixed(2)}%</td><td>${(t.f1_score*100).toFixed(2)}%</td></tr>`).join('');
+  if (tbody) tbody.innerHTML = th.map(t=>`<tr${t.threshold===.5?' style="background:rgba(99,102,241,.06)"':''}><td>${t.threshold.toFixed(1)}${t.threshold===.5?' <i data-lucide="star" class="icon-sm"></i>':''}</td><td>${(t.precision*100).toFixed(2)}%</td><td>${(t.recall*100).toFixed(2)}%</td><td>${(t.f1_score*100).toFixed(2)}%</td></tr>`).join('');
 
   // Features
   document.getElementById('featureCount').textContent = DATA.model.num_features;
@@ -1221,7 +1287,7 @@ function handleFile(file) {
   selectedFile = file;
   const preview = document.getElementById('filePreview');
   preview.classList.add('show');
-  document.getElementById('previewIcon').textContent = ext==='csv'?'📄':'📊';
+  document.getElementById('previewIcon').textContent = ext==='csv'?'<i data-lucide="file-text" class="icon-sm"></i>':'<i data-lucide="bar-chart-2" class="icon-sm"></i>';
   document.getElementById('previewName').textContent = file.name;
   document.getElementById('previewMeta').textContent = `${(file.size/1024).toFixed(1)} KB · ${ext.toUpperCase()}`;
   document.getElementById('uploadBtn').disabled = false;
@@ -1258,11 +1324,12 @@ async function uploadFile() {
   if (!response) {
     showVal('error', 'Unable to connect to the API.');
     btn.disabled = false;
-    btn.innerHTML = '🚀 Upload & Run Pipeline';
+    btn.innerHTML = '<i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline';
     return;
   }
 
   const data = await response.json().catch(() => ({}));
+    if (data && data.run_id) window.currentPipelineRunId = data.run_id;
   
   if (!response.ok) {
     if (response.status === 404) {
@@ -1280,12 +1347,12 @@ async function uploadFile() {
       showVal('error', data.detail ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Upload failed.');
     }
     btn.disabled = false;
-    btn.innerHTML = '🚀 Upload & Run Pipeline';
+    btn.innerHTML = '<i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline';
     return;
   }
 
-  showVal('ok', `✓ ${data.rows?.toLocaleString()} rows uploaded. Pipeline starting…`);
-  btn.innerHTML = '✓ Uploaded — Pipeline Running';
+  showVal('ok', `<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> ${data.rows?.toLocaleString()} rows uploaded. Pipeline starting…`);
+  btn.innerHTML = '<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> Uploaded — Pipeline Running';
   showToast('Pipeline started! Dashboard will update when complete.');
   document.getElementById('pipelineProgress').classList.add('show');
   startPolling();
@@ -1294,6 +1361,7 @@ async function uploadFile() {
 async function checkPipelineStatus() {
   try {
     const data = await fetch(API_BASE + '/api/upload/status', {signal:AbortSignal.timeout(2000)}).then(r=>r.json());
+      if (data && data.run_id) window.currentPipelineRunId = data.run_id;
     if (data.status === 'running') {
       document.getElementById('pipelineProgress').classList.add('show');
       updateProgress(data);
@@ -1307,6 +1375,7 @@ function startPolling() {
   pollInterval = setInterval(async () => {
     try {
       const data = await fetch(API_BASE + '/api/upload/status', {signal:AbortSignal.timeout(3000)}).then(r=>r.json());
+        if (data && data.run_id) window.currentPipelineRunId = data.run_id;
       updateProgress(data);
       if (data.status === 'success' || data.status === 'failed') {
         clearInterval(pollInterval); pollInterval = null;
@@ -1314,7 +1383,7 @@ function startPolling() {
         if (data.status === 'success') {
           showToast('✅ Pipeline complete! Refresh the page to see updated data.');
           document.getElementById('uploadBtn').disabled = false;
-          document.getElementById('uploadBtn').innerHTML = '🚀 Upload & Run Pipeline';
+          document.getElementById('uploadBtn').innerHTML = '<i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline';
         }
       }
     } catch(e) {}
@@ -1329,7 +1398,14 @@ function updateProgress(data) {
   document.getElementById('progText').textContent = data.message || '';
   renderStepCards(step, data.status);
   const msg = document.getElementById('statusMsg');
-  msg.className = `status-msg ${data.status==='running'?'running':data.status==='success'?'success':'failed'}`;
+    msg.className = `status-msg ${data.status==='running'?'running':data.status==='success'?'success':'failed'}`;
+    
+    // If progress is 100% but status is failed
+    if (data.status === 'failed' && pct === 100) {
+        document.getElementById('progBar').style.background = 'var(--rose)';
+    } else {
+        document.getElementById('progBar').style.background = 'var(--gi)';
+    }
   const spin = data.status==='running'?'<span class="spin-sm"></span>':'';
   msg.innerHTML = spin + ' ' + (data.message||'');
 }
@@ -1340,11 +1416,11 @@ function renderStepCards(currentStep, pipelineStatus) {
   for (let i=1; i<=8; i++) {
     const div = document.createElement('div');
     let state = 'pending', icon = '○';
-    if (i < currentStep) { state='success'; icon='✓'; }
+    if (i < currentStep) { state='success'; icon='<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i>'; }
     else if (i === currentStep) {
       if (pipelineStatus==='running') { state='running'; icon='⟳'; }
-      else if (pipelineStatus==='success') { state='success'; icon='✓'; }
-      else if (pipelineStatus==='failed') { state='failed'; icon='✗'; }
+      else if (pipelineStatus==='success') { state='success'; icon='<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i>'; }
+      else if (pipelineStatus==='failed') { state='failed'; icon='<i data-lucide="x-circle" class="icon-sm text-rose"></i>'; }
     }
     div.className = `step-card ${state}`;
     div.innerHTML = `<div class="snum">Step ${i}</div><div class="sname">${STEP_NAMES[i]}</div><span class="sico">${icon}</span>`;
@@ -1430,6 +1506,23 @@ function initScroll() {
   document.querySelectorAll('.section').forEach(s=>obs.observe(s));
 }
 </script>
+  <script>lucide.createIcons();</script>
+
+<!-- LOGS MODAL -->
+<div id="logsModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);">
+  <div class="modal-content card" style="margin:5% auto; width:80%; max-width:800px; max-height:80vh; display:flex; flex-direction:column; padding:24px; position:relative;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="margin:0; font-size:1.2rem; color:var(--tx1)"><i data-lucide="file-text" class="icon-sm"></i> Pipeline Logs</h3>
+      <button onclick="document.getElementById('logsModal').style.display='none'" style="background:transparent; border:none; color:var(--tx2); cursor:pointer; font-size:1.5rem">&times;</button>
+    </div>
+    <div style="flex:1; overflow-y:auto; background:#1e1e1e; padding:16px; border-radius:8px; border:1px solid var(--border); text-align:left;">
+      <pre id="logsContent" style="margin:0; font-family:monospace; font-size:0.85rem; color:#d4d4d4; white-space:pre-wrap; word-wrap:break-word;">Loading logs...</pre>
+    </div>
+    <div style="margin-top:16px; display:flex; justify-content:flex-end;">
+      <button class="btn" onclick="fetchLogs()"><i data-lucide="refresh-cw" class="icon-sm"></i> Refresh Logs</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
 
