@@ -8,9 +8,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    DESIGN TOKENS
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 :root {
   --bg:         #06080f;
   --bg2:        #0d1117;
@@ -59,9 +59,9 @@ body::before {
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:rgba(99,102,241,.3); border-radius:3px; }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SIDEBAR
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .sidebar {
   position:fixed; top:0; left:0; width:var(--sidebar-w);
   height:100vh; background:var(--sidebar);
@@ -111,9 +111,9 @@ body::before {
   box-shadow:0 0 6px rgba(16,185,129,.5);
 }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MAIN CONTENT
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .main-content {
   margin-left:var(--sidebar-w); min-height:100vh;
   position:relative; z-index:1;
@@ -122,9 +122,9 @@ body::before {
 .page.active { display:block; }
 .page-container { max-width:1280px; margin:0 auto; padding:32px 32px 64px; }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    PAGE HEADER
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .page-header { margin-bottom:32px; }
 .page-breadcrumb { font-size:.75rem; color:var(--tx3); margin-bottom:8px; }
 .page-breadcrumb a { color:var(--tx2); text-decoration:none; }
@@ -133,9 +133,9 @@ body::before {
 .page-subtitle { font-size:.9rem; color:var(--tx2); margin-top:6px; }
 .page-meta { font-size:.75rem; color:var(--tx3); margin-top:6px; }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SECTION
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .section { margin-bottom:40px; opacity:0; transform:translateY(16px); transition:opacity .5s,transform .5s; }
 .section.visible { opacity:1; transform:none; }
 .section-header { display:flex; align-items:flex-start; gap:14px; margin-bottom:20px; }
@@ -151,9 +151,9 @@ body::before {
 .section-title { font-size:1.1rem; font-weight:700; color:var(--tx1); }
 .section-subtitle { font-size:.82rem; color:var(--tx2); margin-top:3px; }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    CARDS
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .card {
   background:var(--bg3); border:1px solid var(--border);
   border-radius:var(--r-lg); padding:24px;
@@ -196,9 +196,9 @@ body::before {
 .chart-wrapper { height:220px; position:relative; }
 .chart-wrapper canvas { max-height:220px; }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    PIPELINE
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .pipeline-flow { display:flex; align-items:center; flex-wrap:wrap; gap:4px; padding:8px 0; }
 .pipeline-step { display:flex; flex-direction:column; align-items:center; gap:6px; padding:12px 14px; min-width:90px; }
 .step-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
@@ -206,9 +206,9 @@ body::before {
 .step-file { font-size:.65rem; color:var(--tx3); font-family:'JetBrains Mono',monospace; }
 .pipeline-arrow { color:var(--tx3); font-size:1.1rem; padding:0 2px; }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    MODEL PAGE
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .model-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; margin-bottom:24px; }
 .model-card {
   background:var(--bg3); border:1px solid var(--border);
@@ -263,9 +263,9 @@ body::before {
 .risk-badge.MEDIUM { background:rgba(245,158,11,.15); color:#fbbf24; border:1px solid rgba(245,158,11,.2); }
 .risk-badge.LOW    { background:rgba(16,185,129,.15); color:#34d399; border:1px solid rgba(16,185,129,.2); }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    CUSTOMERS PAGE
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .table-wrap { overflow-x:auto; border-radius:var(--r-lg); }
 .overview-stats { display:flex; flex-wrap:wrap; gap:16px; margin-bottom:20px; }
 .overview-stat { background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:var(--r-md); padding:14px 20px; }
@@ -277,9 +277,9 @@ body::before {
 .column-name { font-size:.78rem; color:var(--tx1); flex:1; }
 .column-unique { font-size:.68rem; color:var(--tx3); }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    UPLOAD PAGE
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .upload-layout { display:grid; grid-template-columns:1fr 380px; gap:24px; }
 @media(max-width:900px) { .upload-layout { grid-template-columns:1fr; } }
 
@@ -374,9 +374,9 @@ body::before {
 .history-table td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.03); color:var(--tx1); }
 .history-table tr:last-child td { border-bottom:none; }
 
-/* ═══════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    LOADING OVERLAY
-═══════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .loading-overlay {
   position:fixed; inset:0; background:var(--bg);
   display:flex; flex-direction:column; align-items:center;
@@ -423,44 +423,44 @@ body::before {
   <div class="loading-text">Loading Dashboard...</div>
 </div>
 
-<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <nav class="sidebar">
   <div class="sidebar-brand">
-    <div class="brand-icon">📊</div>
+    <div class="brand-icon">ðŸ“Š</div>
     <div class="brand-title">Churn Intelligence</div>
     <div class="brand-subtitle">Revenue Optimization System</div>
   </div>
   <div class="sidebar-nav">
     <div class="nav-label">Dashboard</div>
     <button class="nav-item active" data-page="overview">
-      <span class="nav-icon">🏠</span><span class="nav-text">Overview</span>
+      <span class="nav-icon">ðŸ </span><span class="nav-text">Overview</span>
     </button>
     <button class="nav-item" data-page="model">
-      <span class="nav-icon">🤖</span><span class="nav-text">Model Performance</span>
+      <span class="nav-icon">ðŸ¤–</span><span class="nav-text">Model Performance</span>
     </button>
     <button class="nav-item" data-page="analytics">
-      <span class="nav-icon">📈</span><span class="nav-text">Analytics</span>
+      <span class="nav-icon">ðŸ“ˆ</span><span class="nav-text">Analytics</span>
     </button>
     <button class="nav-item" data-page="customers">
-      <span class="nav-icon">👥</span><span class="nav-text">Customers</span>
+      <span class="nav-icon">ðŸ‘¥</span><span class="nav-text">Customers</span>
     </button>
     <div class="nav-label">System</div>
     <button class="nav-item" data-page="upload">
-      <span class="nav-icon">📂</span><span class="nav-text">Upload Data</span>
+      <span class="nav-icon">ðŸ“‚</span><span class="nav-text">Upload Data</span>
     </button>
   </div>
   <div class="sidebar-footer">
     <div class="version-badge">
-      <span class="dot"></span>
-      <span id="versionBadge">v2.0.0</span>
+      <span class="dot" id="apiStatusDot" style="background:var(--tx3);box-shadow:none;"></span>
+      <span id="apiStatusText">Checking API...</span>
     </div>
   </div>
 </nav>
 
-<!-- ═══════════════ MAIN ═══════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MAIN â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <main class="main-content">
 
-  <!-- ── OVERVIEW ── -->
+  <!-- â”€â”€ OVERVIEW â”€â”€ -->
   <div class="page active" id="page-overview">
     <div class="page-container">
       <div class="page-header">
@@ -474,7 +474,7 @@ body::before {
       </section>
       <section class="section">
         <div class="section-header">
-          <div class="section-icon rose">💸</div>
+          <div class="section-icon rose">ðŸ’¸</div>
           <div>
             <h2 class="section-title">Churn & Risk Overview</h2>
             <p class="section-subtitle">Customer attrition and predicted risk distribution</p>
@@ -495,7 +495,7 @@ body::before {
       </section>
       <section class="section">
         <div class="section-header">
-          <div class="section-icon indigo">⚙️</div>
+          <div class="section-icon indigo">âš™ï¸</div>
           <div>
             <h2 class="section-title">ML Pipeline Architecture</h2>
             <p class="section-subtitle">End-to-end data processing and model workflow</p>
@@ -506,7 +506,7 @@ body::before {
     </div>
   </div>
 
-  <!-- ── MODEL ── -->
+  <!-- â”€â”€ MODEL â”€â”€ -->
   <div class="page" id="page-model">
     <div class="page-container">
       <div class="page-header">
@@ -516,7 +516,7 @@ body::before {
       </div>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon indigo">🤖</div>
+          <div class="section-icon indigo">ðŸ¤–</div>
           <div><h2 class="section-title">Model Comparison</h2></div>
         </div>
         <div class="model-grid" id="modelCards"></div>
@@ -530,14 +530,14 @@ body::before {
           </div>
           <div class="card">
             <div class="chart-title" style="margin-bottom:10px">Confusion Matrix</div>
-            <div class="chart-subtitle" style="margin-bottom:16px">Test set: <strong id="testSamples">—</strong> samples</div>
+            <div class="chart-subtitle" style="margin-bottom:16px">Test set: <strong id="testSamples">â€”</strong> samples</div>
             <div class="cm-grid" id="confusionMatrix"></div>
           </div>
         </div>
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon amber">📊</div>
+          <div class="section-icon amber">ðŸ“Š</div>
           <div><h2 class="section-title">Threshold Analysis</h2><p class="section-subtitle">Precision, Recall, F1 at different decision thresholds</p></div>
         </div>
         <div class="chart-grid">
@@ -560,8 +560,8 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon cyan">🔬</div>
-          <div><h2 class="section-title">Feature List</h2><p class="section-subtitle"><span id="featureCount">—</span> features used for training</p></div>
+          <div class="section-icon cyan">ðŸ”¬</div>
+          <div><h2 class="section-title">Feature List</h2><p class="section-subtitle"><span id="featureCount">â€”</span> features used for training</p></div>
         </div>
         <div class="card">
           <div class="feature-tags-wrap" id="featureTags"></div>
@@ -570,7 +570,7 @@ body::before {
     </div>
   </div>
 
-  <!-- ── ANALYTICS ── -->
+  <!-- â”€â”€ ANALYTICS â”€â”€ -->
   <div class="page" id="page-analytics">
     <div class="page-container">
       <div class="page-header">
@@ -580,7 +580,7 @@ body::before {
       </div>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon amber">💰</div>
+          <div class="section-icon amber">ðŸ’°</div>
           <div><h2 class="section-title">Revenue Impact</h2></div>
         </div>
         <div class="chart-grid">
@@ -596,7 +596,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon indigo">📊</div>
+          <div class="section-icon indigo">ðŸ“Š</div>
           <div><h2 class="section-title">Churn by Segment</h2></div>
         </div>
         <div class="chart-grid">
@@ -620,7 +620,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon emerald">📋</div>
+          <div class="section-icon emerald">ðŸ“‹</div>
           <div><h2 class="section-title">Tenure Breakdown</h2></div>
         </div>
         <div class="card">
@@ -635,7 +635,7 @@ body::before {
     </div>
   </div>
 
-  <!-- ── CUSTOMERS ── -->
+  <!-- â”€â”€ CUSTOMERS â”€â”€ -->
   <div class="page" id="page-customers">
     <div class="page-container">
       <div class="page-header">
@@ -645,7 +645,7 @@ body::before {
       </div>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon rose">🔥</div>
+          <div class="section-icon rose">ðŸ”¥</div>
           <div><h2 class="section-title">Top Priority Customers</h2><p class="section-subtitle">Ranked by expected revenue loss</p></div>
         </div>
         <div class="card">
@@ -659,7 +659,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon cyan">🗃️</div>
+          <div class="section-icon cyan">ðŸ—ƒï¸</div>
           <div><h2 class="section-title">Dataset Overview</h2></div>
         </div>
         <div class="overview-stats" id="datasetStats"></div>
@@ -668,12 +668,12 @@ body::before {
     </div>
   </div>
 
-  <!-- ── UPLOAD ── -->
+  <!-- â”€â”€ UPLOAD â”€â”€ -->
   <div class="page" id="page-upload">
     <div class="page-container">
       <div class="page-header">
         <div class="page-breadcrumb"><span>Dashboard</span> <span>/</span> Upload Data</div>
-        <h1 class="page-title">📂 Upload Dataset</h1>
+        <h1 class="page-title">ðŸ“‚ Upload Dataset</h1>
         <p class="page-subtitle">Upload your customer data (CSV or Excel). The full ML pipeline runs automatically and the dashboard updates instantly.</p>
       </div>
 
@@ -684,7 +684,7 @@ body::before {
             <div class="chart-title" style="margin-bottom:18px">Upload Customer Data</div>
             <div class="drop-zone" id="dropZone">
               <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" />
-              <div class="drop-icon">📁</div>
+              <div class="drop-icon">ðŸ“</div>
               <h3>Drag & drop your file here</h3>
               <p>or click to browse from your computer</p>
               <div class="format-badges">
@@ -695,35 +695,35 @@ body::before {
               </div>
             </div>
             <div class="file-preview" id="filePreview">
-              <div class="file-icon-big" id="previewIcon">📄</div>
+              <div class="file-icon-big" id="previewIcon">ðŸ“„</div>
               <div class="file-info">
-                <div class="file-name" id="previewName">—</div>
-                <div class="file-meta" id="previewMeta">—</div>
+                <div class="file-name" id="previewName">â€”</div>
+                <div class="file-meta" id="previewMeta">â€”</div>
               </div>
-              <button class="remove-btn" onclick="clearFile()">✕</button>
+              <button class="remove-btn" onclick="clearFile()">âœ•</button>
             </div>
             <div class="val-box" id="valBox"></div>
             <div class="upload-actions">
               <button class="btn btn-primary" id="uploadBtn" disabled onclick="uploadFile()">
-                🚀 Upload & Run Pipeline
+                ðŸš€ Upload & Run Pipeline
               </button>
-              <button class="btn btn-outline" onclick="downloadTemplate()">⬇ Download Template</button>
+              <button class="btn btn-outline" onclick="downloadTemplate()">â¬‡ Download Template</button>
             </div>
           </div>
 
           <!-- Pipeline Progress -->
           <div class="card pipeline-progress" id="pipelineProgress">
-            <div class="chart-title" style="margin-bottom:14px">⚙️ Pipeline Progress</div>
+            <div class="chart-title" style="margin-bottom:14px">âš™ï¸ Pipeline Progress</div>
             <div class="prog-bar-wrap">
               <div class="prog-bar-fill" id="progBar" style="width:0%"></div>
             </div>
             <div class="prog-labels">
-              <span id="progText">Starting…</span>
+              <span id="progText">Startingâ€¦</span>
               <span id="progPct">0%</span>
             </div>
             <div class="step-cards" id="stepCards"></div>
             <div class="status-msg running" id="statusMsg">
-              <span class="spin-sm"></span> Pipeline is initializing…
+              <span class="spin-sm"></span> Pipeline is initializingâ€¦
             </div>
           </div>
         </div>
@@ -731,7 +731,7 @@ body::before {
         <!-- Right: Guide + History -->
         <div>
           <div class="card" style="margin-bottom:20px">
-            <div class="chart-title" style="margin-bottom:14px">📋 Expected Columns</div>
+            <div class="chart-title" style="margin-bottom:14px">ðŸ“‹ Expected Columns</div>
             <table class="col-guide">
               <thead><tr><th>Column</th><th>Type</th><th>Example</th></tr></thead>
               <tbody>
@@ -747,12 +747,12 @@ body::before {
               </tbody>
             </table>
             <p style="margin-top:10px;font-size:.72rem;color:var(--tx3)">
-              💡 Telco-format names (MonthlyCharges, CustomerID, TotalCharges) also accepted.
+              ðŸ’¡ Telco-format names (MonthlyCharges, CustomerID, TotalCharges) also accepted.
             </p>
           </div>
 
           <div class="card">
-            <div class="chart-title" style="margin-bottom:14px">🕒 Upload History</div>
+            <div class="chart-title" style="margin-bottom:14px">ðŸ•’ Upload History</div>
             <div class="table-wrap">
               <table class="history-table">
                 <thead><tr><th>File</th><th>Status</th><th>Time</th></tr></thead>
@@ -771,7 +771,7 @@ body::before {
 
 <div id="toast"></div>
 
-<!-- ═══════════════ DATA ═══════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DATA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <!-- Try multiple paths for dashboard_data.js so it works on both file:// and http:// -->
 <script>
 (function() {
@@ -791,18 +791,16 @@ body::before {
 })();
 </script>
 
-<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SCRIPTS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <script>
-// ─────────────────────────────────────────
-// CONFIG — API base URL
-// ─────────────────────────────────────────
-// The webapp (port 8000) proxies /api/* to the inference API.
-// We should just use empty string so fetch goes to the same origin (port 8000).
-const API_BASE = '';
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// CONFIG â€” API base URL
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const API_BASE = window.location.origin;
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // CHART DEFAULTS
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Chart.defaults.color = '#8b949e';
 Chart.defaults.borderColor = 'rgba(255,255,255,0.03)';
 Chart.defaults.font.family = "'Inter', sans-serif";
@@ -821,9 +819,9 @@ const C = {
 let DATA = null;
 const charts = {};
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // BOOT
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     if (window.DASHBOARD_DATA) {
@@ -842,7 +840,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch(e) {
     document.getElementById('loadingOverlay').innerHTML =
       `<div style="text-align:center;color:#f43f5e;padding:32px;max-width:440px">
-        <div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>
+        <div style="font-size:2.5rem;margin-bottom:12px">âš ï¸</div>
         <p style="font-size:1rem;font-weight:700;margin-bottom:8px">Failed to load dashboard data</p>
         <p style="color:#8b949e;font-size:.83rem;margin-bottom:14px">${e.message}</p>
         <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;text-align:left;font-size:.77rem;color:#8b949e;line-height:1.8">
@@ -874,9 +872,9 @@ function hideLoader() {
   setTimeout(() => ov.remove(), 500);
 }
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // NAVIGATION
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function navigateTo(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
@@ -889,9 +887,9 @@ function navigateTo(pageId) {
   if (pageId === 'customers' && !charts.custLoaded) renderCustomers();
 }
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // LIVE API HYDRATION
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function hydrateFromAPI() {
   try {
     const summary = await fetch(API_BASE + '/api/dashboard/summary', {signal: AbortSignal.timeout(3000)}).then(r=>r.json());
@@ -901,7 +899,7 @@ async function hydrateFromAPI() {
     }
     const version = await fetch(API_BASE + '/health', {signal: AbortSignal.timeout(2000)}).then(r=>r.json());
     if (version.model_name) {
-      document.getElementById('versionBadge').textContent = `${version.model_version || 'v2.0'} — ${version.model_name}`;
+      document.getElementById('versionBadge').textContent = `${version.model_version || 'v2.0'} â€” ${version.model_name}`;
     }
   } catch(e) { /* API not running - static data used */ }
 }
@@ -914,9 +912,9 @@ function updateKPILive(summary) {
   if (hiRiskEl) hiRiskEl.textContent = fmt(summary.high_risk_count);
 }
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // OVERVIEW PAGE
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderOverview() {
   const el = document.getElementById('generatedAt');
   if (el) el.textContent = 'Report generated: ' + DATA.generated_at;
@@ -928,12 +926,12 @@ function renderOverview() {
   const grid = document.getElementById('kpiGrid');
   if (grid) {
     const cards = [
-      { label:'Total Customers', value:fmt(k.total_customers), sub:`${DATA.dataset_overview.columns} features`, cls:'neutral', color:'indigo', icon:'👥' },
-      { label:'Churn Rate', value:`${ch.churn_rate}%`, sub:`${fmt(ch.churned)} churned`, cls:'negative', color:'rose', icon:'📉', live:'churn_rate' },
-      { label:'Revenue at Risk', value:`$${compact(k.revenue_at_risk)}`, sub:`${k.revenue_at_risk_pct}% of total`, cls:'negative', color:'amber', icon:'💰', live:'rev_at_risk' },
-      { label:'Model ROC-AUC', value:m.roc_auc.toFixed(4), sub:`${DATA.model.selected_model.replace(/_/g,' ')} — ${DATA.model.model_version}`, cls:'positive', color:'emerald', icon:'🎯' },
-      { label:'High-Risk Customers', value:`${k.high_risk_pct}%`, sub:`${fmt(DATA.model.risk_distribution.HIGH||0)} > 70% prob`, cls:'negative', color:'rose', icon:'🔥', live:'high_risk' },
-      { label:'Total Revenue', value:`$${compact(k.total_revenue)}`, sub:`Avg $${DATA.revenue_analysis.avg_monthly_charges}/mo`, cls:'neutral', color:'cyan', icon:'💎' },
+      { label:'Total Customers', value:fmt(k.total_customers), sub:`${DATA.dataset_overview.columns} features`, cls:'neutral', color:'indigo', icon:'ðŸ‘¥' },
+      { label:'Churn Rate', value:`${ch.churn_rate}%`, sub:`${fmt(ch.churned)} churned`, cls:'negative', color:'rose', icon:'ðŸ“‰', live:'churn_rate' },
+      { label:'Revenue at Risk', value:`$${compact(k.revenue_at_risk)}`, sub:`${k.revenue_at_risk_pct}% of total`, cls:'negative', color:'amber', icon:'ðŸ’°', live:'rev_at_risk' },
+      { label:'Model ROC-AUC', value:m.roc_auc.toFixed(4), sub:`${DATA.model.selected_model.replace(/_/g,' ')} â€” ${DATA.model.model_version}`, cls:'positive', color:'emerald', icon:'ðŸŽ¯' },
+      { label:'High-Risk Customers', value:`${k.high_risk_pct}%`, sub:`${fmt(DATA.model.risk_distribution.HIGH||0)} > 70% prob`, cls:'negative', color:'rose', icon:'ðŸ”¥', live:'high_risk' },
+      { label:'Total Revenue', value:`$${compact(k.total_revenue)}`, sub:`Avg $${DATA.revenue_analysis.avg_monthly_charges}/mo`, cls:'neutral', color:'cyan', icon:'ðŸ’Ž' },
     ];
     grid.innerHTML = cards.map(c=>`
       <div class="kpi-card ${c.color} animate-in">
@@ -968,17 +966,17 @@ function renderOverview() {
   const flow = document.getElementById('pipelineFlow');
   if (flow) {
     const steps = [
-      {icon:'📁',name:'Raw Data',file:'data/raw/',bg:'rgba(139,92,246,.12)'},
-      {icon:'📥',name:'Ingestion',file:'ingestion.py',bg:'rgba(6,182,212,.12)'},
-      {icon:'🧹',name:'Cleaning',file:'cleaning.py',bg:'rgba(16,185,129,.12)'},
-      {icon:'⚙️',name:'Features',file:'features.py',bg:'rgba(245,158,11,.12)'},
-      {icon:'🤖',name:'Training',file:'train.py',bg:'rgba(99,102,241,.12)'},
-      {icon:'📊',name:'Evaluate',file:'evaluate.py',bg:'rgba(16,185,129,.12)'},
-      {icon:'💡',name:'Insights',file:'business_insights.py',bg:'rgba(244,63,94,.12)'},
-      {icon:'🌐',name:'Dashboard',file:'index.html',bg:'rgba(14,165,233,.12)'},
+      {icon:'ðŸ“',name:'Raw Data',file:'data/raw/',bg:'rgba(139,92,246,.12)'},
+      {icon:'ðŸ“¥',name:'Ingestion',file:'ingestion.py',bg:'rgba(6,182,212,.12)'},
+      {icon:'ðŸ§¹',name:'Cleaning',file:'cleaning.py',bg:'rgba(16,185,129,.12)'},
+      {icon:'âš™ï¸',name:'Features',file:'features.py',bg:'rgba(245,158,11,.12)'},
+      {icon:'ðŸ¤–',name:'Training',file:'train.py',bg:'rgba(99,102,241,.12)'},
+      {icon:'ðŸ“Š',name:'Evaluate',file:'evaluate.py',bg:'rgba(16,185,129,.12)'},
+      {icon:'ðŸ’¡',name:'Insights',file:'business_insights.py',bg:'rgba(244,63,94,.12)'},
+      {icon:'ðŸŒ',name:'Dashboard',file:'index.html',bg:'rgba(14,165,233,.12)'},
     ];
     flow.innerHTML = steps.map((s,i)=>`
-      ${i>0?'<div class="pipeline-arrow">→</div>':''}
+      ${i>0?'<div class="pipeline-arrow">â†’</div>':''}
       <div class="pipeline-step">
         <div class="step-icon" style="background:${s.bg}">${s.icon}</div>
         <div class="step-name">${s.name}</div>
@@ -987,9 +985,9 @@ function renderOverview() {
   }
 }
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // MODEL PAGE
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderModel() {
   const comp = DATA.model.model_comparison;
   const selected = DATA.model.selected_model;
@@ -1056,7 +1054,7 @@ function renderModel() {
   }
   // Threshold table
   const tbody = document.querySelector('#thresholdTable tbody');
-  if (tbody) tbody.innerHTML = th.map(t=>`<tr${t.threshold===.5?' style="background:rgba(99,102,241,.06)"':''}><td>${t.threshold.toFixed(1)}${t.threshold===.5?' ★':''}</td><td>${(t.precision*100).toFixed(2)}%</td><td>${(t.recall*100).toFixed(2)}%</td><td>${(t.f1_score*100).toFixed(2)}%</td></tr>`).join('');
+  if (tbody) tbody.innerHTML = th.map(t=>`<tr${t.threshold===.5?' style="background:rgba(99,102,241,.06)"':''}><td>${t.threshold.toFixed(1)}${t.threshold===.5?' â˜…':''}</td><td>${(t.precision*100).toFixed(2)}%</td><td>${(t.recall*100).toFixed(2)}%</td><td>${(t.f1_score*100).toFixed(2)}%</td></tr>`).join('');
 
   // Features
   document.getElementById('featureCount').textContent = DATA.model.num_features;
@@ -1074,9 +1072,9 @@ function metricBar(label, val, color) {
     </div></div>`;
 }
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // ANALYTICS PAGE
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderAnalytics() {
   const rev = DATA.revenue_analysis;
   const seg = DATA.segment_analysis;
@@ -1128,9 +1126,9 @@ function renderAnalytics() {
     <td>$${g.avg_monthly.toFixed(2)}</td></tr>`).join('');
 }
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // CUSTOMERS PAGE
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderCustomers() {
   charts.custLoaded = true;
 
@@ -1176,7 +1174,7 @@ function renderCustomerTable(customers, isLive) {
         <td>${((c.churn_probability||0)*100).toFixed(1)}%</td>
         <td><span class="risk-badge ${risk}">${risk.toUpperCase()}</span></td>
         <td>$${(c.revenue||0).toFixed(2)}</td>
-        <td>—</td>
+        <td>â€”</td>
         <td>$${fmt(c.revenue||0)}</td>
         <td style="color:#fb7185;font-weight:600">$${fmt(c.expected_revenue_loss||0)}</td>
       </tr>`;
@@ -1191,7 +1189,7 @@ function renderCustomerTable(customers, isLive) {
         <td>${(c.churn_probability*100).toFixed(1)}%</td>
         <td><span class="risk-badge ${risk}">${risk.toUpperCase()}</span></td>
         <td>$${(c.monthly_charges||0).toFixed(2)}</td>
-        <td>${c.tenure||'—'} mo</td>
+        <td>${c.tenure||'â€”'} mo</td>
         <td>$${fmt(c.revenue||0)}</td>
         <td style="color:#fb7185;font-weight:600">$${fmt(c.expected_loss||0)}</td>
       </tr>`;
@@ -1199,9 +1197,9 @@ function renderCustomerTable(customers, isLive) {
   }
 }
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // UPLOAD
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const STEP_NAMES = ['','Data Ingestion','Data Cleaning','Feature Engineering','EDA','Model Training','Model Evaluation','Batch Predictions','Business Insights'];
 let pollInterval = null;
 let selectedFile = null;
@@ -1223,9 +1221,9 @@ function handleFile(file) {
   selectedFile = file;
   const preview = document.getElementById('filePreview');
   preview.classList.add('show');
-  document.getElementById('previewIcon').textContent = ext==='csv'?'📄':'📊';
+  document.getElementById('previewIcon').textContent = ext==='csv'?'ðŸ“„':'ðŸ“Š';
   document.getElementById('previewName').textContent = file.name;
-  document.getElementById('previewMeta').textContent = `${(file.size/1024).toFixed(1)} KB · ${ext.toUpperCase()}`;
+  document.getElementById('previewMeta').textContent = `${(file.size/1024).toFixed(1)} KB Â· ${ext.toUpperCase()}`;
   document.getElementById('uploadBtn').disabled = false;
   hideVal();
 }
@@ -1242,98 +1240,84 @@ async function uploadFile() {
   if (!selectedFile) return;
   const btn = document.getElementById('uploadBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spin-sm"></span> Uploading…';
+  btn.innerHTML = '<span class="spin-sm"></span> Uploadingâ€¦';
 
   const formData = new FormData();
   formData.append('file', selectedFile);
 
-  // Try API on port 5000 first (direct), fall back to same-origin proxy
-  const urls = [
-    `http://${window.location.hostname}:5000/api/upload/dataset`,
-    `${window.location.origin}/api/upload/dataset`,
-  ];
-
+  const url = API_BASE + '/api/upload/dataset';
   let response = null;
   let lastErr = null;
 
-  for (const url of urls) {
-    try {
-      response = await fetch(url, { method:'POST', body:formData });
-      break; // success
-    } catch(e) {
-      lastErr = e;
-      response = null;
-    }
+  try {
+    response = await fetch(url, { method:'POST', body:formData });
+  } catch(e) {
+    lastErr = e;
   }
 
   if (!response) {
-    showVal('error', `Upload failed: Could not reach API server. Make sure the API is running on port 5000.\n\nRun: python -m uvicorn api.app:app --port 5000`);
+    showVal('error', 'Unable to connect to the API.');
     btn.disabled = false;
-    btn.innerHTML = '🚀 Upload & Run Pipeline';
+    btn.innerHTML = 'ðŸš€ Upload & Run Pipeline';
     return;
   }
 
-  const data = await response.json();
+  const data = await response.json().catch(() => ({}));
+  
   if (!response.ok) {
-    const detail = data.detail;
-    if (typeof detail === 'object' && detail.errors) {
-      showVal('error', 'Validation failed:', detail.errors, detail.warnings||[]);
+    if (response.status === 404) {
+      showVal('error', 'Upload API endpoint not found. Please check the API configuration.');
+    } else if (response.status === 500) {
+      showVal('error', 'Server error while processing the file. Please try again.');
+    } else if (response.status === 422 || response.status === 400) {
+      const detail = data.detail;
+      if (typeof detail === 'object' && detail.errors) {
+        showVal('error', 'Invalid file format or required columns are missing.', detail.errors, detail.warnings||[]);
+      } else {
+        showVal('error', 'Invalid file format or required columns are missing.', [typeof detail === 'string' ? detail : JSON.stringify(detail)]);
+      }
     } else {
-      showVal('error', typeof detail==='string' ? detail : JSON.stringify(detail));
+      showVal('error', data.detail ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Upload failed.');
     }
     btn.disabled = false;
-    btn.innerHTML = '🚀 Upload & Run Pipeline';
+    btn.innerHTML = 'ðŸš€ Upload & Run Pipeline';
     return;
   }
 
-  showVal('ok', `✓ ${data.rows?.toLocaleString()} rows uploaded. Pipeline starting…`);
-  btn.innerHTML = '✓ Uploaded — Pipeline Running';
+  showVal('ok', `âœ“ ${data.rows?.toLocaleString()} rows uploaded. Pipeline startingâ€¦`);
+  btn.innerHTML = 'âœ“ Uploaded â€” Pipeline Running';
   showToast('Pipeline started! Dashboard will update when complete.');
   document.getElementById('pipelineProgress').classList.add('show');
   startPolling();
 }
 
 async function checkPipelineStatus() {
-  const urls = [
-    `http://${window.location.hostname}:5000/api/upload/status`,
-    `${window.location.origin}/api/upload/status`,
-  ];
-  for (const url of urls) {
-    try {
-      const data = await fetch(url, {signal:AbortSignal.timeout(2000)}).then(r=>r.json());
-      if (data.status === 'running') {
-        document.getElementById('pipelineProgress').classList.add('show');
-        updateProgress(data);
-        startPolling();
-      }
-      return;
-    } catch(e) {}
-  }
+  try {
+    const data = await fetch(API_BASE + '/api/upload/status', {signal:AbortSignal.timeout(2000)}).then(r=>r.json());
+    if (data.status === 'running') {
+      document.getElementById('pipelineProgress').classList.add('show');
+      updateProgress(data);
+      startPolling();
+    }
+  } catch(e) {}
 }
 
 function startPolling() {
   if (pollInterval) clearInterval(pollInterval);
-  const urls = [
-    `http://${window.location.hostname}:5000/api/upload/status`,
-    `${window.location.origin}/api/upload/status`,
-  ];
   pollInterval = setInterval(async () => {
-    for (const url of urls) {
-      try {
-        const data = await fetch(url, {signal:AbortSignal.timeout(3000)}).then(r=>r.json());
-        updateProgress(data);
-        if (data.status === 'success' || data.status === 'failed') {
-          clearInterval(pollInterval); pollInterval = null;
-          loadHistory();
-          if (data.status === 'success') {
-            showToast('✓ Pipeline complete! Refresh the page to see updated data.');
-            document.getElementById('uploadBtn').disabled = false;
-            document.getElementById('uploadBtn').innerHTML = '🚀 Upload & Run Pipeline';
-          }
+    try {
+      const data = await fetch(API_BASE + '/api/upload/status', {signal:AbortSignal.timeout(3000)}).then(r=>r.json());
+      updateProgress(data);
+      if (data.status === 'success' || data.status === 'failed') {
+        clearInterval(pollInterval); pollInterval = null;
+        loadHistory();
+        if (data.status === 'success') {
+          showToast('✅ Pipeline complete! Refresh the page to see updated data.');
+          document.getElementById('uploadBtn').disabled = false;
+          document.getElementById('uploadBtn').innerHTML = '🚀 Upload & Run Pipeline';
         }
-        return;
-      } catch(e) {}
-    }
+      }
+    } catch(e) {}
   }, 2500);
 }
 
@@ -1355,12 +1339,12 @@ function renderStepCards(currentStep, pipelineStatus) {
   container.innerHTML = '';
   for (let i=1; i<=8; i++) {
     const div = document.createElement('div');
-    let state = 'pending', icon = '○';
-    if (i < currentStep) { state='success'; icon='✓'; }
+    let state = 'pending', icon = 'â—‹';
+    if (i < currentStep) { state='success'; icon='âœ“'; }
     else if (i === currentStep) {
-      if (pipelineStatus==='running') { state='running'; icon='⟳'; }
-      else if (pipelineStatus==='success') { state='success'; icon='✓'; }
-      else if (pipelineStatus==='failed') { state='failed'; icon='✗'; }
+      if (pipelineStatus==='running') { state='running'; icon='âŸ³'; }
+      else if (pipelineStatus==='success') { state='success'; icon='âœ“'; }
+      else if (pipelineStatus==='failed') { state='failed'; icon='âœ—'; }
     }
     div.className = `step-card ${state}`;
     div.innerHTML = `<div class="snum">Step ${i}</div><div class="sname">${STEP_NAMES[i]}</div><span class="sico">${icon}</span>`;
@@ -1369,16 +1353,11 @@ function renderStepCards(currentStep, pipelineStatus) {
 }
 
 async function loadHistory() {
-  const urls = [
-    `http://${window.location.hostname}:5000/api/upload/history`,
-    `${window.location.origin}/api/upload/history`,
-  ];
-  for (const url of urls) {
-    try {
-      const data = await fetch(url, {signal:AbortSignal.timeout(2000)}).then(r=>r.json());
-      renderHistory(data);
-      return;
-    } catch(e) {}
+  try {
+    const data = await fetch(API_BASE + '/api/upload/history', {signal:AbortSignal.timeout(2000)}).then(r=>r.json());
+    renderHistory(data);
+  } catch(e) {
+    console.error('Failed to load history:', e);
   }
 }
 
@@ -1392,8 +1371,8 @@ function renderHistory(items) {
     const badge = item.status==='success'
       ? '<span class="risk-badge low">Success</span>'
       : '<span class="risk-badge high">Failed</span>';
-    const dt = item.uploaded_at ? new Date(item.uploaded_at).toLocaleString() : '—';
-    return `<tr><td style="font-size:.78rem">${item.filename||'—'}</td><td>${badge}</td><td style="color:var(--tx2);font-size:.75rem">${dt}</td></tr>`;
+    const dt = item.uploaded_at ? new Date(item.uploaded_at).toLocaleString() : 'â€”';
+    return `<tr><td style="font-size:.78rem">${item.filename||'â€”'}</td><td>${badge}</td><td style="color:var(--tx2);font-size:.75rem">${dt}</td></tr>`;
   }).join('');
 }
 
@@ -1408,18 +1387,18 @@ async function downloadTemplate() {
       if (r.ok) { window.open(url, '_blank'); return; }
     } catch(e) {}
   }
-  showToast('API not running — template unavailable.');
+  showToast('API not running â€” template unavailable.');
 }
 
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // HELPERS
-// ─────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function showVal(type, msg, errors=[], warnings=[]) {
   const box = document.getElementById('valBox');
   const cls = type==='error'?'error':type==='warn'?'warn':'ok';
   let html = `<strong>${msg}</strong>`;
   if (errors.length)   html += `<ul>${errors.map(e=>`<li>${e}</li>`).join('')}</ul>`;
-  if (warnings.length) html += `<ul>${warnings.map(w=>`<li>⚠️ ${w}</li>`).join('')}</ul>`;
+  if (warnings.length) html += `<ul>${warnings.map(w=>`<li>âš ï¸ ${w}</li>`).join('')}</ul>`;
   box.className = `val-box show ${cls}`;
   box.innerHTML = html;
 }
@@ -1435,7 +1414,7 @@ function showToast(msg) {
 }
 
 function fmt(n) {
-  if (n===null||n===undefined) return '—';
+  if (n===null||n===undefined) return 'â€”';
   return Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
 }
 function compact(n) {
@@ -1453,3 +1432,4 @@ function initScroll() {
 </script>
 </body>
 </html>
+

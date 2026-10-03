@@ -2,15 +2,15 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/app"
+      "destination": "/api/index.py"
     },
     {
       "source": "/health",
-      "destination": "/api/app"
+      "destination": "/api/index.py"
     },
     {
       "source": "/predict",
-      "destination": "/api/app"
+      "destination": "/api/index.py"
     }
   ]
 }
