@@ -1,17 +1,17 @@
-"""
-Business Insights — Customer Churn & Revenue Intelligence
+﻿"""
+Business Insights â€” Customer Churn & Revenue Intelligence
 ==========================================================
 Computes and exports structured business KPIs from:
   - The processed feature dataset (always available)
   - The MySQL predictions table (if DB is running)
 
 Outputs:
-  - reports/business_insights.csv   — metric table
-  - reports/segment_summary.csv     — churn by risk bucket
+  - reports/business_insights.csv   â€” metric table
+  - reports/segment_summary.csv     â€” churn by risk bucket
   - Console summary
 
 This is the 'Prescriptive Intelligence' layer from the project spec:
-    Priority Score = Churn Probability × Revenue Impact
+    Priority Score = Churn Probability Ã— Revenue Impact
 
 Run:
     python src/business_insights.py
@@ -28,7 +28,7 @@ from datetime import datetime
 
 warnings.filterwarnings("ignore")
 
-# ── Logging ───────────────────────────────────────────────────────────────────
+# â”€â”€ Logging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  [INSIGHTS]  %(message)s",
@@ -36,7 +36,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
+# â”€â”€ Paths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os, shutil
 _REAL_BASE = Path(__file__).resolve().parent.parent
 IS_VERCEL = os.environ.get("VERCEL") == "1"
@@ -59,7 +59,7 @@ PROCESSED_DIR  = BASE_DIR / "data" / "processed"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── Try loading .env ──────────────────────────────────────────────────────────
+# â”€â”€ Try loading .env â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 try:
     from dotenv import load_dotenv
     load_dotenv(BASE_DIR / ".env")
@@ -67,9 +67,9 @@ except ImportError:
     pass
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # HELPERS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def _revenue_col(df):
     for c in ["total_spend", "TotalCharges", "totalcharges", "revenue"]:
         if c in df.columns:
@@ -103,9 +103,9 @@ def _churn_col(df):
     return None
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # LOAD DATA
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def load_data() -> pd.DataFrame:
     if FEATURES_CSV.exists():
         df = pd.read_csv(FEATURES_CSV)
@@ -115,7 +115,7 @@ def load_data() -> pd.DataFrame:
         log.info(f"Loaded clean data (feature file not found): {df.shape}")
     else:
         raise FileNotFoundError(
-            "No processed data found. Run ingestion → cleaning → features first."
+            "No processed data found. Run ingestion â†’ cleaning â†’ features first."
         )
 
     # Normalise churn column
@@ -129,9 +129,9 @@ def load_data() -> pd.DataFrame:
     return df
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # TRY LOADING PREDICTIONS FROM MYSQL (optional)
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def load_predictions_from_db() -> pd.DataFrame | None:
     """
     Attempts to pull live prediction data from MySQL.
@@ -166,23 +166,23 @@ def load_predictions_from_db() -> pd.DataFrame | None:
         return None
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # CORE INSIGHT COMPUTATIONS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def compute_kpis(df: pd.DataFrame) -> dict:
-    """Returns a flat dict of KPI metric → value."""
+    """Returns a flat dict of KPI metric â†’ value."""
     kpis = {}
     total = len(df)
     rev_col = _revenue_col(df)
 
-    # ── Churn rate ──
+    # â”€â”€ Churn rate â”€â”€
     churn_count = df["churn_flag"].sum()
     kpis["total_customers"]       = total
     kpis["churned_customers"]     = int(churn_count)
     kpis["retained_customers"]    = int(total - churn_count)
     kpis["churn_rate_%"]          = round(churn_count / total * 100, 2)
 
-    # ── Revenue ──
+    # â”€â”€ Revenue â”€â”€
     if rev_col:
         total_rev   = df[rev_col].sum()
         churned_rev = df[df["churn_flag"] == 1][rev_col].sum()
@@ -195,7 +195,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
             float(churned_rev * 0.15), 2
         )  # If we save 15% of at-risk customers
 
-    # ── Contract breakdown ──
+    # â”€â”€ Contract breakdown â”€â”€
     contract_col = _contract_col(df)
     if contract_col:
         worst_contract = (
@@ -207,7 +207,7 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         kpis["lowest_churn_contract"]         = worst_contract.index[-1]
         kpis["lowest_churn_contract_rate_%"]  = round(float(worst_contract.iloc[-1] * 100), 2)
 
-    # ── Tenure ──
+    # â”€â”€ Tenure â”€â”€
     tenure_col = _tenure_col(df)
     if tenure_col:
         q25 = df[tenure_col].quantile(0.25)
@@ -218,14 +218,14 @@ def compute_kpis(df: pd.DataFrame) -> dict:
         kpis["churn_rate_late_tenure_%"]   = round(late, 2)
         kpis["early_vs_late_churn_ratio"]  = round(early / late, 2) if late > 0 else "N/A"
 
-    # ── Complaints ──
+    # â”€â”€ Complaints â”€â”€
     if "complaints_count" in df.columns:
         no_complaint = df[df["complaints_count"] == 0]["churn_flag"].mean() * 100
         some_complaint = df[df["complaints_count"] >= 1]["churn_flag"].mean() * 100
         kpis["churn_rate_no_complaints_%"]  = round(no_complaint, 2)
         kpis["churn_rate_with_complaints_%"] = round(some_complaint, 2)
 
-    # ── Payment delays ──
+    # â”€â”€ Payment delays â”€â”€
     if "payment_delays" in df.columns:
         no_delay   = df[df["payment_delays"] == 0]["churn_flag"].mean() * 100
         with_delay = df[df["payment_delays"] >= 1]["churn_flag"].mean() * 100
@@ -287,7 +287,7 @@ def compute_segment_summary(df: pd.DataFrame) -> pd.DataFrame:
 def compute_top_priority_customers(df: pd.DataFrame, top_n: int = 20) -> pd.DataFrame:
     """
     Returns top N customers ranked by priority score:
-    Priority = churn_probability × revenue (decision intelligence layer).
+    Priority = churn_probability Ã— revenue (decision intelligence layer).
     """
     df = df.copy()
     rev_col = _revenue_col(df)
@@ -335,25 +335,25 @@ def compute_top_priority_customers(df: pd.DataFrame, top_n: int = 20) -> pd.Data
     return result
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # SAVE & PRINT
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def save_insights(kpis: dict, segment_df: pd.DataFrame, top_customers: pd.DataFrame):
     # KPI table
     kpi_df = pd.DataFrame(list(kpis.items()), columns=["metric", "value"])
     kpi_path = PROCESSED_DIR / "business_insights.csv"
     kpi_df.to_csv(kpi_path, index=False)
-    log.info(f"KPIs saved → {kpi_path}")
+    log.info(f"KPIs saved â†’ {kpi_path}")
 
     # Segment summary
     seg_path = PROCESSED_DIR / "segment_summary.csv"
     segment_df.to_csv(seg_path, index=False)
-    log.info(f"Segment summary saved → {seg_path}")
+    log.info(f"Segment summary saved â†’ {seg_path}")
 
     # Top priority customers
     top_path = PROCESSED_DIR / "top_priority_customers.csv"
     top_customers.to_csv(top_path)
-    log.info(f"Priority customers saved → {top_path}")
+    log.info(f"Priority customers saved â†’ {top_path}")
     
     # Save to SQL Database
     try:
@@ -385,9 +385,9 @@ def save_insights(kpis: dict, segment_df: pd.DataFrame, top_customers: pd.DataFr
 
 
 def print_kpis(kpis: dict):
-    print("\n" + "═"*60)
+    print("\n" + "â•"*60)
     print("  BUSINESS INTELLIGENCE SUMMARY")
-    print("═"*60)
+    print("â•"*60)
     for k, v in kpis.items():
         if k == "generated_at":
             continue
@@ -398,28 +398,28 @@ def print_kpis(kpis: dict):
             print(f"  {label:<45}  {v:>12,}")
         else:
             print(f"  {label:<45}  {str(v):>12}")
-    print("═"*60)
+    print("â•"*60)
 
 
 def print_segment_table(segment_df: pd.DataFrame):
-    print("\n" + "═"*60)
+    print("\n" + "â•"*60)
     print("  RISK SEGMENT BREAKDOWN")
-    print("═"*60)
+    print("â•"*60)
     print(segment_df.to_string(index=False))
-    print("═"*60)
+    print("â•"*60)
 
 
 def print_top_customers(top_df: pd.DataFrame):
-    print("\n" + "═"*60)
+    print("\n" + "â•"*60)
     print("  TOP PRIORITY CUSTOMERS FOR RETENTION ACTION")
-    print("═"*60)
+    print("â•"*60)
     print(top_df.to_string())
-    print("═"*60 + "\n")
+    print("â•"*60 + "\n")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # MAIN
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def main():
     log.info("Business Insights pipeline started.")
 
@@ -456,3 +456,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

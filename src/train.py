@@ -1,5 +1,5 @@
-"""
-Model Training — Customer Churn & Revenue Intelligence
+﻿"""
+Model Training â€” Customer Churn & Revenue Intelligence
 =======================================================
 Trains three models:
     1. Logistic Regression  (baseline, linear)
@@ -46,7 +46,7 @@ except ImportError:
 
 warnings.filterwarnings("ignore")
 
-# ── Logging ───────────────────────────────────────────────────────────────────
+# â”€â”€ Logging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  [TRAIN]  %(message)s",
@@ -54,7 +54,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
+# â”€â”€ Paths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os, shutil
 _REAL_BASE = Path(__file__).resolve().parent.parent
 IS_VERCEL = os.environ.get("VERCEL") == "1"
@@ -79,14 +79,14 @@ FEATURES_OUT = MODELS_DIR / "feature_list.json"
 METADATA_OUT = MODELS_DIR / "model_metadata.json"
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 1. LOAD & PREPARE DATA
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def load_features() -> pd.DataFrame:
     if not DATA_PATH.exists():
         raise FileNotFoundError(
             f"Feature data not found at {DATA_PATH}. "
-            "Run ingestion.py → cleaning.py → features.py first."
+            "Run ingestion.py â†’ cleaning.py â†’ features.py first."
         )
     df = pd.read_csv(DATA_PATH)
     log.info(f"Loaded feature data: {df.shape}")
@@ -98,7 +98,7 @@ def prepare_xy(df: pd.DataFrame):
     Identify target, drop non-feature columns, encode categoricals,
     return X (DataFrame), y (Series), and feature name list.
     """
-    # ── Target ──
+    # â”€â”€ Target â”€â”€
     target_col = None
     for c in ["churn_flag", "churn", "Churn"]:
         if c in df.columns:
@@ -112,7 +112,7 @@ def prepare_xy(df: pd.DataFrame):
         y = y.str.strip().str.lower().map({"yes": 1, "no": 0})
     y = pd.to_numeric(y, errors="coerce").fillna(0).astype(int)
 
-    # ── Drop non-feature columns ──
+    # â”€â”€ Drop non-feature columns â”€â”€
     drop_cols = [target_col]
     for c in ["customer_id", "customerid", "CustomerID", "signup_date",
               "last_active_date", "ingestion_timestamp"]:
@@ -121,7 +121,7 @@ def prepare_xy(df: pd.DataFrame):
 
     X = df.drop(columns=drop_cols)
 
-    # ── Encode categorical columns ──
+    # â”€â”€ Encode categorical columns â”€â”€
     cat_cols = X.select_dtypes(include=["object", "category", "string"]).columns.tolist()
     le = LabelEncoder()
     for col in cat_cols:
@@ -131,7 +131,7 @@ def prepare_xy(df: pd.DataFrame):
         except Exception:
             X[col] = 0  # fallback for edge cases
 
-    # ── Fill any remaining NaN ──
+    # â”€â”€ Fill any remaining NaN â”€â”€
     X = X.fillna(0)
 
     feature_names = X.columns.tolist()
@@ -139,14 +139,14 @@ def prepare_xy(df: pd.DataFrame):
     return X, y, feature_names
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 2. DEFINE MODELS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def get_model_candidates() -> dict:
     """
-    Returns dict of model_name → (model_object, needs_scaling).
-    needs_scaling=True  → scaler will be fitted and saved alongside model.
-    needs_scaling=False → model handles feature scale internally.
+    Returns dict of model_name â†’ (model_object, needs_scaling).
+    needs_scaling=True  â†’ scaler will be fitted and saved alongside model.
+    needs_scaling=False â†’ model handles feature scale internally.
     """
     candidates = {
         "Logistic Regression": (
@@ -191,18 +191,18 @@ def get_model_candidates() -> dict:
             False,  # gradient boosting: no scaling needed
         )
     else:
-        log.warning("XGBoost not available — training 2 models only.")
+        log.warning("XGBoost not available â€” training 2 models only.")
 
     return candidates
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 3. EVALUATE ONE MODEL
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def evaluate_model(model, X_train, X_test, y_train, y_test, needs_scaling, model_name):
     """
     Fits, predicts, and returns a metrics dict.
-    Handles scaling internally — returns fitted (model, scaler or None).
+    Handles scaling internally â€” returns fitted (model, scaler or None).
     """
     scaler = None
 
@@ -251,16 +251,16 @@ def evaluate_model(model, X_train, X_test, y_train, y_test, needs_scaling, model
     return model, scaler, metrics
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 4. SAVE ARTIFACTS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def save_artifacts(best_model, best_scaler, feature_names, metadata):
     joblib.dump(best_model, MODEL_OUT)
-    log.info(f"Model saved   → {MODEL_OUT}")
+    log.info(f"Model saved   â†’ {MODEL_OUT}")
 
     if best_scaler is not None:
         joblib.dump(best_scaler, SCALER_OUT)
-        log.info(f"Scaler saved  → {SCALER_OUT}")
+        log.info(f"Scaler saved  â†’ {SCALER_OUT}")
     else:
         # Remove stale scaler if new best doesn't need one
         if SCALER_OUT.exists():
@@ -269,22 +269,22 @@ def save_artifacts(best_model, best_scaler, feature_names, metadata):
 
     with open(FEATURES_OUT, "w") as f:
         json.dump(feature_names, f, indent=2)
-    log.info(f"Features saved → {FEATURES_OUT}")
+    log.info(f"Features saved â†’ {FEATURES_OUT}")
 
     with open(METADATA_OUT, "w") as f:
         json.dump(metadata, f, indent=2)
-    log.info(f"Metadata saved → {METADATA_OUT}")
+    log.info(f"Metadata saved â†’ {METADATA_OUT}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 5. PRINT COMPARISON TABLE
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def print_comparison(results: dict):
     print("\n" + "="*72)
     print(f"  {'MODEL':<22}  {'AUC':>6}  {'CV-AUC':>7}  {'PREC':>6}  {'RECALL':>6}  {'F1':>6}")
     print("="*72)
     for name, m in results.items():
-        marker = " ★" if m.get("selected") else ""
+        marker = " â˜…" if m.get("selected") else ""
         print(
             f"  {name:<22}  {m['roc_auc']:>6.4f}  {m['cv_auc']:>7.4f}  "
             f"{m['precision']:>6.4f}  {m['recall']:>6.4f}  {m['f1_score']:>6.4f}{marker}"
@@ -292,9 +292,9 @@ def print_comparison(results: dict):
     print("="*72 + "\n")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 6. MAIN
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def main():
     log.info("Training pipeline started.")
 
@@ -334,7 +334,7 @@ def main():
     print_comparison(results)
     log.info(f"Best model: {best_name}  (ROC-AUC = {best_auc:.4f})")
 
-    # ── Save artifacts ──
+    # â”€â”€ Save artifacts â”€â”€
     feature_importances = {}
     if hasattr(best_model, "feature_importances_"):
         importances = best_model.feature_importances_
@@ -388,7 +388,7 @@ def main():
             "Review your data and features."
         )
     else:
-        log.info("Performance gate passed ✓")
+        log.info("Performance gate passed âœ“")
 
     log.info("Training pipeline complete.\n")
     return metadata
@@ -396,3 +396,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

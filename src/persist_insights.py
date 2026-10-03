@@ -1,19 +1,19 @@
-"""
-Batch Predictions & Persistence — Customer Churn & Revenue Intelligence
+﻿"""
+Batch Predictions & Persistence â€” Customer Churn & Revenue Intelligence
 ========================================================================
 Runs the trained model over the entire customer dataset, computes:
-    - churn_probability     (0.0 – 1.0)
+    - churn_probability     (0.0 â€“ 1.0)
     - risk_bucket           (Low / Medium / High)
-    - expected_revenue_loss (churn_probability × revenue)
-    - priority_score        (expected_revenue_loss — for retention ranking)
+    - expected_revenue_loss (churn_probability Ã— revenue)
+    - priority_score        (expected_revenue_loss â€” for retention ranking)
     - clv_estimate          (simple Customer Lifetime Value proxy)
 
 Stores results in MySQL table: customer_churn_analytics
 Also exports: reports/batch_predictions.csv
 
 Priority Score logic (from PDF spec):
-    Priority Score = Risk (churn_probability) × Revenue Impact (expected_revenue_loss)
-    → Identifies who to save first when resources are limited.
+    Priority Score = Risk (churn_probability) Ã— Revenue Impact (expected_revenue_loss)
+    â†’ Identifies who to save first when resources are limited.
 
 Run:
     python src/persist_insights.py
@@ -34,7 +34,7 @@ from sklearn.preprocessing import LabelEncoder
 
 warnings.filterwarnings("ignore")
 
-# ── Logging ───────────────────────────────────────────────────────────────────
+# â”€â”€ Logging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  [PERSIST]  %(message)s",
@@ -42,7 +42,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
+# â”€â”€ Paths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os, shutil
 _REAL_BASE = Path(__file__).resolve().parent.parent
 IS_VERCEL = os.environ.get("VERCEL") == "1"
@@ -69,11 +69,11 @@ PROCESSED_DIR = BASE_DIR / "data" / "processed"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── Risk bucket thresholds (aligned with api/app.py) ─────────────────────────
+# â”€â”€ Risk bucket thresholds (aligned with api/app.py) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 LOW_THRESHOLD    = 0.40
 MEDIUM_THRESHOLD = 0.70
 
-# ── Try .env ──────────────────────────────────────────────────────────────────
+# â”€â”€ Try .env â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 try:
     from dotenv import load_dotenv
     load_dotenv(BASE_DIR / ".env")
@@ -81,9 +81,9 @@ except ImportError:
     pass
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 1. LOAD MODEL ARTIFACTS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def load_artifacts():
     if not MODEL_PATH.exists():
         raise FileNotFoundError(
@@ -110,9 +110,9 @@ def load_artifacts():
     return model, scaler, feature_names, metadata
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 2. LOAD FULL CUSTOMER DATASET
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def load_customers() -> pd.DataFrame:
     if FEATURES_CSV.exists():
         df = pd.read_csv(FEATURES_CSV)
@@ -125,9 +125,9 @@ def load_customers() -> pd.DataFrame:
     return df
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 3. PREPARE FEATURES (same logic as train.py to avoid schema mismatch)
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def prepare_features(df: pd.DataFrame, feature_names: list) -> tuple:
     """
     Returns (X_array, customer_ids, revenue_series, raw_df_with_ids).
@@ -182,9 +182,9 @@ def prepare_features(df: pd.DataFrame, feature_names: list) -> tuple:
     return X.values, customer_ids, revenue_series, raw_df
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 4. RUN BATCH PREDICTIONS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def run_batch_predictions(model, scaler, X_array) -> np.ndarray:
     X = X_array
     if scaler is not None:
@@ -193,9 +193,9 @@ def run_batch_predictions(model, scaler, X_array) -> np.ndarray:
     return proba
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 5. COMPUTE BUSINESS METRICS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def assign_risk_bucket(prob: float) -> str:
     if prob < LOW_THRESHOLD:
         return "Low"
@@ -209,8 +209,8 @@ def compute_clv_estimate(revenue: float, churn_prob: float,
                          avg_tenure_months: float = 24.0) -> float:
     """
     Simple CLV proxy:
-        CLV = monthly_revenue × expected_remaining_tenure
-        expected_remaining_tenure = (1 - churn_prob) × avg_tenure_months
+        CLV = monthly_revenue Ã— expected_remaining_tenure
+        expected_remaining_tenure = (1 - churn_prob) Ã— avg_tenure_months
     """
     monthly_rev = revenue / max(avg_tenure_months, 1)
     expected_tenure = (1 - churn_prob) * avg_tenure_months
@@ -222,8 +222,8 @@ def build_predictions_dataframe(
 ) -> pd.DataFrame:
     """
     Builds the full output DataFrame with all columns the dashboard API needs.
-    Priority Score = churn_probability × expected_revenue_loss
-    (per PDF spec: Priority = Risk × Revenue Impact)
+    Priority Score = churn_probability Ã— expected_revenue_loss
+    (per PDF spec: Priority = Risk Ã— Revenue Impact)
     """
     now = datetime.utcnow().isoformat()
     model_version = metadata.get("model_version", "v1.0.0")
@@ -262,7 +262,7 @@ def build_predictions_dataframe(
 
     df_out = pd.DataFrame(records)
 
-    # Sort by priority score descending — highest risk customers first
+    # Sort by priority score descending â€” highest risk customers first
     df_out = df_out.sort_values("priority_score", ascending=False).reset_index(drop=True)
     df_out.index += 1
     df_out.index.name = "priority_rank"
@@ -270,9 +270,9 @@ def build_predictions_dataframe(
     return df_out
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 6. PERSIST TO MYSQL
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 CREATE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS customer_churn_analytics (
     id                    INT AUTO_INCREMENT PRIMARY KEY,
@@ -336,20 +336,20 @@ def persist_to_mysql(df_out: pd.DataFrame) -> bool:
         return False
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 7. PRINT BATCH SUMMARY
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def print_batch_summary(df_out: pd.DataFrame):
     total = len(df_out)
     risk_counts = df_out["risk_bucket"].value_counts()
 
-    print("\n" + "═"*60)
+    print("\n" + "â•"*60)
     print("  BATCH PREDICTION SUMMARY")
-    print("═"*60)
+    print("â•"*60)
     print(f"  Total customers processed   : {total:,}")
-    print(f"  High risk  (prob ≥ 0.70)    : {risk_counts.get('High',   0):,}  "
+    print(f"  High risk  (prob â‰¥ 0.70)    : {risk_counts.get('High',   0):,}  "
           f"({risk_counts.get('High',   0)/total*100:.1f}%)")
-    print(f"  Medium risk (0.40–0.70)     : {risk_counts.get('Medium', 0):,}  "
+    print(f"  Medium risk (0.40â€“0.70)     : {risk_counts.get('Medium', 0):,}  "
           f"({risk_counts.get('Medium', 0)/total*100:.1f}%)")
     print(f"  Low risk   (prob < 0.40)    : {risk_counts.get('Low',    0):,}  "
           f"({risk_counts.get('Low',    0)/total*100:.1f}%)")
@@ -366,12 +366,12 @@ def print_batch_summary(df_out: pd.DataFrame):
     top10 = df_out[top10_cols].head(10).copy()
     top10["churn_probability"] = top10["churn_probability"].map("{:.2%}".format)
     print(top10.to_string(index=False))
-    print("═"*60 + "\n")
+    print("â•"*60 + "\n")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 8. MAIN
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def main():
     log.info("Batch inference pipeline started.")
 
@@ -392,7 +392,7 @@ def main():
     # Save CSV (always)
     csv_path = PROCESSED_DIR / "batch_predictions.csv"
     df_out.to_csv(csv_path)
-    log.info(f"Batch predictions saved → {csv_path}")
+    log.info(f"Batch predictions saved â†’ {csv_path}")
 
     # Persist to MySQL (best-effort)
     db_success = persist_to_mysql(df_out)
@@ -410,3 +410,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -49,9 +49,13 @@ else:
     LOG_DIR = Path(__file__).resolve().parent / "logs"
 
 LOG_DIR.mkdir(parents=True, exist_ok=True)
+<<<<<<< HEAD
 run_id = [arg.split("=")[1] for arg in sys.argv if arg.startswith("--run-id=")]
 run_id = run_id[0] if run_id else f"RUN-{datetime.now().strftime('%Y%m%d_%H%M%S')}"
 log_file = LOG_DIR / f"{run_id}.log"
+=======
+log_file = LOG_DIR / f"pipeline_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+>>>>>>> 93636510e0d10e6f707978fa8ef8e4985267ec67
 handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
 log_file_str = str(log_file)
 
@@ -76,7 +80,7 @@ if IS_VERCEL:
     BASE_DIR = Path("/tmp/app")
     if not BASE_DIR.exists():
         BASE_DIR.mkdir(parents=True, exist_ok=True)
-        for d in ["data", "models", "reports"]:
+        for d in ["src", "data", "models", "reports"]:
             src_dir = _REAL_BASE / d
             dst_dir = BASE_DIR / d
             if src_dir.exists():
@@ -312,3 +316,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 93636510e0d10e6f707978fa8ef8e4985267ec67

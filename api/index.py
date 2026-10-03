@@ -1,10 +1,10 @@
-"""
-api/app.py — PATCH INSTRUCTIONS
+﻿"""
+api/app.py â€” PATCH INSTRUCTIONS
 ================================
 Add the following lines to your existing api/app.py.
 
 STEP 1: Add this import near the top (after existing imports):
-──────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 import sys
 from pathlib import Path
@@ -12,23 +12,23 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from upload_handler import router as upload_router
 
 STEP 2: Mount the router (after app = FastAPI(...)):
-──────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 app.include_router(upload_router)
 
 STEP 3: Add the /api/upload/status SSE endpoint (optional but makes
         progress polling more efficient):
-──────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 # Already handled inside upload_handler.py via GET /api/upload/status
 # No additional code needed.
 
-──────────────────────────────────────────────────────────────
-FULL PATCHED app.py SHOWN BELOW — replace your existing file:
-──────────────────────────────────────────────────────────────
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+FULL PATCHED app.py SHOWN BELOW â€” replace your existing file:
+â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 """
 
-# ── Standard imports (keep your existing ones) ────────────────────────────────
+# â”€â”€ Standard imports (keep your existing ones) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os
 import sys
 import json
@@ -59,7 +59,7 @@ def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
         )
     return credentials.username
 
-# ── Add project root to path ──────────────────────────────────────────────────
+# â”€â”€ Add project root to path â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os, shutil
 _REAL_BASE = Path(__file__).resolve().parent.parent
 IS_VERCEL = os.environ.get("VERCEL") == "1"
@@ -77,23 +77,23 @@ else:
 sys.path.insert(0, str(BASE_DIR))
 sys.path.insert(0, str(BASE_DIR / "src"))
 
-# ── Import upload router ──────────────────────────────────────────────────────
+# â”€â”€ Import upload router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 from upload_handler import router as upload_router
 
-# Sub-routers disabled — endpoints are now handled directly in this file
+# Sub-routers disabled â€” endpoints are now handled directly in this file
 HAS_SUBROUTERS = False
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
+# â”€â”€ Paths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 MODELS_DIR    = BASE_DIR / "models"
 MODEL_PATH    = MODELS_DIR / "churn_model.pkl"
 SCALER_PATH   = MODELS_DIR / "scaler.pkl"
 FEATURES_PATH = MODELS_DIR / "feature_list.json"
 METADATA_PATH = MODELS_DIR / "model_metadata.json"
 
-# ── App ───────────────────────────────────────────────────────────────────────
+# â”€â”€ App â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app = FastAPI(
     title="Churn Intelligence API",
     description="Customer Churn & Revenue Optimization Intelligence System",
@@ -107,11 +107,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Mount routers ─────────────────────────────────────────────────────────────
-app.include_router(upload_router)            # ← upload + pipeline trigger
+# â”€â”€ Mount routers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+app.include_router(upload_router)            # â† upload + pipeline trigger
 
 
-# ── Load model ────────────────────────────────────────────────────────────────
+# â”€â”€ Load model â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def load_model():
     if not MODEL_PATH.exists():
         log.warning("Model not found. Run the pipeline first.")
@@ -128,7 +128,7 @@ def load_model():
 model, scaler, feature_names, model_metadata = load_model()
 
 
-# ── Request schema ────────────────────────────────────────────────────────────
+# â”€â”€ Request schema â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 class PredictRequest(BaseModel):
     customer_id:      str
     revenue:          float = Field(default=0.0, ge=0.0)
@@ -141,7 +141,7 @@ class PredictRequest(BaseModel):
     contract:         Optional[str] = None
 
 
-# ── Endpoints ─────────────────────────────────────────────────────────────────
+# â”€â”€ Endpoints â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.get("/health")
 @app.get("/api/health")
@@ -291,3 +291,4 @@ def reload_model(username: str = Depends(get_current_user)):
         "model_name": model_metadata.get("model_name", "unknown"),
         "loaded":     model is not None,
     }
+

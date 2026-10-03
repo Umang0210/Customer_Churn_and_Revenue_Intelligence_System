@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 import json
 import joblib
@@ -24,7 +24,7 @@ from sklearn.preprocessing import LabelEncoder
 
 warnings.filterwarnings("ignore")
 
-# ── Logging ───────────────────────────────────────────────────────────────────
+# â”€â”€ Logging â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s  [EVAL]  %(message)s",
@@ -32,7 +32,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# ── Paths ─────────────────────────────────────────────────────────────────────
+# â”€â”€ Paths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os, shutil
 _REAL_BASE = Path(__file__).resolve().parent.parent
 IS_VERCEL = os.environ.get("VERCEL") == "1"
@@ -57,7 +57,7 @@ REPORTS_DIR  = BASE_DIR / "reports"
 FIGURES_DIR  = REPORTS_DIR / "figures"
 FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
-# ── Gate threshold ────────────────────────────────────────────────────────────
+# â”€â”€ Gate threshold â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 MIN_AUC_THRESHOLD  = 0.70
 EVAL_THRESHOLDS    = [0.4, 0.5, 0.6, 0.7]
 
@@ -66,9 +66,9 @@ COLOR_POS = "#e74c3c"
 COLOR_NEG = "#2ecc71"
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 1. LOAD ARTIFACTS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def load_artifacts():
     if not MODEL_PATH.exists():
         raise FileNotFoundError(
@@ -97,9 +97,9 @@ def load_artifacts():
     return model, scaler, feature_names, metadata
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 2. LOAD & PREPARE TEST DATA
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def load_test_data(feature_names):
     if not DATA_PATH.exists():
         raise FileNotFoundError(
@@ -152,9 +152,9 @@ def load_test_data(feature_names):
     return X_test, y_test
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 3. PREDICT
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def get_predictions(model, scaler, X_test):
     X = X_test.values if isinstance(X_test, pd.DataFrame) else X_test
     if scaler is not None:
@@ -163,9 +163,9 @@ def get_predictions(model, scaler, X_test):
     return proba
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 4. METRICS AT EACH THRESHOLD
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def metrics_at_threshold(y_true, y_proba, threshold):
     y_pred = (y_proba >= threshold).astype(int)
     return {
@@ -183,9 +183,9 @@ def run_threshold_analysis(y_true, y_proba):
     return rows
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 5. PLOTS
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def plot_roc_curve(y_true, y_proba, model_name):
     fpr, tpr, _ = roc_curve(y_true, y_proba)
     auc          = roc_auc_score(y_true, y_proba)
@@ -196,7 +196,7 @@ def plot_roc_curve(y_true, y_proba, model_name):
     ax.fill_between(fpr, tpr, alpha=0.08, color="#3498db")
     ax.set_xlabel("False Positive Rate")
     ax.set_ylabel("True Positive Rate")
-    ax.set_title("ROC Curve — Churn Prediction", fontsize=13, fontweight="bold")
+    ax.set_title("ROC Curve â€” Churn Prediction", fontsize=13, fontweight="bold")
     ax.legend(loc="lower right")
     ax.set_xlim([0, 1])
     ax.set_ylim([0, 1.02])
@@ -204,7 +204,7 @@ def plot_roc_curve(y_true, y_proba, model_name):
     out = FIGURES_DIR / "09_roc_curve.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    log.info(f"Saved → {out.name}")
+    log.info(f"Saved â†’ {out.name}")
 
 
 def plot_confusion_matrix(y_true, y_proba, threshold=0.5):
@@ -236,7 +236,7 @@ def plot_confusion_matrix(y_true, y_proba, threshold=0.5):
     out = FIGURES_DIR / "10_confusion_matrix.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    log.info(f"Saved → {out.name}")
+    log.info(f"Saved â†’ {out.name}")
 
 
 def plot_threshold_analysis(threshold_rows):
@@ -273,7 +273,7 @@ def plot_threshold_analysis(threshold_rows):
     out = FIGURES_DIR / "11_threshold_analysis.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    log.info(f"Saved → {out.name}")
+    log.info(f"Saved â†’ {out.name}")
 
 
 def plot_feature_importance(model, feature_names, model_name):
@@ -285,7 +285,7 @@ def plot_feature_importance(model, feature_names, model_name):
     elif hasattr(model, "coef_"):
         importances = np.abs(model.coef_[0])
     else:
-        log.info("Model does not expose feature importances — skipping plot.")
+        log.info("Model does not expose feature importances â€” skipping plot.")
         return
 
     if feature_names is None or len(feature_names) != len(importances):
@@ -298,7 +298,7 @@ def plot_feature_importance(model, feature_names, model_name):
     ax.barh(fi.index[::-1], fi.values[::-1], color=colors[::-1], edgecolor="white")
     ax.set_xlabel("Importance Score")
     ax.set_title(
-        f"Top 15 Feature Importances — {model_name}",
+        f"Top 15 Feature Importances â€” {model_name}",
         fontsize=12, fontweight="bold",
     )
     ax.axvline(fi.values.mean(), color="grey", linestyle="--", lw=1.2, label="Mean importance")
@@ -307,16 +307,16 @@ def plot_feature_importance(model, feature_names, model_name):
     out = FIGURES_DIR / "12_feature_importance.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
     plt.close()
-    log.info(f"Saved → {out.name}")
+    log.info(f"Saved â†’ {out.name}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 6. CONSOLE SUMMARY
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def print_evaluation_summary(model_name, auc, threshold_rows, y_true, y_proba):
-    print("\n" + "═"*68)
-    print(f"  EVALUATION REPORT — {model_name}")
-    print("═"*68)
+    print("\n" + "â•"*68)
+    print(f"  EVALUATION REPORT â€” {model_name}")
+    print("â•"*68)
     print(f"  ROC-AUC Score     : {auc:.4f}")
     print(f"  Avg Precision     : {average_precision_score(y_true, y_proba):.4f}")
     print(f"  Test samples      : {len(y_true)}")
@@ -325,13 +325,13 @@ def print_evaluation_summary(model_name, auc, threshold_rows, y_true, y_proba):
     print(f"  {'THRESHOLD':<12}  {'PRECISION':>10}  {'RECALL':>8}  {'F1':>8}  {'PRED CHURN %':>13}")
     print("  " + "-"*58)
     for row in threshold_rows:
-        marker = " ←" if row["threshold"] == 0.5 else ""
+        marker = " â†" if row["threshold"] == 0.5 else ""
         print(
             f"  {row['threshold']:<12}  {row['precision']:>10.4f}  "
             f"{row['recall']:>8.4f}  {row['f1_score']:>8.4f}  "
             f"{row['predicted_churn_%']:>12.2f}%{marker}"
         )
-    print("═"*68 + "\n")
+    print("â•"*68 + "\n")
 
     # Classification report at 0.5
     y_pred = (y_proba >= 0.5).astype(int)
@@ -339,9 +339,9 @@ def print_evaluation_summary(model_name, auc, threshold_rows, y_true, y_proba):
     print(classification_report(y_true, y_pred, target_names=["Retained", "Churned"], digits=4))
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 7. SAVE EVALUATION REPORT
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def save_evaluation_report(model_name, auc, threshold_rows, y_true, y_proba, passes_gate):
     report = {
         "model_name":       model_name,
@@ -363,13 +363,13 @@ def save_evaluation_report(model_name, auc, threshold_rows, y_true, y_proba, pas
     out = REPORTS_DIR / "evaluation_report.json"
     with open(out, "w") as f:
         json.dump(report, f, indent=2)
-    log.info(f"Evaluation report saved → {out}")
+    log.info(f"Evaluation report saved â†’ {out}")
     return report
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 # 8. MAIN
-# ══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 def main():
     log.info("Evaluation pipeline started.")
 
@@ -395,7 +395,7 @@ def main():
     # Save report
     save_evaluation_report(model_name, auc, threshold_rows, y_test.values, y_proba, passes_gate)
 
-    # ── CI/CD Performance Gate ──
+    # â”€â”€ CI/CD Performance Gate â”€â”€
     if not passes_gate:
         log.error(
             f"PERFORMANCE GATE FAILED: ROC-AUC = {auc:.4f} "
@@ -404,9 +404,10 @@ def main():
         )
         sys.exit(1)
     else:
-        log.info(f"Performance gate PASSED ✓  (ROC-AUC = {auc:.4f} ≥ {MIN_AUC_THRESHOLD})")
+        log.info(f"Performance gate PASSED âœ“  (ROC-AUC = {auc:.4f} â‰¥ {MIN_AUC_THRESHOLD})")
         log.info("Evaluation pipeline complete.\n")
 
 
 if __name__ == "__main__":
     main()
+
