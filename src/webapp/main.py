@@ -21,8 +21,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 log = logging.getLogger(__name__)
 
-BASE_DIR   = Path(__file__).resolve().parent
-STATIC_DIR = BASE_DIR / "static"
+BASE_DIR   = Path(__file__).resolve().parent.parent.parent
+STATIC_DIR = BASE_DIR / "public"
 
 INFERENCE_API = os.getenv("API_BASE_URL", "http://localhost:5000")
 

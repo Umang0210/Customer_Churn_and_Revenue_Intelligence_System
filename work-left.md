@@ -103,3 +103,9 @@
 - [x] Verify test suite covers > 80% of pipeline and API logic.
 - [x] Check that API input validation handles edge cases (e.g., missing fields, wrong types, negative numbers).
 - [x] Run end-to-end flow: Ingest -> SQL -> Train -> API -> Power BI without manual intervention.
+
+## 14. Frontend Deployment
+- **Task**: Vercel Frontend Deployment
+  - **Current Status**: Completed.
+  - **What was Missing/Broken**: Vercel root URL served {'detail': 'Not Found'} because the static frontend was hidden in src/webapp/static and Vercel's zero-config defaulted to FastAPI's 404.
+  - **Implementation**: Moved frontend static files to public/ directory for Vercel auto-deployment at root, and added vercel.json with rewrites mapped to /api/app to preserve all existing API endpoints without changing FastAPI logic.
