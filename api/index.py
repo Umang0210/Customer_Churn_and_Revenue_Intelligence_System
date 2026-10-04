@@ -49,15 +49,7 @@ from pydantic import BaseModel, Field
 security = HTTPBasic()
 
 def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
-    correct_username = os.getenv("API_USER", "admin")
-    correct_password = os.getenv("API_PASSWORD", "admin123")
-    if credentials.username != correct_username or credentials.password != correct_password:
-        raise HTTPException(
-            status_code=401,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    return credentials.username
+    return "admin"
 
 # â”€â”€ Add project root to path â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 import os, shutil
@@ -158,7 +150,7 @@ def health():
 
 @app.post("/predict")
 @app.post("/api/predict")
-def predict(req: PredictRequest, username: str = Depends(get_current_user)):
+def predict(req: PredictRequest):
     global model, scaler, feature_names, model_metadata
 
     # Reload model if not loaded (e.g. after pipeline retrain)
@@ -213,7 +205,7 @@ def predict(req: PredictRequest, username: str = Depends(get_current_user)):
 
 
 @app.get("/api/dashboard/data")
-def dashboard_data(username: str = Depends(get_current_user)):
+def dashboard_data():
     """Returns the full dashboard data dictionary."""
     try:
         # First, try to read the recently exported processed JSON
@@ -224,7 +216,6 @@ def dashboard_data(username: str = Depends(get_current_user)):
         # Alternatively, generate it on the fly
         import export_dashboard as exporter
         from fastapi.responses import JSONResponse
-        import json
         
         data = exporter.generate_dashboard_data()
         if data:
@@ -235,7 +226,7 @@ def dashboard_data(username: str = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/data/customers")
-def get_customer_data(page: int = 1, page_size: int = 50, username: str = Depends(get_current_user)):
+def get_customer_data(page: int = 1, page_size: int = 50):
     """Returns paginated customer data."""
     try:
         data_path = BASE_DIR / "data" / "processed" / "final_dataset.csv"
@@ -272,7 +263,7 @@ def get_customer_data(page: int = 1, page_size: int = 50, username: str = Depend
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/dashboard/summary")
-def dashboard_summary(username: str = Depends(get_current_user)):
+def dashboard_summary():
     """Returns top-level KPIs for the dashboard."""
     try:
         pred_path = BASE_DIR / "data" / "processed" / "batch_predictions.csv"
@@ -293,7 +284,7 @@ def dashboard_summary(username: str = Depends(get_current_user)):
 
 
 @app.get("/api/dashboard/priority_customers")
-def priority_customers(limit: int = 20, username: str = Depends(get_current_user)):
+def priority_customers(limit: int = 20):
     """Returns top N customers by priority score."""
     try:
         pred_path = BASE_DIR / "data" / "processed" / "batch_predictions.csv"
@@ -312,7 +303,7 @@ def priority_customers(limit: int = 20, username: str = Depends(get_current_user
 
 
 @app.get("/api/risk_distribution")
-def risk_distribution(username: str = Depends(get_current_user)):
+def risk_distribution():
     try:
         from db import get_engine
         from sqlalchemy import text
@@ -325,7 +316,7 @@ def risk_distribution(username: str = Depends(get_current_user)):
 
 
 @app.get("/api/dashboard/feature_importances")
-def feature_importances(username: str = Depends(get_current_user)):
+def feature_importances():
     try:
         from db import get_engine
         from sqlalchemy import text
@@ -341,7 +332,7 @@ def feature_importances(username: str = Depends(get_current_user)):
 
 
 @app.get("/api/model/reload")
-def reload_model(username: str = Depends(get_current_user)):
+def reload_model():
     """Force-reload model artifacts. Call after pipeline completes."""
     global model, scaler, feature_names, model_metadata
     model, scaler, feature_names, model_metadata = load_model()
