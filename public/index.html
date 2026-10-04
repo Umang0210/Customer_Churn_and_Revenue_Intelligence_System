@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -960,8 +960,10 @@ function updateKPILive(summary) {
   // Subtly update values if API returns fresher data
   const atRiskEl = document.querySelector('[data-live="rev_at_risk"]');
   const hiRiskEl = document.querySelector('[data-live="high_risk"]');
+  const churnRtEl = document.querySelector('[data-live="churn_rate"]');
   if (atRiskEl) atRiskEl.textContent = '$' + compact(summary.revenue_at_risk);
   if (hiRiskEl) hiRiskEl.textContent = fmt(summary.high_risk_count);
+  if (churnRtEl) churnRtEl.textContent = (summary.avg_churn_probability * 100).toFixed(2) + '%';
 }
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -978,7 +980,12 @@ function renderOverview() {
   const grid = document.getElementById('kpiGrid');
   if (grid) {
     const cards = [
-1
+      { label:'Total Customers', value:fmt(k.total_customers), sub:`${DATA.dataset_overview.columns} features`, cls:'neutral', color:'indigo', icon:'<i data-lucide="users" class="icon-sm"></i>' },
+      { label:'Churn Rate', value:`${ch.churn_rate}%`, sub:`${fmt(ch.churned)} churned`, cls:'negative', color:'rose', icon:'<i data-lucide="alert-triangle" class="icon-sm"></i>', live:'churn_rate' },
+      { label:'Revenue at Risk', value:`$${compact(k.revenue_at_risk)}`, sub:`${k.revenue_at_risk_pct}% of total`, cls:'negative', color:'amber', icon:'<i data-lucide="dollar-sign" class="icon-sm"></i>', live:'rev_at_risk' },
+      { label:'Model ROC-AUC', value:m.roc_auc.toFixed(4), sub:`${DATA.model.selected_model.replace(/_/g,' ')} - ${DATA.model.model_version}`, cls:'positive', color:'emerald', icon:'<i data-lucide="activity" class="icon-sm"></i>' },
+      { label:'High-Risk Customers', value:`${k.high_risk_pct}%`, sub:`${fmt(DATA.model.risk_distribution.HIGH||0)} > 70% prob`, cls:'negative', color:'rose', icon:'<i data-lucide="alert-circle" class="icon-sm"></i>', live:'high_risk' },
+      { label:'Total Revenue', value:`$${compact(k.total_revenue)}`, sub:`Avg $${DATA.revenue_analysis.avg_monthly_charges}/mo`, cls:'neutral', color:'cyan', icon:'<i data-lucide="credit-card" class="icon-sm"></i>' }
     ];
     grid.innerHTML = cards.map(c=>`
       <div class="kpi-card ${c.color} animate-in">
@@ -1013,7 +1020,14 @@ function renderOverview() {
   const flow = document.getElementById('pipelineFlow');
   if (flow) {
     const steps = [
-1
+      {name:'Data Ingestion', file:'ingestion.py', bg:C.indigo, icon:'<i data-lucide="database" class="icon-sm"></i>'},
+      {name:'Data Cleaning', file:'cleaning.py', bg:C.violet, icon:'<i data-lucide="brush" class="icon-sm"></i>'},
+      {name:'Feature Engineering', file:'features.py', bg:C.cyan, icon:'<i data-lucide="settings" class="icon-sm"></i>'},
+      {name:'EDA', file:'eda.py', bg:C.amber, icon:'<i data-lucide="pie-chart" class="icon-sm"></i>'},
+      {name:'Model Training', file:'train.py', bg:C.rose, icon:'<i data-lucide="cpu" class="icon-sm"></i>'},
+      {name:'Evaluation', file:'evaluate.py', bg:C.emerald, icon:'<i data-lucide="check-circle" class="icon-sm"></i>'},
+      {name:'Predictions', file:'persist_insights.py', bg:C.sky, icon:'<i data-lucide="save" class="icon-sm"></i>'},
+      {name:'Business Insights', file:'business_insights.py', bg:C.indigo, icon:'<i data-lucide="trending-up" class="icon-sm"></i>'}
     ];
     flow.innerHTML = steps.map((s,i)=>`
       ${i>0?'<div class="pipeline-arrow">â†’</div>':''}
@@ -1094,7 +1108,7 @@ function renderModel() {
   }
   // Threshold table
   const tbody = document.querySelector('#thresholdTable tbody');
-1
+  if (tbody) tbody.innerHTML = th.map(t=>`<tr${t.threshold===.5?' style="background:rgba(99,102,241,.06)"':''}><td>${t.threshold.toFixed(1)}${t.threshold===.5?' *':''}</td><td>${(t.precision*100).toFixed(2)}%</td><td>${(t.recall*100).toFixed(2)}%</td><td>${(t.f1_score*100).toFixed(2)}%</td></tr>`).join('');
 
   // Features
   document.getElementById('featureCount').textContent = DATA.model.num_features;
@@ -1240,7 +1254,7 @@ function renderCustomerTable(customers, isLive) {
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // UPLOAD
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const STEP_NAMES = ['','Data Ingestion','Data Cleaning','Feature Engineering','EDA','Model Training','Model Evaluation','Batch Predictions','Business Insights'];
+const STEP_NAMES = ['','Data Ingestion','Data Cleaning','Feature Engineering','EDA','Model Training','Model Evaluation','Batch Predictions','Business Insights','Export Dashboard JSON'];
 let pollInterval = null;
 let selectedFile = null;
 
@@ -1261,7 +1275,7 @@ function handleFile(file) {
   selectedFile = file;
   const preview = document.getElementById('filePreview');
   preview.classList.add('show');
-1
+  document.getElementById('previewIcon').innerHTML = ext==='csv'?'<i data-lucide="file-text" class="icon-sm"></i>':'<i data-lucide="bar-chart-2" class="icon-sm"></i>';
   document.getElementById('previewName').textContent = file.name;
   document.getElementById('previewMeta').textContent = `${(file.size/1024).toFixed(1)} KB Â· ${ext.toUpperCase()}`;
   document.getElementById('uploadBtn').disabled = false;
@@ -1298,7 +1312,7 @@ async function uploadFile() {
   if (!response) {
     showVal('error', 'Unable to connect to the API.');
     btn.disabled = false;
-1
+    btn.innerHTML = '<i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline';
     return;
   }
 
@@ -1321,7 +1335,8 @@ async function uploadFile() {
       showVal('error', data.detail ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Upload failed.');
     }
     btn.disabled = false;
-1
+    showVal('ok', `<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> ${data.rows?.toLocaleString() || 'File'} uploaded. Pipeline starting.`);
+    btn.innerHTML = '<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> Uploaded - Pipeline Running';
   showToast('Pipeline started! Dashboard will update when complete.');
   document.getElementById('pipelineProgress').classList.add('show');
   startPolling();
@@ -1352,7 +1367,7 @@ function startPolling() {
         if (data.status === 'success') {
           showToast('âœ… Pipeline complete! Refresh the page to see updated data.');
           document.getElementById('uploadBtn').disabled = false;
-1
+          document.getElementById('uploadBtn').innerHTML = '<i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline';
         }
       }
     } catch(e) {}
@@ -1382,9 +1397,14 @@ function updateProgress(data) {
 function renderStepCards(currentStep, pipelineStatus) {
   const container = document.getElementById('stepCards');
   container.innerHTML = '';
-  for (let i=1; i<=8; i++) {
+  for (let i=1; i<=9; i++) {
     const div = document.createElement('div');
-1
+      let state = 'pending', icon = '';
+      if (i < currentStep) { state='success'; icon='<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i>'; }
+      else if (i === currentStep) {
+        if (pipelineStatus==='running') { state='running'; icon='<i data-lucide="loader-2" class="icon-sm spin"></i>'; }
+        else if (pipelineStatus==='success') { state='success'; icon='<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i>'; }
+        else if (pipelineStatus==='failed') { state='failed'; icon='<i data-lucide="x-circle" class="icon-sm text-rose"></i>'; }
     }
     div.className = `step-card ${state}`;
     div.innerHTML = `<div class="snum">Step ${i}</div><div class="sname">${STEP_NAMES[i]}</div><span class="sico">${icon}</span>`;
@@ -1470,20 +1490,20 @@ function initScroll() {
   document.querySelectorAll('.section').forEach(s=>obs.observe(s));
 }
 </script>
-1
+<script>lucide.createIcons();</script>
 
 <!-- LOGS MODAL -->
 <div id="logsModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);">
   <div class="modal-content card" style="margin:5% auto; width:80%; max-width:800px; max-height:80vh; display:flex; flex-direction:column; padding:24px; position:relative;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-1
+        <h3 style="margin:0; font-size:1.2rem; color:var(--tx1)"><i data-lucide="file-text" class="icon-sm"></i> Pipeline Logs</h3>
       <button onclick="document.getElementById('logsModal').style.display='none'" style="background:transparent; border:none; color:var(--tx2); cursor:pointer; font-size:1.5rem">&times;</button>
     </div>
     <div style="flex:1; overflow-y:auto; background:#1e1e1e; padding:16px; border-radius:8px; border:1px solid var(--border); text-align:left;">
       <pre id="logsContent" style="margin:0; font-family:monospace; font-size:0.85rem; color:#d4d4d4; white-space:pre-wrap; word-wrap:break-word;">Loading logs...</pre>
     </div>
     <div style="margin-top:16px; display:flex; justify-content:flex-end;">
-1
+        <button class="btn" onclick="fetchLogs()"><i data-lucide="refresh-cw" class="icon-sm"></i> Refresh Logs</button>
     </div>
   </div>
 </div>

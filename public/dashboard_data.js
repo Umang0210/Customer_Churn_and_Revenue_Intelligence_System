@@ -1,41 +1,39 @@
-// Auto-generated — wraps dashboard_data.json for file:// support
 window.DASHBOARD_DATA = {
-  "generated_at": "2026-03-01 11:44:35",
-  "project_name": "Customer Churn & Revenue Optimization Intelligence System",
+  "generated_at": "2026-10-04 12:09:11",
   "dataset_overview": {
     "rows": 7043,
-    "columns": 21,
+    "columns": 24,
     "total_missing": 0,
-    "total_cells": 147903,
+    "total_cells": 169032,
     "missing_pct": 0.0,
     "columns_info": [
       {
-        "name": "customerID",
-        "dtype": "object",
+        "name": "customer_id",
+        "dtype": "str",
         "missing": 0,
         "unique": 7043
       },
       {
         "name": "gender",
-        "dtype": "object",
+        "dtype": "str",
         "missing": 0,
         "unique": 2
       },
       {
-        "name": "SeniorCitizen",
+        "name": "seniorcitizen",
         "dtype": "int64",
         "missing": 0,
         "unique": 2
       },
       {
-        "name": "Partner",
-        "dtype": "object",
+        "name": "partner",
+        "dtype": "str",
         "missing": 0,
         "unique": 2
       },
       {
-        "name": "Dependents",
-        "dtype": "object",
+        "name": "dependents",
+        "dtype": "str",
         "missing": 0,
         "unique": 2
       },
@@ -46,461 +44,460 @@ window.DASHBOARD_DATA = {
         "unique": 73
       },
       {
-        "name": "PhoneService",
-        "dtype": "object",
+        "name": "phoneservice",
+        "dtype": "str",
         "missing": 0,
         "unique": 2
       },
       {
-        "name": "MultipleLines",
-        "dtype": "object",
+        "name": "multiplelines",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "InternetService",
-        "dtype": "object",
+        "name": "internetservice",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "OnlineSecurity",
-        "dtype": "object",
+        "name": "onlinesecurity",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "OnlineBackup",
-        "dtype": "object",
+        "name": "onlinebackup",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "DeviceProtection",
-        "dtype": "object",
+        "name": "deviceprotection",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "TechSupport",
-        "dtype": "object",
+        "name": "techsupport",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "StreamingTV",
-        "dtype": "object",
+        "name": "streamingtv",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "StreamingMovies",
-        "dtype": "object",
+        "name": "streamingmovies",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "Contract",
-        "dtype": "object",
+        "name": "contract",
+        "dtype": "str",
         "missing": 0,
         "unique": 3
       },
       {
-        "name": "PaperlessBilling",
-        "dtype": "object",
+        "name": "paperlessbilling",
+        "dtype": "str",
         "missing": 0,
         "unique": 2
       },
       {
-        "name": "PaymentMethod",
-        "dtype": "object",
+        "name": "paymentmethod",
+        "dtype": "str",
         "missing": 0,
         "unique": 4
       },
       {
-        "name": "MonthlyCharges",
+        "name": "monthlycharges",
         "dtype": "float64",
         "missing": 0,
         "unique": 1585
       },
       {
-        "name": "TotalCharges",
-        "dtype": "object",
+        "name": "totalcharges",
+        "dtype": "float64",
         "missing": 0,
         "unique": 6531
       },
       {
-        "name": "Churn",
-        "dtype": "object",
+        "name": "churn",
+        "dtype": "str",
         "missing": 0,
         "unique": 2
+      },
+      {
+        "name": "tenure_group",
+        "dtype": "str",
+        "missing": 0,
+        "unique": 5
+      },
+      {
+        "name": "avg_monthly_spend",
+        "dtype": "float64",
+        "missing": 0,
+        "unique": 6639
+      },
+      {
+        "name": "revenue",
+        "dtype": "float64",
+        "missing": 0,
+        "unique": 1585
       }
     ],
-    "memory_mb": 7.79,
+    "memory_mb": 6.97,
     "duplicate_rows": 0
   },
   "churn_distribution": {
-    "churned": 1869,
-    "retained": 5174,
+    "churned": 2887,
+    "retained": 4156,
     "total": 7043,
-    "churn_rate": 26.54,
-    "retention_rate": 73.46
+    "churn_rate": 40.99,
+    "retention_rate": 59.01
   },
   "revenue_analysis": {
-    "total_monthly_charges": 456116.6,
-    "avg_monthly_charges": 64.76,
-    "total_revenue": 16056168.7,
-    "avg_revenue_per_customer": 2283.3,
-    "churned_total_revenue": 2862926.9,
-    "retained_total_revenue": 13193241.8,
-    "churned_avg_monthly": 74.44,
-    "retained_avg_monthly": 61.27,
+    "total_monthly_charges": 0.0,
+    "avg_monthly_charges": 0.0,
+    "total_revenue": 0.0,
+    "avg_revenue_per_customer": 0.0,
+    "churned_total_revenue": 0.0,
+    "retained_total_revenue": 0.0,
     "charge_distribution": {
-      "$0-30": 1653,
-      "$30-50": 646,
-      "$50-70": 1161,
-      "$70-90": 1844,
-      "$90-120": 1739
+      "$0-30": 0,
+      "$30-50": 0,
+      "$50-70": 0,
+      "$70-90": 0,
+      "$90-120": 0
     }
   },
   "segment_analysis": {
     "contract": [
       {
-        "contract": "Month-To-Month",
+        "contract": "month-to-month",
         "count": 3875,
-        "churn_rate": 42.71,
-        "avg_monthly": 66.4
+        "churn_rate": 0.0,
+        "avg_monthly": 0.0
       },
       {
-        "contract": "One Year",
+        "contract": "one year",
         "count": 1473,
-        "churn_rate": 11.27,
-        "avg_monthly": 65.05
+        "churn_rate": 0.0,
+        "avg_monthly": 0.0
       },
       {
-        "contract": "Two Year",
+        "contract": "two year",
         "count": 1695,
-        "churn_rate": 2.83,
-        "avg_monthly": 60.77
+        "churn_rate": 0.0,
+        "avg_monthly": 0.0
       }
     ],
-    "gender": [
-      {
-        "gender": "Female",
-        "count": 3488,
-        "churn_rate": 26.92
-      },
-      {
-        "gender": "Male",
-        "count": 3555,
-        "churn_rate": 26.16
-      }
-    ],
-    "senior_citizen": [
-      {
-        "category": "Non-Senior",
-        "count": 5901,
-        "churn_rate": 23.61
-      },
-      {
-        "category": "Non-Senior",
-        "count": 1142,
-        "churn_rate": 41.68
-      }
-    ]
+    "gender": [],
+    "senior_citizen": []
   },
   "tenure_analysis": {
     "groups": [
       {
         "group": "0-6 mo",
-        "count": 1481,
-        "churn_rate": 52.94,
-        "avg_monthly": 54.74
+        "count": 1470,
+        "churn_rate": 0.0,
+        "avg_monthly": 0.0
       },
       {
         "group": "6-12 mo",
         "count": 705,
-        "churn_rate": 35.89,
-        "avg_monthly": 58.95
+        "churn_rate": 0.0,
+        "avg_monthly": 0.0
       },
       {
         "group": "12-24 mo",
         "count": 1024,
-        "churn_rate": 28.71,
-        "avg_monthly": 61.36
+        "churn_rate": 0.0,
+        "avg_monthly": 0.0
       },
       {
         "group": "24-48 mo",
         "count": 1594,
-        "churn_rate": 20.39,
-        "avg_monthly": 65.93
+        "churn_rate": 0.0,
+        "avg_monthly": 0.0
       },
       {
         "group": "48+ mo",
         "count": 2239,
-        "churn_rate": 9.51,
-        "avg_monthly": 73.95
+        "churn_rate": 0.0,
+        "avg_monthly": 0.0
       }
     ],
-    "avg_tenure": 32.4,
+    "avg_tenure": 32.37114865824223,
     "median_tenure": 29.0,
-    "max_tenure": 72
+    "max_tenure": 72.0
   },
   "services_analysis": {
-    "internet_service": [
-      {
-        "service": "Dsl",
-        "count": 2421,
-        "churn_rate": 18.96
-      },
-      {
-        "service": "Fiber Optic",
-        "count": 3096,
-        "churn_rate": 41.89
-      },
-      {
-        "service": "No",
-        "count": 1526,
-        "churn_rate": 7.4
-      }
-    ],
-    "payment_method": [
-      {
-        "method": "Bank Transfer (Automatic)",
-        "count": 1544,
-        "churn_rate": 16.71
-      },
-      {
-        "method": "Credit Card (Automatic)",
-        "count": 1522,
-        "churn_rate": 15.24
-      },
-      {
-        "method": "Electronic Check",
-        "count": 2365,
-        "churn_rate": 45.29
-      },
-      {
-        "method": "Mailed Check",
-        "count": 1612,
-        "churn_rate": 19.11
-      }
-    ]
+    "internet_service": [],
+    "payment_method": []
   },
   "model": {
     "evaluation": {
-      "roc_auc": 0.8323,
-      "precision": 0.541,
-      "recall": 0.7406,
-      "f1_score": 0.6253,
+      "roc_auc": 0.8447,
+      "precision": 0.5,
+      "recall": 0.7,
+      "f1_score": 0.6,
       "confusion_matrix": [
         [
-          800,
-          235
+          0,
+          0
         ],
         [
-          97,
-          277
+          0,
+          0
         ]
       ],
-      "test_samples": 1409,
-      "train_samples": 5634
+      "test_samples": 1409
     },
     "model_comparison": {
-      "logistic_regression": {
-        "roc_auc": 0.8282,
-        "precision": 0.491,
-        "recall": 0.8021
-      },
       "random_forest": {
-        "roc_auc": 0.8323,
-        "precision": 0.541,
-        "recall": 0.7406
+        "roc_auc": 0.8447,
+        "precision": 0.5,
+        "recall": 0.7
+      },
+      "logistic_regression": {
+        "roc_auc": 0.8,
+        "precision": 0.5,
+        "recall": 0.7
       }
     },
     "selected_model": "random_forest",
-    "model_version": "v1.1.0",
-    "num_features": 7,
+    "model_version": "v2.0",
+    "num_features": 29,
     "feature_list": [
+      "customer_id",
+      "gender",
+      "seniorcitizen",
+      "partner",
+      "dependents",
       "tenure",
-      "monthlycharges",
-      "totalcharges",
-      "gender_male",
-      "seniorcitizen_1",
-      "contract_one year",
-      "contract_two year"
+      "phoneservice",
+      "multiplelines",
+      "internetservice",
+      "onlinesecurity"
     ],
     "thresholds": [
       {
         "threshold": 0.3,
-        "precision": 0.4591,
-        "recall": 0.885,
-        "f1_score": 0.6046
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1_score": 0.5
       },
       {
         "threshold": 0.4,
-        "precision": 0.4976,
-        "recall": 0.8262,
-        "f1_score": 0.6211
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1_score": 0.5
       },
       {
         "threshold": 0.5,
-        "precision": 0.541,
-        "recall": 0.7406,
-        "f1_score": 0.6253
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1_score": 0.5
       },
       {
         "threshold": 0.6,
-        "precision": 0.5762,
-        "recall": 0.5963,
-        "f1_score": 0.5861
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1_score": 0.5
       },
       {
         "threshold": 0.7,
-        "precision": 0.625,
-        "recall": 0.4278,
-        "f1_score": 0.5079
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1_score": 0.5
       },
       {
         "threshold": 0.8,
-        "precision": 0.7442,
-        "recall": 0.2567,
-        "f1_score": 0.3817
+        "precision": 0.5,
+        "recall": 0.5,
+        "f1_score": 0.5
       }
     ],
     "risk_distribution": {
-      "LOW": 3870,
-      "MEDIUM": 1847,
-      "HIGH": 1320
+      "LOW": 3558,
+      "MEDIUM": 1748,
+      "HIGH": 1737
     },
     "top_customers": [
       {
-        "customer_id": "2889-fpwrm",
-        "churn_probability": 0.6647,
-        "revenue": 8481.6,
-        "expected_loss": 5637.46,
-        "monthly_charges": 117.8,
-        "tenure": 72
-      },
-      {
-        "customer_id": "0201-oamxr",
-        "churn_probability": 0.6854,
-        "revenue": 8088.5,
-        "expected_loss": 5543.84,
-        "monthly_charges": 115.55,
-        "tenure": 70
-      },
-      {
         "customer_id": "9090-sgqxl",
-        "churn_probability": 0.7393,
-        "revenue": 7160.4,
-        "expected_loss": 5293.79,
-        "monthly_charges": 105.3,
-        "tenure": 68
+        "churn_probability": 0.6914,
+        "revenue": 7299.65,
+        "expected_loss": 5047.08,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "4550-vbofe",
-        "churn_probability": 0.7107,
-        "revenue": 7206.5,
-        "expected_loss": 5121.6,
-        "monthly_charges": 102.95,
-        "tenure": 70
+        "customer_id": "2452-kdrrh",
+        "churn_probability": 0.706,
+        "revenue": 6841.05,
+        "expected_loss": 4829.52,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "5287-qwlky",
-        "churn_probability": 0.6729,
-        "revenue": 7462.1,
-        "expected_loss": 5021.29,
-        "monthly_charges": 105.1,
-        "tenure": 71
+        "customer_id": "3761-flyzi",
+        "churn_probability": 0.6931,
+        "revenue": 7082.45,
+        "expected_loss": 4909.09,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "9835-ziitk",
-        "churn_probability": 0.6792,
-        "revenue": 7316.1,
-        "expected_loss": 4969.37,
-        "monthly_charges": 110.85,
-        "tenure": 66
+        "customer_id": "5647-fxotp",
+        "churn_probability": 0.7245,
+        "revenue": 6401.25,
+        "expected_loss": 4637.56,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "3886-certz",
-        "churn_probability": 0.6265,
-        "revenue": 7866.0,
-        "expected_loss": 4928.25,
-        "monthly_charges": 109.25,
-        "tenure": 72
+        "customer_id": "2378-vtkdh",
+        "churn_probability": 0.7076,
+        "revenue": 6578.55,
+        "expected_loss": 4655.02,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "7632-mnyoy",
-        "churn_probability": 0.6571,
-        "revenue": 7319.4,
-        "expected_loss": 4809.87,
-        "monthly_charges": 110.9,
-        "tenure": 66
+        "customer_id": "7901-tbkjx",
+        "churn_probability": 0.7655,
+        "revenue": 5594.0,
+        "expected_loss": 4282.47,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "7317-ggvpb",
-        "churn_probability": 0.611,
-        "revenue": 7710.6,
-        "expected_loss": 4711.48,
-        "monthly_charges": 108.6,
-        "tenure": 71
+        "customer_id": "1013-qcwam",
+        "churn_probability": 0.6987,
+        "revenue": 6690.75,
+        "expected_loss": 4674.68,
+        "monthly_charges": 0.0,
+        "tenure": 0
+      },
+      {
+        "customer_id": "0946-cljti",
+        "churn_probability": 0.7491,
+        "revenue": 5812.6,
+        "expected_loss": 4354.44,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
         "customer_id": "0324-brpcj",
-        "churn_probability": 0.6903,
-        "revenue": 6813.6,
-        "expected_loss": 4703.67,
-        "monthly_charges": 100.2,
-        "tenure": 68
+        "churn_probability": 0.686,
+        "revenue": 6851.65,
+        "expected_loss": 4700.05,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "3838-ozurd",
-        "churn_probability": 0.6707,
-        "revenue": 6930.0,
-        "expected_loss": 4647.94,
-        "monthly_charges": 105.0,
-        "tenure": 66
+        "customer_id": "4550-vbofe",
+        "churn_probability": 0.6733,
+        "revenue": 7101.5,
+        "expected_loss": 4781.55,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "0917-ezola",
-        "churn_probability": 0.6142,
-        "revenue": 7498.8,
-        "expected_loss": 4605.6,
-        "monthly_charges": 104.15,
-        "tenure": 72
+        "customer_id": "7056-imhcc",
+        "churn_probability": 0.7593,
+        "revenue": 5549.4,
+        "expected_loss": 4213.43,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "0639-tsiqw",
-        "churn_probability": 0.6665,
-        "revenue": 6897.65,
-        "expected_loss": 4596.94,
-        "monthly_charges": 102.95,
-        "tenure": 67
+        "customer_id": "1035-ipqpu",
+        "churn_probability": 0.6998,
+        "revenue": 6479.4,
+        "expected_loss": 4534.51,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "3259-fdwoy",
-        "churn_probability": 0.6023,
-        "revenue": 7526.0,
-        "expected_loss": 4532.83,
-        "monthly_charges": 106.0,
-        "tenure": 71
+        "customer_id": "4553-dvpzg",
+        "churn_probability": 0.7164,
+        "revenue": 6164.7,
+        "expected_loss": 4416.45,
+        "monthly_charges": 0.0,
+        "tenure": 0
       },
       {
-        "customer_id": "5502-rluyv",
-        "churn_probability": 0.6316,
-        "revenue": 7172.55,
-        "expected_loss": 4530.4,
-        "monthly_charges": 103.95,
-        "tenure": 69
+        "customer_id": "8634-mphtr",
+        "churn_probability": 0.8038,
+        "revenue": 4871.05,
+        "expected_loss": 3915.38,
+        "monthly_charges": 0.0,
+        "tenure": 0
+      },
+      {
+        "customer_id": "4433-jcgcg",
+        "churn_probability": 0.816,
+        "revenue": 4680.05,
+        "expected_loss": 3819.08,
+        "monthly_charges": 0.0,
+        "tenure": 0
+      },
+      {
+        "customer_id": "6173-golsu",
+        "churn_probability": 0.7122,
+        "revenue": 6079.0,
+        "expected_loss": 4329.46,
+        "monthly_charges": 0.0,
+        "tenure": 0
+      },
+      {
+        "customer_id": "3791-lgqcy",
+        "churn_probability": 0.7356,
+        "revenue": 5688.05,
+        "expected_loss": 4184.26,
+        "monthly_charges": 0.0,
+        "tenure": 0
+      },
+      {
+        "customer_id": "6646-vrfol",
+        "churn_probability": 0.7481,
+        "revenue": 5485.5,
+        "expected_loss": 4103.68,
+        "monthly_charges": 0.0,
+        "tenure": 0
+      },
+      {
+        "customer_id": "6377-whaox",
+        "churn_probability": 0.6916,
+        "revenue": 6411.25,
+        "expected_loss": 4434.26,
+        "monthly_charges": 0.0,
+        "tenure": 0
+      },
+      {
+        "customer_id": "2675-dhutr",
+        "churn_probability": 0.7264,
+        "revenue": 5780.7,
+        "expected_loss": 4199.28,
+        "monthly_charges": 0.0,
+        "tenure": 0
       }
     ],
     "business_kpis": {
       "total_customers": 7043,
-      "high_risk_pct": 18.74,
-      "total_revenue": 16055091.45,
-      "revenue_at_risk": 4230312.33,
-      "revenue_at_risk_pct": 26.35
+      "high_risk_pct": 24.66,
+      "total_revenue": 0.0,
+      "revenue_at_risk": 5099675.26,
+      "revenue_at_risk_pct": 0.0
     }
   }
 };

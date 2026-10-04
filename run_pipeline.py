@@ -1,4 +1,4 @@
-﻿"""
+"""
 Pipeline Orchestrator â€” Customer Churn & Revenue Intelligence
 =============================================================
 Connects ALL pipeline steps end-to-end in the correct order.
@@ -49,7 +49,7 @@ else:
     LOG_DIR = Path(__file__).resolve().parent / "logs"
 
 LOG_DIR.mkdir(parents=True, exist_ok=True)
-1
+log_file = LOG_DIR / "pipeline.log"
 handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
 log_file_str = str(log_file)
 
@@ -159,6 +159,7 @@ PIPELINE_STEPS = [
     (6, "Model Evaluation",       "evaluate"),
     (7, "Batch Predictions",      "persist_insights"),
     (8, "Business Insights",      "business_insights"),
+    (9, "Export Dashboard JSON",  "export_dashboard"),
 ]
 
 
@@ -170,6 +171,7 @@ def run_pipeline(
     skip_eda: bool = False,
     skip_train: bool = False,
     raise_on_failure: bool = False,
+    run_id: str = None,
 ) -> dict:
     """
     Runs the full pipeline. Returns a summary dict.
