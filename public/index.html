@@ -983,7 +983,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       // First try the API
       try {
-        const apiR = await fetch(API_BASE + '/api/dashboard/data');
+        const apiR = await fetch(API_BASE + '/api/dashboard/data', { signal: AbortSignal.timeout(8000) });
         if (apiR.ok) {
           DATA = await apiR.json();
         }
@@ -994,7 +994,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const paths = ['dashboard_data.json', '/dashboard_data.json', '/static/dashboard_data.json'];
         for (const p of paths) {
           try { 
-            const r = await fetch(p); 
+            const r = await fetch(p, { signal: AbortSignal.timeout(4000) }); 
             if (r.ok) { DATA = await r.json(); break; } 
           } catch(e) {}
         }

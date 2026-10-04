@@ -223,9 +223,12 @@ def dashboard_data(username: str = Depends(get_current_user)):
         
         # Alternatively, generate it on the fly
         import export_dashboard as exporter
+        from fastapi.responses import JSONResponse
+        import json
+        
         data = exporter.generate_dashboard_data()
         if data:
-            return data
+            return JSONResponse(content=json.loads(json.dumps(data, cls=exporter.NpEncoder)))
             
         raise HTTPException(status_code=404, detail="Dashboard data not found. Run the pipeline first.")
     except Exception as e:
@@ -253,13 +256,18 @@ def get_customer_data(page: int = 1, page_size: int = 50, username: str = Depend
         
         page_df = df.iloc[start:end]
         
-        return {
+        response_data = {
             "total": total,
             "page": page,
             "page_size": page_size,
             "columns": list(df.columns),
             "data": page_df.to_dict(orient="records")
         }
+        
+        import export_dashboard as exporter
+        from fastapi.responses import JSONResponse
+        import json
+        return JSONResponse(content=json.loads(json.dumps(response_data, cls=exporter.NpEncoder)))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
