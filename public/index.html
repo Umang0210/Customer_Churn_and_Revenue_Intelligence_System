@@ -846,9 +846,18 @@ body::before {
 <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â SCRIPTS Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
 <script>
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// CONFIG â€” API base URL
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// CONFIG â€” API base URL & Polyfills
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const API_BASE = window.location.origin;
+
+if (!AbortSignal.timeout) {
+  AbortSignal.timeout = function (ms) {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), ms);
+    return controller.signal;
+  };
+}
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // CHART DEFAULTS
@@ -881,7 +890,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       const paths = ['dashboard_data.json', '/dashboard_data.json', '/static/dashboard_data.json'];
       for (const p of paths) {
-        try { const r = await fetch(p, {signal: AbortSignal.timeout(3000)}); if (r.ok) { DATA = await r.json(); break; } } catch(e) {}
+        try { 
+          const r = await fetch(p); 
+          if (r.ok) { DATA = await r.json(); break; } 
+        } catch(e) {}
       }
     }
     if (!DATA) throw new Error('dashboard_data.js not found in static/. Make sure the file exists.');
@@ -893,14 +905,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('loadingOverlay').innerHTML =
       `<div style="text-align:center;color:#f43f5e;padding:32px;max-width:440px">
         <div style="font-size:2.5rem;margin-bottom:12px">âš </div>
-        <p style="font-size:1rem;font-weight:700;margin-bottom:8px">Failed to load dashboard data</p>
+        <p style="font-size:1rem;font-weight:700;margin-bottom:8px">Unable to load dashboard data.</p>
         <p style="color:#8b949e;font-size:.83rem;margin-bottom:14px">${e.message}</p>
-        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;text-align:left;font-size:.77rem;color:#8b949e;line-height:1.8">
+        <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;text-align:left;font-size:.77rem;color:#8b949e;line-height:1.8;margin-bottom:20px;">
           <strong style="color:#e6edf3;display:block;margin-bottom:4px">Fix checklist:</strong>
-          1. Is src/webapp/static/dashboard_data.js present?<br>
-          2. Run python run_pipeline.py first to generate data<br>
-          3. Both servers running? API :5000 and Dashboard :8000
+          1. Run python run_pipeline.py to generate data<br>
+          2. Ensure API server is running on correct port
         </div>
+        <button onclick="window.location.reload()" style="background:var(--rose);color:#fff;border:none;padding:10px 24px;border-radius:6px;font-weight:600;cursor:pointer;font-family:inherit;">Retry</button>
       </div>`;
   }
 
@@ -1335,8 +1347,12 @@ async function uploadFile() {
       showVal('error', data.detail ? (typeof data.detail === 'string' ? data.detail : JSON.stringify(data.detail)) : 'Upload failed.');
     }
     btn.disabled = false;
-    showVal('ok', `<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> ${data.rows?.toLocaleString() || 'File'} uploaded. Pipeline starting.`);
-    btn.innerHTML = '<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> Uploaded - Pipeline Running';
+    btn.innerHTML = '<i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline';
+    return;
+  }
+  
+  showVal('ok', `<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> ${data.rows?.toLocaleString() || 'File'} uploaded. Pipeline starting.`);
+  btn.innerHTML = '<i data-lucide="check-circle-2" class="icon-sm text-emerald"></i> Uploaded - Pipeline Running';
   showToast('Pipeline started! Dashboard will update when complete.');
   document.getElementById('pipelineProgress').classList.add('show');
   startPolling();
