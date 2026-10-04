@@ -1,5 +1,5 @@
 window.DASHBOARD_DATA = {
-  "generated_at": "2026-10-04 12:09:11",
+  "generated_at": "2026-10-04 12:51:55",
   "dataset_overview": {
     "rows": 7043,
     "columns": 24,

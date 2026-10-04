@@ -223,11 +223,17 @@ def _run_pipeline_background(filepath: str, filename: str, run_id: str = None):
         summary = rp.run_pipeline(raise_on_failure=False, run_id=run_id)
 
         final_status = "success" if summary["status"] == "success" else "failed"
+        if final_status == "success":
+            if summary.get("fail_count", 0) > 0:
+                msg = "Pipeline completed successfully. Dashboard data is available, but JSON export failed."
+            else:
+                msg = "Pipeline completed successfully! Dashboard data updated."
+        else:
+            msg = f"Pipeline finished with {summary['fail_count']} failure(s). Check logs."
+            
         _write_status(
             final_status,
-            "Pipeline completed successfully! Dashboard data updated."
-            if final_status == "success"
-            else f"Pipeline finished with {summary['fail_count']} failure(s). Check logs.",
+            msg,
             step=9,
             details=summary,
         )

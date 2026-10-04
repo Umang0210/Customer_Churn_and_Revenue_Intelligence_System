@@ -219,15 +219,16 @@ def run_pipeline(
         results.append(result)
 
         if result["status"] in ("failed", "gate_failed"):
-            failed = True
-            if raise_on_failure or result["status"] == "gate_failed":
-                break
-            # For non-gate failures, continue unless it's a critical data step
-            if step_num <= 3:
-                log.error(
-                    f"  Critical step {step_num} failed. Aborting pipeline."
-                )
-                break
+            if step_num == 9:
+                log.warning("  Optional Step 9 (Export JSON) failed. Pipeline will still be marked as successful.")
+            else:
+                failed = True
+                if raise_on_failure or result["status"] == "gate_failed":
+                    break
+                # For non-gate failures, continue unless it's a critical data step
+                if step_num <= 3:
+                    log.error(f"  Critical step {step_num} failed. Aborting pipeline.")
+                    break
 
     total_duration = round(time.time() - pipeline_start, 2)
 

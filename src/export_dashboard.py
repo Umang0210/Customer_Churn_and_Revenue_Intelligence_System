@@ -6,7 +6,31 @@ from datetime import datetime
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-def main():
+import numpy as np
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        if isinstance(obj, pd.Timestamp):
+            return obj.isoformat()
+        if pd.isna(obj):
+            return None
+        return super(NpEncoder, self).default(obj)
+        
+def clean_dict(d):
+    if isinstance(d, dict):
+        return {k: clean_dict(v) for k, v in d.items()}
+    elif isinstance(d, list):
+        return [clean_dict(v) for v in d]
+    elif pd.isna(d):
+        return None
+    return d
+
+def generate_dashboard_data():
     print("Generating dashboard data...")
     clean_path = BASE_DIR / "data" / "processed" / "final_dataset.csv"
     if not clean_path.exists():
@@ -206,16 +230,39 @@ def main():
         "model": model_data
     }
 
+
+        
+    full_data = clean_dict(full_data)
+    return full_data
+
+def main():
+    full_data = generate_dashboard_data()
     out_json = BASE_DIR / "public" / "dashboard_data.json"
     out_js = BASE_DIR / "public" / "dashboard_data.js"
+    data_json = BASE_DIR / "data" / "processed" / "dashboard_data.json"
     
-    with open(out_json, "w") as f:
-        json.dump(full_data, f, indent=2)
-        
-    with open(out_js, "w") as f:
-        f.write("window.DASHBOARD_DATA = " + json.dumps(full_data, indent=2) + ";\n")
+    # Save to data dir for API use
+    try:
+        data_json.parent.mkdir(parents=True, exist_ok=True)
+        with open(data_json, "w") as f:
+            json.dump(full_data, f, indent=2, cls=NpEncoder, allow_nan=False)
+        print(f"Exported dashboard data to {data_json}")
+    except Exception as e:
+        print(f"Failed to export to data directory: {e}")
 
-    print(f"Exported dashboard data to {out_json}")
+    # Try saving to public dir (may fail in serverless)
+    try:
+        out_json.parent.mkdir(parents=True, exist_ok=True)
+        with open(out_json, "w") as f:
+            json.dump(full_data, f, indent=2, cls=NpEncoder, allow_nan=False)
+            
+        with open(out_js, "w") as f:
+            f.write("window.DASHBOARD_DATA = " + json.dumps(full_data, indent=2, cls=NpEncoder, allow_nan=False) + ";\n")
+        print(f"Exported dashboard data to {out_json}")
+    except Exception as e:
+        print(f"Warning: Could not export to public directory (expected in read-only environments like Vercel). {e}")
+        # Not raising an exception to avoid failing the pipeline step
+
 
 if __name__ == "__main__":
     main()

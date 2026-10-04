@@ -1,7 +1,7 @@
 {
   "model_name": "Logistic Regression",
   "model_version": "v2.0.0",
-  "trained_at": "2026-10-04T12:09:05.007875",
+  "trained_at": "2026-10-04T12:51:48.750466",
   "train_samples": 5634,
   "test_samples": 1409,
   "feature_count": 22,

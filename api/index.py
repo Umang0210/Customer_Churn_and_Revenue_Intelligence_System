@@ -1,4 +1,4 @@
-﻿"""
+"""
 api/app.py â€” PATCH INSTRUCTIONS
 ================================
 Add the following lines to your existing api/app.py.
@@ -211,6 +211,57 @@ def predict(req: PredictRequest, username: str = Depends(get_current_user)):
         "model_version":          model_metadata.get("model_version", "unknown"),
     }
 
+
+@app.get("/api/dashboard/data")
+def dashboard_data(username: str = Depends(get_current_user)):
+    """Returns the full dashboard data dictionary."""
+    try:
+        # First, try to read the recently exported processed JSON
+        data_json = BASE_DIR / "data" / "processed" / "dashboard_data.json"
+        if data_json.exists():
+            return json.loads(data_json.read_text())
+        
+        # Alternatively, generate it on the fly
+        import export_dashboard as exporter
+        data = exporter.generate_dashboard_data()
+        if data:
+            return data
+            
+        raise HTTPException(status_code=404, detail="Dashboard data not found. Run the pipeline first.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/data/customers")
+def get_customer_data(page: int = 1, page_size: int = 50, username: str = Depends(get_current_user)):
+    """Returns paginated customer data."""
+    try:
+        data_path = BASE_DIR / "data" / "processed" / "final_dataset.csv"
+        if not data_path.exists():
+            data_path = BASE_DIR / "data" / "raw" / "uploaded_dataset.csv"
+            
+        if not data_path.exists():
+            return {"total": 0, "page": page, "page_size": page_size, "columns": [], "data": []}
+            
+        # Use pandas chunking or just load if it's small enough. For 7000 rows, loading in memory is fine.
+        df = pd.read_csv(data_path)
+        # Convert NaN to None for JSON
+        df = df.replace({np.nan: None})
+        
+        total = len(df)
+        start = (page - 1) * page_size
+        end = start + page_size
+        
+        page_df = df.iloc[start:end]
+        
+        return {
+            "total": total,
+            "page": page,
+            "page_size": page_size,
+            "columns": list(df.columns),
+            "data": page_df.to_dict(orient="records")
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/dashboard/summary")
 def dashboard_summary(username: str = Depends(get_current_user)):

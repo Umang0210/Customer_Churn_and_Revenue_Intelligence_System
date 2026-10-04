@@ -732,6 +732,29 @@ body::before {
         <div class="overview-stats" id="datasetStats"></div>
         <div class="columns-grid" id="columnsGrid"></div>
       </section>
+
+      <section class="section visible">
+        <div class="section-header">
+          <div class="section-icon indigo"><i data-lucide="table"></i></div>
+          <div><h2 class="section-title">Full Customer Data</h2><p class="section-subtitle">Paginated view of the complete dataset</p></div>
+        </div>
+        <div class="card">
+          <div class="table-wrap" style="overflow-x: auto;">
+            <table class="data-table" id="fullCustomerTable">
+              <thead><tr id="fullCustomerTableHeader"></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding: 12px 16px; border-top:1px solid var(--border);">
+            <div id="fullCustomerDataCount" style="color:var(--tx3); font-size:0.85rem;">Showing 0 rows</div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-secondary" id="btnPrevPage" style="padding:4px 12px; font-size:0.85rem;" onclick="loadCustomerDataPage(-1)">Previous</button>
+              <span id="fullCustomerDataPage" style="display:flex; align-items:center; padding:0 8px; font-size:0.85rem; color:var(--tx2);">Page 1</span>
+              <button class="btn btn-secondary" id="btnNextPage" style="padding:4px 12px; font-size:0.85rem;" onclick="loadCustomerDataPage(1)">Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -958,15 +981,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (window.DASHBOARD_DATA) {
       DATA = window.DASHBOARD_DATA;
     } else {
-      const paths = ['dashboard_data.json', '/dashboard_data.json', '/static/dashboard_data.json'];
-      for (const p of paths) {
-        try { 
-          const r = await fetch(p); 
-          if (r.ok) { DATA = await r.json(); break; } 
-        } catch(e) {}
+      // First try the API
+      try {
+        const apiR = await fetch(API_BASE + '/api/dashboard/data');
+        if (apiR.ok) {
+          DATA = await apiR.json();
+        }
+      } catch(e) { console.warn("API dashboard/data fetch failed, falling back"); }
+      
+      // Fallback to static JSON file if API failed
+      if (!DATA) {
+        const paths = ['dashboard_data.json', '/dashboard_data.json', '/static/dashboard_data.json'];
+        for (const p of paths) {
+          try { 
+            const r = await fetch(p); 
+            if (r.ok) { DATA = await r.json(); break; } 
+          } catch(e) {}
+        }
       }
     }
-    if (!DATA) throw new Error('dashboard_data.js not found in static/. Make sure the file exists.');
+    
+    // Load Customer Data table
+    loadCustomerDataPage(0);
+    
+    if (!DATA) throw new Error('Could not load dashboard data from API or static file. Please run the pipeline first.');
     renderOverview();
     hideLoader();
     initScroll();
@@ -1620,6 +1658,98 @@ function toggleSidebar() {
   if (btn) {
     btn.setAttribute('data-lucide', isCollapsed ? 'chevron-right' : 'chevron-left');
     lucide.createIcons();
+  }
+}
+
+let currentCustomerPage = 1;
+const CUSTOMER_PAGE_SIZE = 50;
+
+async function loadCustomerDataPage(dir) {
+  if (dir === 0) currentCustomerPage = 1;
+  else currentCustomerPage += dir;
+  if (currentCustomerPage < 1) currentCustomerPage = 1;
+  
+  try {
+    const res = await fetch(API_BASE + `/api/data/customers?page=${currentCustomerPage}&page_size=${CUSTOMER_PAGE_SIZE}`);
+    if (!res.ok) throw new Error('Network response was not ok');
+    const data = await res.json();
+    
+    if (data.total === 0) {
+      document.getElementById('fullCustomerTableHeader').innerHTML = '<th>No data available</th>';
+      document.getElementById('fullCustomerTable').querySelector('tbody').innerHTML = '<tr><td>Upload a dataset to see it here.</td></tr>';
+      return;
+    }
+    
+    const maxPage = Math.ceil(data.total / CUSTOMER_PAGE_SIZE);
+    if (currentCustomerPage > maxPage) {
+      currentCustomerPage = maxPage;
+      return;
+    }
+    
+    // Render Header
+    const thHTML = data.columns.map(c => `<th>${c}</th>`).join('');
+    document.getElementById('fullCustomerTableHeader').innerHTML = thHTML;
+    
+    // Render Rows
+    const tbody = document.getElementById('fullCustomerTable').querySelector('tbody');
+    tbody.innerHTML = data.data.map(row => {
+      const tr = data.columns.map(c => `<td>${row[c] !== null && row[c] !== undefined ? row[c] : ''}</td>`).join('');
+      return `<tr>${tr}</tr>`;
+    }).join('');
+    
+    document.getElementById('fullCustomerDataCount').textContent = `Showing ${(currentCustomerPage-1)*CUSTOMER_PAGE_SIZE + 1} to ${Math.min(currentCustomerPage*CUSTOMER_PAGE_SIZE, data.total)} of ${fmt(data.total)} rows`;
+    document.getElementById('fullCustomerDataPage').textContent = `Page ${currentCustomerPage}`;
+    document.getElementById('btnPrevPage').disabled = currentCustomerPage === 1;
+    document.getElementById('btnNextPage').disabled = currentCustomerPage >= maxPage;
+    
+  } catch(e) {
+    console.error('Failed to load customer data page:', e);
+  }
+}
+
+let currentCustomerPage = 1;
+const CUSTOMER_PAGE_SIZE = 50;
+
+async function loadCustomerDataPage(dir) {
+  if (dir === 0) currentCustomerPage = 1;
+  else currentCustomerPage += dir;
+  if (currentCustomerPage < 1) currentCustomerPage = 1;
+  
+  try {
+    const res = await fetch(API_BASE + `/api/data/customers?page=${currentCustomerPage}&page_size=${CUSTOMER_PAGE_SIZE}`);
+    if (!res.ok) throw new Error('Network response was not ok');
+    const data = await res.json();
+    
+    if (data.total === 0) {
+      document.getElementById('fullCustomerTableHeader').innerHTML = '<th>No data available</th>';
+      document.getElementById('fullCustomerTable').querySelector('tbody').innerHTML = '<tr><td>Upload a dataset to see it here.</td></tr>';
+      return;
+    }
+    
+    const maxPage = Math.ceil(data.total / CUSTOMER_PAGE_SIZE);
+    if (currentCustomerPage > maxPage) {
+      currentCustomerPage = maxPage;
+      return;
+    }
+    
+    // Render Header
+    const thHTML = data.columns.map(c => `<th>${c}</th>`).join('');
+    document.getElementById('fullCustomerTableHeader').innerHTML = thHTML;
+    
+    // Render Rows
+    const tbody = document.getElementById('fullCustomerTable').querySelector('tbody');
+    tbody.innerHTML = data.data.map(row => {
+      const tr = data.columns.map(c => `<td>${row[c] !== null && row[c] !== undefined ? row[c] : ''}</td>`).join('');
+      return `<tr>${tr}</tr>`;
+    }).join('');
+    
+    document.getElementById('fullCustomerDataCount').textContent = `Showing ${(currentCustomerPage-1)*CUSTOMER_PAGE_SIZE + 1} to ${Math.min(currentCustomerPage*CUSTOMER_PAGE_SIZE, data.total)} of ${fmt(data.total)} rows`;
+    document.getElementById('fullCustomerDataPage').textContent = `Page ${currentCustomerPage}`;
+    document.getElementById('btnPrevPage').disabled = currentCustomerPage === 1;
+    document.getElementById('btnNextPage').disabled = currentCustomerPage >= maxPage;
+    
+  } catch(e) {
+    console.error('Failed to load customer data page:', e);
   }
 }
 
