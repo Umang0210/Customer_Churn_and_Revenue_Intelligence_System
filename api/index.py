@@ -92,6 +92,16 @@ app = FastAPI(
     version="3.1.0",
 )
 
+from fastapi import Request
+@app.middleware("http")
+async def fix_vercel_path(request: Request, call_next):
+    # Fix for Vercel internal rewrites mapping everything to /api/index.py
+    if request.scope.get("path") == "/api/index.py":
+        original = request.headers.get("x-invoke-path")
+        if original:
+            request.scope["path"] = original
+    return await call_next(request)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
