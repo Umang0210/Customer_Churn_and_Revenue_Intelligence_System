@@ -1671,51 +1671,6 @@ function toggleSidebar() {
   }
 }
 
-let currentCustomerPage = 1;
-const CUSTOMER_PAGE_SIZE = 50;
-
-async function loadCustomerDataPage(dir) {
-  if (dir === 0) currentCustomerPage = 1;
-  else currentCustomerPage += dir;
-  if (currentCustomerPage < 1) currentCustomerPage = 1;
-  
-  try {
-    const res = await fetchWithTimeout(API_BASE + `/api/data/customers?page=${currentCustomerPage}&page_size=${CUSTOMER_PAGE_SIZE}`, { timeout: 10000 });
-    if (!res.ok) throw new Error('Network response was not ok');
-    const data = await res.json();
-    
-    if (data.total === 0) {
-      document.getElementById('fullCustomerTableHeader').innerHTML = '<th>No data available</th>';
-      document.getElementById('fullCustomerTable').querySelector('tbody').innerHTML = '<tr><td>Upload a dataset to see it here.</td></tr>';
-      return;
-    }
-    
-    const maxPage = Math.ceil(data.total / CUSTOMER_PAGE_SIZE);
-    if (currentCustomerPage > maxPage) {
-      currentCustomerPage = maxPage;
-      return;
-    }
-    
-    // Render Header
-    const thHTML = data.columns.map(c => `<th>${c}</th>`).join('');
-    document.getElementById('fullCustomerTableHeader').innerHTML = thHTML;
-    
-    // Render Rows
-    const tbody = document.getElementById('fullCustomerTable').querySelector('tbody');
-    tbody.innerHTML = data.data.map(row => {
-      const tr = data.columns.map(c => `<td>${row[c] !== null && row[c] !== undefined ? row[c] : ''}</td>`).join('');
-      return `<tr>${tr}</tr>`;
-    }).join('');
-    
-    document.getElementById('fullCustomerDataCount').textContent = `Showing ${(currentCustomerPage-1)*CUSTOMER_PAGE_SIZE + 1} to ${Math.min(currentCustomerPage*CUSTOMER_PAGE_SIZE, data.total)} of ${fmt(data.total)} rows`;
-    document.getElementById('fullCustomerDataPage').textContent = `Page ${currentCustomerPage}`;
-    document.getElementById('btnPrevPage').disabled = currentCustomerPage === 1;
-    document.getElementById('btnNextPage').disabled = currentCustomerPage >= maxPage;
-    
-  } catch(e) {
-    console.error('Failed to load customer data page:', e);
-  }
-}
 
 let currentCustomerPage = 1;
 const CUSTOMER_PAGE_SIZE = 50;
