@@ -944,6 +944,38 @@ body::before {
 // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
 const API_BASE = window.location.origin;
 
+function fetchWithTimeout(url, options = {}) {
+  const { timeout = 15000, ...fetchOptions } = options;
+  return new Promise((resolve, reject) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error(\'Request Timeout\'));
+    }, timeout);
+    fetchOptions.signal = controller.signal;
+    fetch(url, fetchOptions)
+      .then(response => { clearTimeout(timer); resolve(response); })
+      .catch(err => { clearTimeout(timer); reject(err); });
+  });
+}
+
+
+function fetchWithTimeout(url, options = {}) {
+  const { timeout = 15000, ...fetchOptions } = options;
+  return new Promise((resolve, reject) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error(\'Request Timeout\'));
+    }, timeout);
+    fetchOptions.signal = controller.signal;
+    fetch(url, fetchOptions)
+      .then(response => { clearTimeout(timer); resolve(response); })
+      .catch(err => { clearTimeout(timer); reject(err); });
+  });
+}
+
+
 if (!AbortSignal.timeout) {
   AbortSignal.timeout = function (ms) {
     const controller = new AbortController();
@@ -987,6 +1019,14 @@ const charts = {};
     // BOOT
 // ├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼├óΓÇ¥Γé¼
 document.addEventListener('DOMContentLoaded', async () => {
+  setTimeout(() => {
+    const ov = document.getElementById('loadingOverlay');
+    if (ov && ov.innerHTML.includes('spinner')) {
+      ov.innerHTML = '<div style="text-align:center;color:#f43f5e;padding:32px;max-width:440px"><div style="font-size:2.5rem;margin-bottom:12px;color:var(--rose)"><i data-lucide="alert-triangle" style="width:48px;height:48px"></i></div><p style="font-size:1rem;font-weight:700;margin-bottom:8px">Timeout Error</p><p style="color:#8b949e;font-size:.83rem;margin-bottom:14px">The dashboard took too long to load. A network request may have hung indefinitely.</p><button onclick="window.location.reload()" style="background:var(--rose);color:#fff;border:none;padding:10px 24px;border-radius:6px;font-weight:600;cursor:pointer;font-family:inherit;">Retry</button></div>';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+  }, 20000);
+
   try {
     if (window.DASHBOARD_DATA) {
       DATA = window.DASHBOARD_DATA;

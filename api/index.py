@@ -99,7 +99,7 @@ async def fix_vercel_path(request: Request, call_next):
     if request.scope.get("path") == "/api/index.py":
         original = request.headers.get("x-invoke-path")
         if original:
-            request.scope["path"] = original
+            request.scope["path"] = original if original.startswith("/") else "/" + original
     return await call_next(request)
 
 app.add_middleware(
