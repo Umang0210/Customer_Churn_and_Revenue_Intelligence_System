@@ -69,42 +69,74 @@ body::before {
   display:flex; flex-direction:column;
   z-index:100; transition:width var(--tx-smooth); overflow:hidden;
 }
+.sidebar.collapsed { width:70px; }
 .sidebar-brand {
   padding:24px 20px; border-bottom:1px solid var(--border); flex-shrink:0;
+  display:flex; flex-direction:column; position:relative; overflow:hidden;
+  transition:padding var(--tx-smooth);
 }
+.sidebar.collapsed .sidebar-brand { padding:24px 10px; align-items:center; }
+.sidebar-toggle {
+  position:absolute; right:12px; top:24px; background:none; border:none;
+  color:var(--tx3); cursor:pointer; padding:4px; border-radius:4px;
+  transition:color var(--tx-fast);
+}
+.sidebar.collapsed .sidebar-toggle { position:static; margin-bottom:10px; }
+.sidebar-toggle:hover { color:var(--tx1); background:rgba(255,255,255,0.05); }
 .brand-icon {
   width:36px; height:36px; background:var(--gi);
   border-radius:var(--r-sm); display:flex; align-items:center;
   justify-content:center; font-size:1.1rem; margin-bottom:12px;
 }
-.brand-title { font-size:.95rem; font-weight:700; color:var(--tx1); }
-.brand-subtitle { font-size:.72rem; color:var(--tx3); margin-top:3px; }
-.sidebar-nav { flex:1; overflow-y:auto; padding:12px 0; }
+.brand-title { font-size:.95rem; font-weight:700; color:var(--tx1); transition:opacity var(--tx-fast); white-space:nowrap; }
+.brand-subtitle { font-size:.72rem; color:var(--tx3); margin-top:3px; transition:opacity var(--tx-fast); white-space:nowrap; }
+.sidebar.collapsed .brand-title, .sidebar.collapsed .brand-subtitle { opacity:0; display:none; }
+.sidebar-nav { flex:1; overflow-y:auto; padding:12px 0; overflow-x:hidden; }
 .nav-label {
   font-size:.65rem; font-weight:700; letter-spacing:.1em;
   text-transform:uppercase; color:var(--tx3); padding:16px 20px 6px;
+  transition:opacity var(--tx-fast); white-space:nowrap;
 }
+.sidebar.collapsed .nav-label { opacity:0; display:none; }
 .nav-item {
   display:flex; align-items:center; gap:10px;
   padding:10px 20px; color:var(--tx2); text-decoration:none;
   font-size:.85rem; font-weight:500; cursor:pointer;
   border:none; background:none; width:100%; text-align:left;
   transition:all var(--tx-fast); border-radius:0;
-  position:relative;
+  position:relative; white-space:nowrap;
 }
+.sidebar.collapsed .nav-item { padding:10px 0; justify-content:center; }
 .nav-item:hover { background:rgba(99,102,241,.08); color:var(--tx1); }
 .nav-item.active {
   background:rgba(99,102,241,.14); color:#a5b4fc;
   border-right:2px solid var(--indigo);
 }
+.sidebar.collapsed .nav-item.active { border-right:none; border-left:2px solid var(--indigo); }
 .nav-icon { font-size:1rem; width:20px; text-align:center; flex-shrink:0; }
+.nav-text { transition:opacity var(--tx-fast); }
+.sidebar.collapsed .nav-text { opacity:0; display:none; }
+
+.nav-tooltip {
+  position:absolute; left:70px; top:50%; transform:translateY(-50%);
+  background:var(--bg3); padding:6px 12px; border-radius:var(--r-sm);
+  color:var(--tx1); font-size:.75rem; font-weight:600; border:1px solid var(--border);
+  opacity:0; pointer-events:none; transition:opacity var(--tx-fast);
+  white-space:nowrap; z-index:1000; display:none;
+}
+.sidebar.collapsed .nav-item:hover .nav-tooltip { opacity:1; display:block; }
 .sidebar-footer {
   padding:16px 20px; border-top:1px solid var(--border); flex-shrink:0;
+  transition:padding var(--tx-smooth); white-space:nowrap;
 }
+.sidebar.collapsed .sidebar-footer { padding:16px 10px; }
 .version-badge {
   display:flex; align-items:center; gap:8px;
   font-size:.72rem; color:var(--tx3);
+  transition:opacity var(--tx-fast);
 }
+.sidebar.collapsed .version-badge span:not(.dot) { display:none; }
+.sidebar.collapsed .version-badge { justify-content:center; }
 .version-badge .dot {
   width:6px; height:6px; background:var(--emerald);
   border-radius:50%; flex-shrink:0;
@@ -116,8 +148,9 @@ body::before {
 Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 .main-content {
   margin-left:var(--sidebar-w); min-height:100vh;
-  position:relative; z-index:1;
+  position:relative; z-index:1; transition:margin-left var(--tx-smooth);
 }
+.sidebar.collapsed ~ .main-content { margin-left:70px; }
 .page { display:none; }
 .page.active { display:block; }
 .page-container { max-width:1280px; margin:0 auto; padding:32px 32px 64px; }
@@ -428,22 +461,37 @@ body::before {
 <!-- Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â SIDEBAR Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â -->
 <nav class="sidebar">
   <div class="sidebar-brand">
-1
+    <div class="brand-icon"><i data-lucide="zap"></i></div>
     <div class="brand-title">Churn Intelligence</div>
     <div class="brand-subtitle">Revenue Optimization System</div>
+    <button class="sidebar-toggle" onclick="toggleSidebar()"><i data-lucide="chevron-left" class="icon-sm"></i></button>
   </div>
   <div class="sidebar-nav">
     <div class="nav-label">Dashboard</div>
     <button class="nav-item active" data-page="overview">
-1
+      <span class="nav-icon"><i data-lucide="layout-dashboard" class="icon-sm"></i></span><span class="nav-text">Overview</span>
+      <div class="nav-tooltip">Overview</div>
+    </button>
+    <button class="nav-item" data-page="model">
+      <span class="nav-icon"><i data-lucide="activity" class="icon-sm"></i></span><span class="nav-text">Model Performance</span>
+      <div class="nav-tooltip">Model Performance</div>
+    </button>
+    <button class="nav-item" data-page="analytics">
+      <span class="nav-icon"><i data-lucide="pie-chart" class="icon-sm"></i></span><span class="nav-text">Analytics</span>
+      <div class="nav-tooltip">Analytics</div>
+    </button>
+    <button class="nav-item" data-page="customers">
+      <span class="nav-icon"><i data-lucide="users" class="icon-sm"></i></span><span class="nav-text">Customers</span>
+      <div class="nav-tooltip">Customers</div>
     </button>
     <div class="nav-label">System</div>
-      
-      <button class="nav-item" data-page="logs">
-        <span class="nav-icon"><i data-lucide="file-text" class="icon-sm"></i></span><span class="nav-text">Logs</span>
-      </button>
+    <button class="nav-item" data-page="logs">
+      <span class="nav-icon"><i data-lucide="file-text" class="icon-sm"></i></span><span class="nav-text">Logs</span>
+      <div class="nav-tooltip">Logs</div>
+    </button>
     <button class="nav-item" data-page="upload">
-      <span class="nav-icon">ðŸ“‚</span><span class="nav-text">Upload Data</span>
+      <span class="nav-icon"><i data-lucide="upload-cloud" class="icon-sm"></i></span><span class="nav-text">Upload Data</span>
+      <div class="nav-tooltip">Upload Data</div>
     </button>
   </div>
   <div class="sidebar-footer">
@@ -460,18 +508,40 @@ body::before {
   <!-- â”€â”€ OVERVIEW â”€â”€ -->
   <div class="page active" id="page-overview">
     <div class="page-container">
-      <div class="page-header">
-        <div class="page-breadcrumb"><span>Dashboard</span> <span>/</span> Overview</div>
-        <h1 class="page-title">Executive Overview</h1>
-        <p class="page-subtitle">Key business metrics and intelligence from the ML pipeline</p>
-        <p class="page-meta" id="generatedAt"></p>
+      <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div class="page-breadcrumb"><span>Dashboard</span> <span>/</span> Overview</div>
+          <h1 class="page-title">Executive Overview</h1>
+          <p class="page-subtitle">Key business metrics and intelligence from the ML pipeline</p>
+          <p class="page-meta" id="generatedAt"></p>
+        </div>
+        <button class="btn btn-outline" id="refreshBtn" onclick="forceRefresh()" style="display:flex; align-items:center; gap:6px;">
+          <i data-lucide="refresh-cw" class="icon-sm"></i> Refresh Data
+        </button>
       </div>
       <section class="section visible" id="kpiSection">
         <div class="kpi-grid" id="kpiGrid"></div>
       </section>
+      
+      <section class="section visible" id="recentActivitySection">
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:16px 24px; margin-bottom:24px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="section-icon emerald" style="width:36px; height:36px; font-size:1rem;"><i data-lucide="check-circle"></i></div>
+            <div>
+              <h3 style="font-size:.9rem; margin-bottom:2px;">Pipeline Status: <span id="dashPipelineStatus" style="color:var(--emerald)">Ready</span></h3>
+              <p style="font-size:.75rem; color:var(--tx3);" id="dashPipelineMeta">Waiting for data</p>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:.85rem; color:var(--tx2);" id="dashLastRun">Last Run: -</div>
+            <div style="font-size:.75rem; color:var(--tx3);" id="dashCustomersProcessed">Customers Processed: -</div>
+          </div>
+        </div>
+      </section>
+
       <section class="section">
         <div class="section-header">
-          <div class="section-icon rose">ðŸ’¸</div>
+          <div class="section-icon rose"><i data-lucide="trending-down"></i></div>
           <div>
             <h2 class="section-title">Churn & Risk Overview</h2>
             <p class="section-subtitle">Customer attrition and predicted risk distribution</p>
@@ -492,7 +562,7 @@ body::before {
       </section>
       <section class="section">
         <div class="section-header">
-1
+          <div class="section-icon indigo"><i data-lucide="git-merge"></i></div>
           <div>
             <h2 class="section-title">ML Pipeline Architecture</h2>
             <p class="section-subtitle">End-to-end data processing and model workflow</p>
@@ -513,7 +583,7 @@ body::before {
       </div>
       <section class="section visible">
         <div class="section-header">
-1
+          <div class="section-icon emerald"><i data-lucide="bar-chart"></i></div>
           <div><h2 class="section-title">Model Comparison</h2></div>
         </div>
         <div class="model-grid" id="modelCards"></div>
@@ -534,7 +604,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-1
+          <div class="section-icon amber"><i data-lucide="sliders"></i></div>
           <div><h2 class="section-title">Threshold Analysis</h2><p class="section-subtitle">Precision, Recall, F1 at different decision thresholds</p></div>
         </div>
         <div class="chart-grid">
@@ -557,7 +627,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon cyan">ðŸ”¬</div>
+          <div class="section-icon cyan"><i data-lucide="list"></i></div>
           <div><h2 class="section-title">Feature List</h2><p class="section-subtitle"><span id="featureCount">â€”</span> features used for training</p></div>
         </div>
         <div class="card">
@@ -577,7 +647,7 @@ body::before {
       </div>
       <section class="section visible">
         <div class="section-header">
-1
+          <div class="section-icon amber"><i data-lucide="dollar-sign"></i></div>
           <div><h2 class="section-title">Revenue Impact</h2></div>
         </div>
         <div class="chart-grid">
@@ -593,7 +663,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-1
+          <div class="section-icon indigo"><i data-lucide="users"></i></div>
           <div><h2 class="section-title">Churn by Segment</h2></div>
         </div>
         <div class="chart-grid">
@@ -617,7 +687,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon emerald">ðŸ“‹</div>
+          <div class="section-icon emerald"><i data-lucide="calendar"></i></div>
           <div><h2 class="section-title">Tenure Breakdown</h2></div>
         </div>
         <div class="card">
@@ -642,7 +712,7 @@ body::before {
       </div>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon rose">ðŸ”¥</div>
+          <div class="section-icon rose"><i data-lucide="flame"></i></div>
           <div><h2 class="section-title">Top Priority Customers</h2><p class="section-subtitle">Ranked by expected revenue loss</p></div>
         </div>
         <div class="card">
@@ -656,7 +726,7 @@ body::before {
       </section>
       <section class="section visible">
         <div class="section-header">
-          <div class="section-icon cyan">ðŸ—ƒ</div>
+          <div class="section-icon cyan"><i data-lucide="database"></i></div>
           <div><h2 class="section-title">Dataset Overview</h2></div>
         </div>
         <div class="overview-stats" id="datasetStats"></div>
@@ -681,7 +751,7 @@ body::before {
             <div class="chart-title" style="margin-bottom:18px">Upload Customer Data</div>
             <div class="drop-zone" id="dropZone">
               <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" />
-1
+              <i data-lucide="upload-cloud" class="icon-lg" style="width:48px;height:48px;color:var(--indigo);margin-bottom:16px;"></i>
               <h3>Drag & drop your file here</h3>
               <p>or click to browse from your computer</p>
               <div class="format-badges">
@@ -692,19 +762,19 @@ body::before {
               </div>
             </div>
             <div class="file-preview" id="filePreview">
-1
+              <span class="preview-icon" id="previewIcon"><i data-lucide="file" class="icon-sm"></i></span>
               <div class="file-info">
-                <div class="file-name" id="previewName">â€”</div>
-                <div class="file-meta" id="previewMeta">â€”</div>
+                <div class="file-name" id="previewName">filename.csv</div>
+                <div class="file-meta" id="previewMeta">0 KB</div>
               </div>
-              <button class="remove-btn" onclick="clearFile()">âœ•</button>
+              <button class="remove-btn" onclick="clearFile()" aria-label="Remove file"><i data-lucide="x" class="icon-sm"></i></button>
             </div>
             <div class="val-box" id="valBox"></div>
             <div class="upload-actions">
               <button class="btn btn-primary" id="uploadBtn" disabled onclick="uploadFile()">
-1
+                <i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline
               </button>
-              <button class="btn btn-outline" onclick="downloadTemplate()">â¬‡ Download Template</button>
+              <button class="btn btn-outline" onclick="downloadTemplate()"><i data-lucide="download" class="icon-sm"></i> Download Template</button>
             </div>
           </div>
 
@@ -904,7 +974,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch(e) {
     document.getElementById('loadingOverlay').innerHTML =
       `<div style="text-align:center;color:#f43f5e;padding:32px;max-width:440px">
-        <div style="font-size:2.5rem;margin-bottom:12px">âš </div>
+        <div style="font-size:2.5rem;margin-bottom:12px;color:var(--rose)"><i data-lucide="alert-triangle" style="width:48px;height:48px"></i></div>
         <p style="font-size:1rem;font-weight:700;margin-bottom:8px">Unable to load dashboard data.</p>
         <p style="color:#8b949e;font-size:.83rem;margin-bottom:14px">${e.message}</p>
         <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;text-align:left;font-size:.77rem;color:#8b949e;line-height:1.8;margin-bottom:20px;">
@@ -954,9 +1024,23 @@ function navigateTo(pageId) {
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // LIVE API HYDRATION
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-async function hydrateFromAPI() {
+async function forceRefresh() {
+  const btn = document.getElementById('refreshBtn');
+  const icon = btn.querySelector('i');
+  if (icon) icon.classList.add('spin');
   try {
-    const summary = await fetch(API_BASE + '/api/dashboard/summary', {signal: AbortSignal.timeout(3000)}).then(r=>r.json());
+    await hydrateFromAPI(true);
+    showToast('Dashboard data refreshed.');
+  } catch(e) {
+    showToast('Failed to refresh data. API might be down.');
+  } finally {
+    if (icon) icon.classList.remove('spin');
+  }
+}
+
+async function hydrateFromAPI(force = false) {
+  try {
+    const summary = await fetch(API_BASE + '/api/dashboard/summary' + (force ? '?_=' + Date.now() : ''), {signal: AbortSignal.timeout(3000)}).then(r=>r.json());
     if (summary.total_predictions) {
       // Update KPI cards with live data
       updateKPILive(summary);
@@ -1255,7 +1339,7 @@ function renderCustomerTable(customers, isLive) {
         <td>${(c.churn_probability*100).toFixed(1)}%</td>
         <td><span class="risk-badge ${risk}">${risk.toUpperCase()}</span></td>
         <td>$${(c.monthly_charges||0).toFixed(2)}</td>
-        <td>${c.tenure||'â€”'} mo</td>
+        <td>${c.tenure||'-'} mo</td>
         <td>$${fmt(c.revenue||0)}</td>
         <td style="color:#fb7185;font-weight:600">$${fmt(c.expected_loss||0)}</td>
       </tr>`;
@@ -1289,7 +1373,7 @@ function handleFile(file) {
   preview.classList.add('show');
   document.getElementById('previewIcon').innerHTML = ext==='csv'?'<i data-lucide="file-text" class="icon-sm"></i>':'<i data-lucide="bar-chart-2" class="icon-sm"></i>';
   document.getElementById('previewName').textContent = file.name;
-  document.getElementById('previewMeta').textContent = `${(file.size/1024).toFixed(1)} KB Â· ${ext.toUpperCase()}`;
+  document.getElementById('previewMeta').textContent = `${(file.size/1024).toFixed(1)} KB &middot; ${ext.toUpperCase()}`;
   document.getElementById('uploadBtn').disabled = false;
   hideVal();
 }
@@ -1306,7 +1390,7 @@ async function uploadFile() {
   if (!selectedFile) return;
   const btn = document.getElementById('uploadBtn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spin-sm"></span> Uploadingâ€¦';
+  btn.innerHTML = '<span class="spin-sm"></span> Uploading...';
 
   const formData = new FormData();
   formData.append('file', selectedFile);
@@ -1381,7 +1465,7 @@ function startPolling() {
         clearInterval(pollInterval); pollInterval = null;
         loadHistory();
         if (data.status === 'success') {
-          showToast('âœ… Pipeline complete! Refresh the page to see updated data.');
+          showToast('Pipeline complete! Refresh the page to see updated data.');
           document.getElementById('uploadBtn').disabled = false;
           document.getElementById('uploadBtn').innerHTML = '<i data-lucide="rocket" class="icon-sm"></i> Upload & Run Pipeline';
         }
@@ -1432,6 +1516,27 @@ async function loadHistory() {
   try {
     const data = await fetch(API_BASE + '/api/upload/history', {signal:AbortSignal.timeout(2000)}).then(r=>r.json());
     renderHistory(data);
+    
+    // Update Dashboard Pipeline Widget
+    if (data && data.length > 0) {
+      const latest = data[0];
+      const sEl = document.getElementById('dashPipelineStatus');
+      const mEl = document.getElementById('dashPipelineMeta');
+      const rEl = document.getElementById('dashLastRun');
+      const cEl = document.getElementById('dashCustomersProcessed');
+      
+      if (sEl) {
+        sEl.textContent = latest.status === 'success' ? 'Successful' : 'Failed';
+        sEl.style.color = latest.status === 'success' ? 'var(--emerald)' : 'var(--rose)';
+      }
+      if (mEl) mEl.textContent = `File: ${latest.filename || 'unknown'}`;
+      if (rEl) rEl.textContent = `Last Run: ${latest.uploaded_at ? new Date(latest.uploaded_at).toLocaleString() : '-'}`;
+      
+      // Update customers processed based on KPI data if available
+      if (cEl && window.DATA && DATA.model && DATA.model.business_kpis) {
+        cEl.textContent = `Customers Processed: ${fmt(DATA.model.business_kpis.total_customers)}`;
+      }
+    }
   } catch(e) {
     console.error('Failed to load history:', e);
   }
@@ -1447,8 +1552,8 @@ function renderHistory(items) {
     const badge = item.status==='success'
       ? '<span class="risk-badge low">Success</span>'
       : '<span class="risk-badge high">Failed</span>';
-    const dt = item.uploaded_at ? new Date(item.uploaded_at).toLocaleString() : 'â€”';
-    return `<tr><td style="font-size:.78rem">${item.filename||'â€”'}</td><td>${badge}</td><td style="color:var(--tx2);font-size:.75rem">${dt}</td></tr>`;
+    const dt = item.uploaded_at ? new Date(item.uploaded_at).toLocaleString() : '-';
+    return `<tr><td style="font-size:.78rem">${item.filename||'-'}</td><td>${badge}</td><td style="color:var(--tx2);font-size:.75rem">${dt}</td></tr>`;
   }).join('');
 }
 
@@ -1463,7 +1568,7 @@ async function downloadTemplate() {
       if (r.ok) { window.open(url, '_blank'); return; }
     } catch(e) {}
   }
-  showToast('API not running â€” template unavailable.');
+  showToast('API not running - template unavailable.');
 }
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -1474,7 +1579,7 @@ function showVal(type, msg, errors=[], warnings=[]) {
   const cls = type==='error'?'error':type==='warn'?'warn':'ok';
   let html = `<strong>${msg}</strong>`;
   if (errors.length)   html += `<ul>${errors.map(e=>`<li>${e}</li>`).join('')}</ul>`;
-  if (warnings.length) html += `<ul>${warnings.map(w=>`<li>âš  ${w}</li>`).join('')}</ul>`;
+  if (warnings.length) html += `<ul>${warnings.map(w=>`<li>[Warning] ${w}</li>`).join('')}</ul>`;
   box.className = `val-box show ${cls}`;
   box.innerHTML = html;
 }
@@ -1490,7 +1595,7 @@ function showToast(msg) {
 }
 
 function fmt(n) {
-  if (n===null||n===undefined) return 'â€”';
+  if (n===null||n===undefined) return '-';
   return Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
 }
 function compact(n) {
@@ -1504,6 +1609,25 @@ function initScroll() {
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
   }, {threshold:.08, rootMargin:'0px 0px -40px 0px'});
   document.querySelectorAll('.section').forEach(s=>obs.observe(s));
+}
+
+function toggleSidebar() {
+  const sb = document.querySelector('.sidebar');
+  sb.classList.toggle('collapsed');
+  const isCollapsed = sb.classList.contains('collapsed');
+  sessionStorage.setItem('sidebar_collapsed', isCollapsed);
+  const btn = document.querySelector('.sidebar-toggle i');
+  if (btn) {
+    btn.setAttribute('data-lucide', isCollapsed ? 'chevron-right' : 'chevron-left');
+    lucide.createIcons();
+  }
+}
+
+// Init sidebar state
+if (sessionStorage.getItem('sidebar_collapsed') === 'true') {
+  document.querySelector('.sidebar').classList.add('collapsed');
+  const btn = document.querySelector('.sidebar-toggle i');
+  if (btn) btn.setAttribute('data-lucide', 'chevron-right');
 }
 </script>
 <script>lucide.createIcons();</script>
