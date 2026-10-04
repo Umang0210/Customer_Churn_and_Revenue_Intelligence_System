@@ -1,20 +1,38 @@
 {
-  "rewrites": [
+  "builds": [
     {
-      "source": "/health",
-      "destination": "/api/health"
+      "src": "api/index.py",
+      "use": "@vercel/python"
     },
     {
-      "source": "/predict",
-      "destination": "/api/predict"
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
     },
     {
-      "source": "/logs",
-      "destination": "/"
+      "src": "/health",
+      "dest": "/api/index.py"
     },
     {
-      "source": "/logs/:path*",
-      "destination": "/"
+      "src": "/predict",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/logs",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/logs/(.*)",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ]
 }
